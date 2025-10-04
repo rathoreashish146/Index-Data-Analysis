@@ -14,7 +14,7 @@ from plotly.subplots import make_subplots
 # App Setup (multi-page)
 # -----------------------------
 app = Dash(__name__, suppress_callback_exceptions=True)
-app.title = "Index Data Area"
+app.title = "Index Data Analysis"
 
 # Expose the underlying Flask server for Gunicorn
 server = app.server
@@ -1192,3 +1192,4 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
