@@ -179,7 +179,7 @@ def navbar():
 def home_layout():
     return html.Div(
         [
-            html.H1("Index Data Analysis),
+            html.H1("Index Data Analysis"),
             html.P("Choose a workflow:"),
             html.Div(
                 [
@@ -1192,5 +1192,6 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
