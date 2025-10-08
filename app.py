@@ -90,30 +90,6 @@ def parse_csv_flexible(contents: str, filename: str):
     return df, warnings, None
 
 
-def drop_event_analysis(df: pd.DataFrame, minimum_per_drop: float, windows_size: int):
-    _df = df.copy()
-    _df["index_return"] = _df["index"].pct_change(periods=windows_size)
-    _df = _df.dropna()
-    crossings = (_df["index_return"] <= -minimum_per_drop)
-    total_events = int(crossings.sum())
-    denom = max(len(_df["index_return"]), 1)
-    prob = total_events / denom
-    key = f"{windows_size} days and {minimum_per_drop * 100:.0f}% minimum percentage drop"
-    return {key: {"events": total_events, "probability": f"{prob:.2%}"}}
-
-
-def gain_event_analysis(df: pd.DataFrame, minimum_per_gain: float, windows_size: int):
-    _df = df.copy()
-    _df["index_return"] = _df["index"].pct_change(periods=windows_size)
-    _df = _df.dropna()
-    crossings = (_df["index_return"] >= minimum_per_gain)
-    total_events = int(crossings.sum())
-    denom = max(len(_df["index_return"]), 1)
-    prob = total_events / denom
-    key = f"{windows_size} days and {minimum_per_gain * 100:.0f}% minimum percentage gain"
-    return {key: {"events": total_events, "probability": f"{prob:.2%}"}}
-
-
 def compute_range(preset: str, start_date, end_date, data_min: pd.Timestamp, data_max: pd.Timestamp, snap_month: bool):
     """
     Resolve (start, end) timestamps based on a preset or DatePickerRange values.
@@ -148,6 +124,259 @@ def compute_range(preset: str, start_date, end_date, data_min: pd.Timestamp, dat
     if start > end:
         start, end = end, start
     return start, end
+
+# -----------------------------
+# Weekend-aware window helpers
+# -----------------------------
+def end_trade_day_with_buffer(start: pd.Timestamp, window_size_days: int,
+                              buffer_minus: int = 1, buffer_plus: int = 1) -> pd.Timestamp:
+    """
+    Weekend-aware last trading day for a calendar-day window.
+    - Tentative end = start + (window_size_days - 1) calendar days.
+    - If tentative lands on weekend:
+        - If the backward adjustment would skip more than one day (e.g., Sat→Fri = -1 is OK,
+          Sun→Fri = -2 means instead take +1 and go forward to Monday).
+    """
+    if pd.isna(start):
+        return pd.NaT
+
+    start = (start if isinstance(start, pd.Timestamp) else pd.Timestamp(start)).normalize()
+    tentative = start + pd.Timedelta(days=max(int(window_size_days) - 1, 0))
+
+    weekday = tentative.weekday()  # Monday=0 … Sunday=6
+    # Saturday → -1 to Friday
+    if weekday == 5:
+        return tentative - pd.Timedelta(days=buffer_minus)
+    # Sunday → instead of -2 back to Friday, go +1 to Monday
+    elif weekday == 6:
+        return tentative + pd.Timedelta(days=buffer_plus)
+    # Weekday
+    return tentative
+
+
+def compute_windowed_returns_calendar(df: pd.DataFrame, window_size_days: int) -> pd.Series:
+    """
+    Compute % change using a calendar-day window with weekend-aware snapping.
+    Assumes df has columns ['datetime','index'] and is sorted by datetime.
+    For each row i at date D_i, find E_i = end_trade_day_with_buffer(D_i, window_size_days).
+    Use the latest available row with datetime <= E_i as end value.
+    """
+    if df.empty:
+        return pd.Series(dtype=float)
+
+    df = df.copy()
+    df["datetime"] = pd.to_datetime(df["datetime"]).dt.normalize()
+    df = df.dropna(subset=["datetime", "index"]).sort_values("datetime").reset_index(drop=True)
+
+    dates = df["datetime"]
+    vals = pd.to_numeric(df["index"], errors="coerce").values
+
+    # Map unique day -> last row pos
+    date_to_lastpos = {}
+    for pos, day in enumerate(dates):
+        date_to_lastpos[day] = pos
+    unique_days = dates.drop_duplicates().reset_index(drop=True)
+
+    def pos_leq_day(target_day: pd.Timestamp):
+        # rightmost unique_days[idx] <= target_day
+        left, right = 0, len(unique_days) - 1
+        ans = -1
+        while left <= right:
+            mid = (left + right) // 2
+            if unique_days[mid] <= target_day:
+                ans = mid
+                left = mid + 1
+            else:
+                right = mid - 1
+        if ans == -1:
+            return None
+        return date_to_lastpos[unique_days[ans]]
+
+    rets = np.full(len(df), np.nan, dtype=float)
+    ws = max(int(window_size_days or 1), 1)
+
+    for i in range(len(df)):
+        start_day = dates.iloc[i]
+        end_day = end_trade_day_with_buffer(start_day, ws)
+        j = pos_leq_day(end_day)
+        if j is None or j <= i:
+            continue
+        if np.isfinite(vals[i]) and np.isfinite(vals[j]) and vals[i] != 0:
+            rets[i] = (vals[j] / vals[i]) - 1.0
+
+    return pd.Series(rets, index=df.index, name=f"ret_{ws}d_cal")
+
+# ---------- Indicator helpers (no external TA dependency) ----------
+def ema(s: pd.Series, span: int):
+    return s.ewm(span=span, adjust=False).mean()
+
+def rsi(series: pd.Series, period: int = 14):
+    delta = series.diff()
+    up = (delta.clip(lower=0)).rolling(period).mean()
+    down = (-delta.clip(upper=0)).rolling(period).mean()
+    rs = up / (down.replace(0, np.nan))
+    out = 100 - (100 / (1 + rs))
+    return out
+
+def bbands_mid_upper_lower(price: pd.Series, window: int = 20, k: float = 2.0):
+    mid = price.rolling(window).mean()
+    std = price.rolling(window).std()
+    upper = mid + k * std
+    lower = mid - k * std
+    return mid, upper, lower
+
+def compute_calendar_return_series(df: pd.DataFrame, window_size_days: int) -> pd.Series:
+    """
+    Wrapper that returns weekend-aware calendar returns aligned to df.index,
+    using compute_windowed_returns_calendar.
+    """
+    return compute_windowed_returns_calendar(df[["datetime","index"]].copy(), window_size_days)
+
+def build_indicators(df: pd.DataFrame, price_col="index"):
+    """
+    Builds a feature table.
+    Weekend-aware for ret_5, ret_10, mom_10 via compute_windowed_returns_calendar.
+    Other rolling features operate on available trading days.
+    """
+    out = pd.DataFrame(index=df.index)
+    p = pd.to_numeric(df[price_col], errors="coerce").astype(float)
+
+    # returns, momentum & volatility
+    out["ret_1"]  = p.pct_change(1)
+
+    # weekend-aware multi-day returns
+    out["ret_5"]  = compute_calendar_return_series(df, 5)
+    out["ret_10"] = compute_calendar_return_series(df, 10)
+    # momentum over 10 calendar days == ret_10
+    out["mom_10"] = out["ret_10"]
+
+    # volatility based on daily returns (trading-day based)
+    out["vol_20"] = out["ret_1"].rolling(20).std()
+    out["vol_60"] = out["ret_1"].rolling(60).std()
+
+    # moving averages
+    out["sma_5"]   = p.rolling(5).mean()
+    out["sma_20"]  = p.rolling(20).mean()
+    out["ema_12"]  = ema(p, 12)
+    out["ema_26"]  = ema(p, 26)
+
+    # MACD family
+    macd_line = out["ema_12"] - out["ema_26"]
+    macd_sig  = ema(macd_line, 9)
+    out["macd"]      = macd_line
+    out["macd_sig"]  = macd_sig
+    out["macd_hist"] = macd_line - macd_sig
+
+    # RSI
+    out["rsi_14"] = rsi(p, 14)
+
+    # Bollinger
+    mid, up, lo = bbands_mid_upper_lower(p, 20, 2.0)
+    out["bb_mid"]   = mid
+    out["bb_up"]    = up
+    out["bb_lo"]    = lo
+    out["bb_width"] = (up - lo) / mid
+    out["bb_pos"]   = (p - mid) / (up - lo)
+
+    # drawdown features
+    rolling_max = p.cummax()
+    drawdown = p / rolling_max - 1.0
+    out["dd"]       = drawdown
+    out["dd_20"]    = (p / p.rolling(20).max() - 1.0)
+    out["dd_speed"] = drawdown.diff()
+
+    # combos
+    out["sma_gap_5_20"]  = out["sma_5"] / out["sma_20"] - 1.0
+    out["ema_gap_12_26"] = out["ema_12"] / out["ema_26"] - 1.0
+
+    return out
+
+# ---------- Updated analyses (now using weekend-aware returns everywhere) ----------
+def drop_event_analysis(df: pd.DataFrame, minimum_per_drop: float, windows_size: int):
+    """
+    Count drop events using weekend-aware windowed returns.
+    """
+    ret = compute_windowed_returns_calendar(df, windows_size)
+    ret = ret.dropna()
+    crossings = (ret <= -minimum_per_drop)
+    total_events = int(crossings.sum())
+    denom = max(len(ret), 1)
+    prob = total_events / denom
+    key = f"{windows_size} days and {minimum_per_drop * 100:.0f}% minimum percentage drop"
+    return {key: {"events": total_events, "probability": f"{prob:.2%}"}}
+
+def gain_event_analysis(df: pd.DataFrame, minimum_per_gain: float, windows_size: int):
+    """
+    Count gain events using weekend-aware windowed returns.
+    """
+    ret = compute_windowed_returns_calendar(df, windows_size)
+    ret = ret.dropna()
+    crossings = (ret >= minimum_per_gain)
+    total_events = int(crossings.sum())
+    denom = max(len(ret), 1)
+    prob = total_events / denom
+    key = f"{windows_size} days and {minimum_per_gain * 100:.0f}% minimum percentage gain"
+    return {key: {"events": total_events, "probability": f"{prob:.2%}"}}
+
+# ---------- Table to show first/last trade day ----------
+def build_trade_window_table(df: pd.DataFrame, window_size_days: int, limit: int = 200):
+    """
+    Table of start date, weekend-aware last trade day, and actual end present in data (<= last trade day).
+    """
+    if df.empty:
+        return html.Div()
+
+    df = df.copy()
+    df["datetime"] = pd.to_datetime(df["datetime"]).dt.normalize()
+    df = df.dropna(subset=["datetime", "index"]).sort_values("datetime").reset_index(drop=True)
+
+    dates = df["datetime"]
+
+    # Map unique days to last position
+    date_to_lastpos = {}
+    for pos, day in enumerate(dates):
+        date_to_lastpos[day] = pos
+    unique_days = dates.drop_duplicates().reset_index(drop=True)
+
+    def pos_leq_day(target_day: pd.Timestamp):
+        left, right = 0, len(unique_days) - 1
+        ans = -1
+        while left <= right:
+            mid = (left + right) // 2
+            if unique_days[mid] <= target_day:
+                ans = mid
+                left = mid + 1
+            else:
+                right = mid - 1
+        if ans == -1:
+            return None
+        return date_to_lastpos[unique_days[ans]]
+
+    ws = max(int(window_size_days or 1), 1)
+    rows = []
+    for i in range(len(df)):
+        start_day = dates.iloc[i]
+        last_trade_day = end_trade_day_with_buffer(start_day, ws)
+        j = pos_leq_day(last_trade_day)
+        actual_end = dates.iloc[j] if (j is not None and j > i) else pd.NaT
+        rows.append({
+            "Start (first day of trade)": start_day.date(),
+            "Last day of trade (weekend-aware)": last_trade_day.date() if pd.notna(last_trade_day) else None,
+            "Actual end in data (<= last trade day)": actual_end.date() if pd.notna(actual_end) else None,
+        })
+
+    df_out = pd.DataFrame(rows)
+    if limit and len(df_out) > limit:
+        df_out = df_out.head(limit)
+
+    table = dash_table.DataTable(
+        data=df_out.to_dict("records"),
+        columns=[{"name": c, "id": c} for c in df_out.columns],
+        page_size=min(20, len(df_out)) or 5,
+        style_table={"overflowX": "auto"},
+        style_cell={"textAlign": "left", "minWidth": "160px"},
+    )
+    return table
 
 # -----------------------------
 # Layouts: Home / Single / Cross
@@ -383,6 +612,27 @@ def single_layout():
 
         ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"8px"}),
 
+        # -------------------- INDICATORS TOGGLES --------------------
+        html.Div([
+            html.H3("Indicators"),
+            dcc.Checklist(
+                id="indicators-select",
+                options=[
+                    {"label":" SMA (5 & 20)", "value":"sma"},
+                    {"label":" EMA (12 & 26)", "value":"ema"},
+                    {"label":" Bollinger Bands (20,2)", "value":"bb"},
+                    {"label":" RSI (14)", "value":"rsi"},
+                    {"label":" MACD (12,26,9)", "value":"macd"},
+                    {"label":" Volatility (20/60)", "value":"vol"},
+                    {"label":" Drawdown", "value":"dd"},
+                ],
+                value=["sma","ema","bb","rsi","macd","vol","dd"],
+                inline=True,
+                inputStyle={"marginRight":"6px"},
+                labelStyle={"display":"inline-block","marginRight":"12px"}
+            ),
+        ], style={"margin":"8px 0 4px"}),
+
         html.Div([
             html.Button(
                 "Analyze", id="analyze", n_clicks=0,
@@ -403,6 +653,8 @@ def single_layout():
                 dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
                 dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
                 html.Div(id="stats-drop", style={"margin": "6px 0 14px"}),
+                html.H4("Trade windows (first and last day)"),
+                html.Div(id="trade-windows-drop"),
             ], style={"flex": 1, "minWidth": "420px"}),
 
             html.Div([
@@ -415,18 +667,24 @@ def single_layout():
                 dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
                 dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
                 html.Div(id="stats-gain", style={"margin": "6px 0 14px"}),
+                html.H4("Trade windows (first and last day)"),
+                html.Div(id="trade-windows-gain"),
             ], style={"flex": 1, "minWidth": "420px"}),
         ], style={"display": "flex", "gap": "20px", "flexWrap": "wrap"}),
 
+        # ---------- Indicators figure ----------
+        html.H3("Indicator Charts"),
+        dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
+
         html.Hr(),
-        html.Div(id="preview"),
+        html.Div(id="preview"),  # <<< Data Preview lives here (first 10 rows)
 
         dcc.Store(id=STORE_RAW),
         dcc.Store(id=STORE_META),
     ],
     style={"maxWidth":"1200px","margin":"0 auto","padding":"8px 12px"})
 
-# ---------- Cross Index (UPLOAD TWO + SIMPLE ANALYSIS) ----------
+# ---------- Cross Index ----------
 def cross_layout():
     return html.Div(
         [
@@ -526,6 +784,8 @@ def cross_layout():
                 dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
                 dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
                 html.Div(id="x-stats", style={"margin":"8px 0 16px"}),
+                html.H4("Trade windows (first and last day)"),
+                html.Div(id="x-trade-windows"),
             ], style={"marginTop":"10px"}),
 
             dcc.Store(id=STORE_A),
@@ -565,7 +825,7 @@ def render_page(pathname):
 @app.callback(
     Output("file-msg", "children"),
     Output("warn-msg", "children"),
-    Output("preview", "children"),
+    Output("preview", "children"),          # <<< Data Preview here
     Output(STORE_RAW, "data"),
     Output(STORE_META, "data"),
     # Drop bounds
@@ -608,6 +868,7 @@ def on_upload_single(contents, filename):
     warn_block = (html.Div([html.Strong("Warnings:"),
                    html.Ul([html.Li(w) for w in warns])], style={"color":"#996800"}) if warns else None)
 
+    # --- Data Preview (first 10 rows)
     table = dash_table.DataTable(
         data=df.head(10).to_dict("records"),
         columns=[{"name": c, "id": c} for c in df.columns],
@@ -686,11 +947,15 @@ def jump_gain(year, month, _cur):
     Output("return-chart-drop", "figure"),
     Output("bar-chart-drop", "figure"),
     Output("stats-drop", "children"),
+    Output("trade-windows-drop", "children"),
     # GAIN outputs
     Output("analysis-output-gain", "children"),
     Output("return-chart-gain", "figure"),
     Output("bar-chart-gain", "figure"),
     Output("stats-gain", "children"),
+    Output("trade-windows-gain", "children"),
+    # INDICATOR figure
+    Output("indicators-figure", "figure"),
     Input("analyze", "n_clicks"),
     State(STORE_RAW, "data"),
     State("analysis-types", "value"),
@@ -712,17 +977,20 @@ def jump_gain(year, month, _cur):
     State("window-size-input-gain", "value"),
     State("min-threshold-gain", "value"),
     State("min-threshold-input-gain", "value"),
+    # Indicators toggles
+    State("indicators-select", "value"),
     prevent_initial_call=True,
 )
 def run_analysis_single(n_clicks, raw_payload, analysis_types,
                  preset_drop, sd_drop, ed_drop, snap_drop, ws_drop, ws_in_drop, th_drop, th_in_drop,
-                 preset_gain, sd_gain, ed_gain, snap_gain, ws_gain, ws_in_gain, th_gain, th_in_gain):
+                 preset_gain, sd_gain, ed_gain, snap_gain, ws_gain, ws_in_gain, th_gain, th_in_gain,
+                 indicators_selected):
     if not n_clicks:
-        return (no_update,) * 8
+        return (no_update,) * 11
     if not raw_payload:
         msg = html.Div("Please upload a CSV first.", style={"color": "crimson"})
         empty = go.Figure()
-        return msg, empty, empty, None, msg, empty, empty, None
+        return msg, empty, empty, None, None, msg, empty, empty, None, None, empty
 
     try:
         csv_bytes = base64.b64decode(raw_payload["csv_b64"].encode())
@@ -730,7 +998,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
     except Exception as e:
         msg = html.Div(f"Failed to load stored data: {e}", style={"color": "crimson"})
         empty = go.Figure()
-        return msg, empty, empty, None, msg, empty, empty, None
+        return msg, empty, empty, None, None, msg, empty, empty, None, None, empty
 
     df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
     df["index"] = pd.to_numeric(df["index"], errors="coerce")
@@ -746,12 +1014,13 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         if dff.empty:
             msg = html.Div(f"No data in selected date range ({start.date()} to {end.date()}).", style={"color": "crimson"})
             empty = go.Figure()
-            return msg, empty, empty, None
+            return msg, empty, empty, None, None
 
         ws = int(ws_custom) if ws_custom else int(ws_radio)
         th_pct = float(th_custom) if th_custom is not None else float(th_radio)
         th_frac = th_pct / 100.0
 
+        # Weekend-aware summary
         if mode == "gain":
             summary = gain_event_analysis(dff, minimum_per_gain=th_frac, windows_size=ws)
             title = "Gain Event Analysis"
@@ -769,7 +1038,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         card = html.Div([
             html.H3(title, style={"marginTop": 0}),
             html.P([
-                html.Strong("Change over: "), f"{ws} days ",
+                html.Strong("Change over: "), f"{ws} calendar days (weekend-aware) ",
                 html.Span(" · "),
                 html.Strong("Range: "), f"{start.date()} → {end.date()} ",
                 html.Span(" · "),
@@ -787,12 +1056,13 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             ], style={"display": "flex", "gap": "12px"}),
         ], style={"border": "1px solid #e6e6e6", "borderRadius": "12px", "padding": "12px", "background": "#f8fafc"})
 
-        # Return chart
-        ret = dff["index"].pct_change(ws)
+        # Weekend-aware returns for visuals
+        ret = compute_windowed_returns_calendar(dff, ws)
         mask = ~ret.isna()
         x_time = dff.loc[mask, "datetime"]
         y_pct = ret.loc[mask].values * 100.0
 
+        # Return chart
         line_fig = go.Figure()
         if len(y_pct) > 0:
             line_fig.add_trace(go.Scatter(x=x_time, y=y_pct, mode="lines", name=f"{ws}-day % change"))
@@ -807,7 +1077,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
                                xaxis_title="Time", yaxis_title="% change",
                                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
 
-        # Bar chart
+        # Bar chart (counts & probabilities by threshold)
         ret_clean = ret.dropna()
         N = len(ret_clean)
         thresholds_pct = [i for i in range(1, 11)]
@@ -823,7 +1093,8 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         bar_fig = make_subplots(specs=[[{"secondary_y": True}]])
         bar_fig.add_trace(
             go.Bar(
-                x=labels, y=counts, name="Count", marker_color=color,
+                x=labels, y=counts, name="Count",
+                marker_color=color,
                 text=[f"{c:,}" for c in counts], textposition="outside",
                 cliponaxis=False,
                 customdata=np.round(probs, 2),
@@ -863,23 +1134,133 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         ], style={"background": "#f8fafc", "border": "1px solid #e6e6e6",
                   "borderRadius": "10px", "padding": "10px"})
 
-        return card, line_fig, bar_fig, stats_view
+        # Trade windows list
+        trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
+
+        return card, line_fig, bar_fig, stats_view, trade_table, dff
 
     want_drop = "drop" in (analysis_types or [])
     want_gain = "gain" in (analysis_types or [])
 
     drop_out = build_outputs("drop",
                              preset_drop, sd_drop, ed_drop, snap_drop, ws_drop, ws_in_drop, th_drop, th_in_drop) \
-               if want_drop else (html.Div("Drop disabled"), go.Figure(), go.Figure(), None)
+               if want_drop else (html.Div("Drop disabled"), go.Figure(), go.Figure(), None, None, None)
 
     gain_out = build_outputs("gain",
                              preset_gain, sd_gain, ed_gain, snap_gain, ws_gain, ws_in_gain, th_gain, th_in_gain) \
-               if want_gain else (html.Div("Gain disabled"), go.Figure(), go.Figure(), None)
+               if want_gain else (html.Div("Gain disabled"), go.Figure(), go.Figure(), None, None, None)
 
-    return (*drop_out, *gain_out)
+    # Build indicators figure from the union of the filtered range (prefer gain range if both same; else use full df slice)
+    # We'll use the DROP slice if available, else GAIN slice, else overall df.
+    dff_for_indicators = None
+    if drop_out[-1] is not None:
+        dff_for_indicators = drop_out[-1]
+    if gain_out[-1] is not None:
+        # if both exist, take intersection of their date windows to keep consistent
+        if dff_for_indicators is not None:
+            s1, e1 = dff_for_indicators["datetime"].min(), dff_for_indicators["datetime"].max()
+            s2, e2 = gain_out[-1]["datetime"].min(), gain_out[-1]["datetime"].max()
+            s, e = max(s1, s2), min(e1, e2)
+            dff_for_indicators = df[(df["datetime"]>=s) & (df["datetime"]<=e)].reset_index(drop=True)
+        else:
+            dff_for_indicators = gain_out[-1]
+    if dff_for_indicators is None:
+        dff_for_indicators = df.copy()
+
+    # --- Build indicators and figure
+    feats = build_indicators(dff_for_indicators[["datetime","index"]].copy())
+    price = dff_for_indicators["index"].astype(float)
+    time = dff_for_indicators["datetime"]
+
+    show_sma  = "sma"  in (indicators_selected or [])
+    show_ema  = "ema"  in (indicators_selected or [])
+    show_bb   = "bb"   in (indicators_selected or [])
+    show_rsi  = "rsi"  in (indicators_selected or [])
+    show_macd = "macd" in (indicators_selected or [])
+    show_vol  = "vol"  in (indicators_selected or [])
+    show_dd   = "dd"   in (indicators_selected or [])
+
+    # Determine which rows to show
+    row1_needed = any([True, show_sma, show_ema, show_bb, show_vol, show_dd])  # price always shown
+    row2_needed = show_rsi
+    row3_needed = show_macd
+
+    rows = (1 if row1_needed else 0) + (1 if row2_needed else 0) + (1 if row3_needed else 0)
+    if rows == 0:
+        rows = 1  # safety
+
+    fig_ind = make_subplots(
+        rows=rows, cols=1, shared_xaxes=True,
+        row_heights=[0.5 if rows==3 else (0.65 if rows==2 else 1.0)] + ([0.25] if rows>=2 else []) + ([0.25] if rows==3 else []),
+        vertical_spacing=0.06,
+        specs=[[{"secondary_y": True}] for _ in range(rows)]
+    )
+
+    # helper to map logical row numbers
+    cur_row = 1
+    row_price = cur_row
+    # Row 1: Price + overlays
+    fig_ind.add_trace(go.Scatter(x=time, y=price, mode="lines", name="Price"), row=row_price, col=1, secondary_y=False)
+
+    if show_sma:
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["sma_5"],  mode="lines", name="SMA 5"),  row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["sma_20"], mode="lines", name="SMA 20"), row=row_price, col=1, secondary_y=False)
+    if show_ema:
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["ema_12"], mode="lines", name="EMA 12"), row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["ema_26"], mode="lines", name="EMA 26"), row=row_price, col=1, secondary_y=False)
+    if show_bb:
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_mid"], mode="lines", name="BB Mid"),   row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_up"],  mode="lines", name="BB Upper"), row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_lo"],  mode="lines", name="BB Lower"), row=row_price, col=1, secondary_y=False)
+    if show_vol:
+        # plot vol_20 on secondary y to keep scales tidy
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["vol_20"], mode="lines", name="Vol 20 (stdev)"),
+                          row=row_price, col=1, secondary_y=True)
+    if show_dd:
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["dd"], mode="lines", name="Drawdown"),
+                          row=row_price, col=1, secondary_y=True)
+
+    fig_ind.update_yaxes(title_text="Price", row=row_price, col=1, secondary_y=False)
+    if show_vol or show_dd:
+        fig_ind.update_yaxes(title_text="Vol / DD", row=row_price, col=1, secondary_y=True)
+
+    # Row 2: RSI (if needed)
+    if row2_needed:
+        cur_row += 1
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["rsi_14"], mode="lines", name="RSI (14)"),
+                          row=cur_row, col=1, secondary_y=False)
+        fig_ind.add_hline(y=70, line=dict(dash="dash"), row=cur_row, col=1)
+        fig_ind.add_hline(y=30, line=dict(dash="dash"), row=cur_row, col=1)
+        fig_ind.update_yaxes(title_text="RSI", range=[0, 100], row=cur_row, col=1)
+
+    # Row 3: MACD (if needed)
+    if row3_needed:
+        cur_row += 1
+        fig_ind.add_trace(go.Bar(x=time, y=feats["macd_hist"], name="MACD Hist"),
+                          row=cur_row, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["macd"],     mode="lines", name="MACD"),
+                          row=cur_row, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["macd_sig"], mode="lines", name="MACD Signal"),
+                          row=cur_row, col=1, secondary_y=False)
+        fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
+
+    fig_ind.update_layout(
+        template="plotly_white",
+        margin=dict(t=40, r=10, l=40, b=40),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        title="Indicators (weekend-aware where applicable)"
+    )
+
+    # Unpack results for return
+    drop_card, drop_line, drop_bar, drop_stats, drop_table, _dff_drop = drop_out
+    gain_card, gain_line, gain_bar, gain_stats, gain_table, _dff_gain = gain_out
+
+    return (drop_card, drop_line, drop_bar, drop_stats, drop_table,
+            gain_card, gain_line, gain_bar, gain_stats, gain_table,
+            fig_ind)
 
 # -----------------------------
-# Upload callback (CROSS page) — BOTH uploads + date bounds
+# Upload callback (CROSS page)
 # -----------------------------
 @app.callback(
     # A side
@@ -1026,6 +1407,7 @@ def jump_cross(year, month, _cur):
     Output("x-scatter-returns", "figure"),
     Output("x-line-returns", "figure"),
     Output("x-stats", "children"),
+    Output("x-trade-windows", "children"),
     Input("x-analyze", "n_clicks"),
     State(STORE_A, "data"),
     State(STORE_B, "data"),
@@ -1039,10 +1421,10 @@ def jump_cross(year, month, _cur):
 def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     empty = go.Figure()
     if not n_clicks:
-        return empty, empty, empty, None
+        return empty, empty, empty, None, None
     if not rawA or not rawB:
         msg = html.Div("Please upload both Index A and Index B CSVs.", style={"color":"crimson"})
-        return empty, empty, empty, msg
+        return empty, empty, empty, msg, None
 
     # Load A & B
     try:
@@ -1050,7 +1432,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         dfB = pd.read_csv(io.BytesIO(base64.b64decode(rawB["csv_b64"].encode())))
     except Exception as e:
         msg = html.Div(f"Failed to load stored data: {e}", style={"color":"crimson"})
-        return empty, empty, empty, msg
+        return empty, empty, empty, msg, None
 
     for df in (dfA, dfB):
         df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
@@ -1063,7 +1445,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     data_max = min(dfA["datetime"].max(), dfB["datetime"].max())
     if data_min >= data_max:
         msg = html.Div("No overlapping dates between A and B.", style={"color":"crimson"})
-        return empty, empty, empty, msg
+        return empty, empty, empty, msg, None
 
     snap = ("snap" in (snap_val or []))
     start, end = compute_range(preset, sd, ed, data_min, data_max, snap)
@@ -1074,7 +1456,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     levels = pd.merge(A_in, B_in, on="datetime", how="inner")
     if levels.empty:
         msg = html.Div("No overlapping data inside the selected date range.", style={"color":"crimson"})
-        return empty, empty, empty, msg
+        return empty, empty, empty, msg, None
 
     # -------- Chart 1: Levels normalized to 100 at range start --------
     baseA = levels["A"].iloc[0]
@@ -1092,22 +1474,30 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
 
-    # -------- Returns (window) --------
+    # -------- Weekend-aware returns (window size in calendar days) --------
     win = max(int(win or 1), 1)
-    retA = dfA.set_index("datetime")["index"].pct_change(win).rename("retA")
-    retB = dfB.set_index("datetime")["index"].pct_change(win).rename("retB")
-    # Keep only range
-    retA = retA[(retA.index>=start) & (retA.index<=end)]
-    retB = retB[(retB.index>=start) & (retB.index<=end)]
-    rets = pd.concat([retA, retB], axis=1, join="inner").dropna()
+    retA_series = compute_windowed_returns_calendar(dfA, win)
+    retB_series = compute_windowed_returns_calendar(dfB, win)
+
+    tmpA = dfA.assign(retA=retA_series)
+    tmpB = dfB.assign(retB=retB_series)
+    tmpA = tmpA[(tmpA["datetime"]>=start) & (tmpA["datetime"]<=end)]
+    tmpB = tmpB[(tmpB["datetime"]>=start) & (tmpB["datetime"]<=end)]
+
+    rets = pd.merge(
+        tmpA[["datetime","retA"]],
+        tmpB[["datetime","retB"]],
+        on="datetime",
+        how="inner"
+    ).dropna(subset=["retA","retB"])
+
     if rets.empty:
-        msg = html.Div("Not enough data to compute windowed returns in this range.", style={"color":"crimson"})
-        return fig_levels, empty, empty, msg
+        msg = html.Div("Not enough data to compute weekend-aware windowed returns in this range.", style={"color":"crimson"})
+        return fig_levels, empty, empty, msg, None
 
     # -------- Chart 2: Correlation scatter (windowed returns) --------
     x = rets["retB"].values * 100.0
     y = rets["retA"].values * 100.0
-    # Pearson correlation
     if len(x) >= 2:
         corr = float(np.corrcoef(x, y)[0,1])
     else:
@@ -1118,7 +1508,6 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         x=x, y=y, mode="markers", name=f"{win}-day returns",
         hovertemplate="B: %{x:.2f}%<br>A: %{y:.2f}%<extra></extra>"
     ))
-    # Add best-fit line (if enough points)
     if len(x) >= 2:
         m, b = np.polyfit(x, y, 1)
         xfit = np.linspace(x.min(), x.max(), 100)
@@ -1135,7 +1524,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     )
 
     # -------- Chart 3: Windowed returns through time --------
-    ret_time = rets.reset_index().rename(columns={"index":"datetime"})
+    ret_time = rets.reset_index(drop=True)
     fig_returns = go.Figure()
     fig_returns.add_trace(go.Scatter(
         x=ret_time["datetime"], y=ret_time["retA"]*100.0, mode="lines", name=f"A {win}-day %"
@@ -1151,7 +1540,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
 
-    # -------- Stats card (windowed returns) --------
+    # -------- Stats card --------
     def stats_block(name, s):
         desc = s.describe()
         items = [
@@ -1185,13 +1574,22 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         ], style={"display":"flex","gap":"12px","flexWrap":"wrap"})
     ])
 
-    return fig_levels, fig_scatter, fig_returns, stats_view
+    # -------- Trade windows tables --------
+    tableA = build_trade_window_table(tmpA[["datetime","index"]], win, limit=200)
+    tableB = build_trade_window_table(tmpB[["datetime","index"]], win, limit=200)
+    twin = html.Div([
+        html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
+        html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
+    ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
+
+    return fig_levels, fig_scatter, fig_returns, stats_view, twin
 
 
 # Local run (useful for dev & Render health checks)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
 
