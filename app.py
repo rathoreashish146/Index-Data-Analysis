@@ -4142,9 +4142,6 @@ STORE_META = "store_meta"
 STORE_A = "store_raw_a"
 STORE_B = "store_raw_b"
 
-# Store (Theme)
-STORE_THEME = "store_theme"
-STORE_THEME_CLICKS = "store_theme_clicks"
 
 MONTH_OPTIONS = [{"label": m, "value": i} for i, m in enumerate(
     ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], start=1
@@ -4555,11 +4552,11 @@ card_style_hover = {
     "boxShadow": "0 12px 32px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.12)",
 }
 
-def navbar(theme="dark"):
-    is_dark = theme == "dark"
-    bg_color = "#0a0a0a" if is_dark else "#ffffff"
-    text_color = "white" if is_dark else "#1e293b"
-    border_color = "rgba(255,255,255,0.1)" if is_dark else "rgba(0,0,0,0.1)"
+def navbar():
+    # Always dark theme
+    bg_color = "#0a0a0a"
+    text_color = "white"
+    border_color = "rgba(255,255,255,0.1)"
     
     return html.Div(
         [
@@ -4575,7 +4572,7 @@ def navbar(theme="dark"):
                 ),
             ], style={"display": "flex", "alignItems": "center", "flex": 1}),
             
-            # Right side: Navigation elements and theme toggle
+            # Right side: Navigation elements
             html.Div([
                 dcc.Link("Home", href="/", style={
                     "marginRight": "20px", "textDecoration": "none",
@@ -4590,26 +4587,11 @@ def navbar(theme="dark"):
                     "transition": "all 0.2s"
                 }),
                 dcc.Link("Cross Index", href="/cross", style={
-                    "marginRight": "20px", "textDecoration": "none",
+                    "textDecoration": "none",
                     "color": text_color, "fontSize": "14px", "fontWeight": 500,
                     "padding": "6px 12px", "borderRadius": "4px",
                     "transition": "all 0.2s"
                 }),
-                html.Button(
-                    "🌙" if is_dark else "☀️",
-                    id="theme-toggle",
-                    style={
-                        "background": "transparent",
-                        "border": f"1px solid {border_color}",
-                        "color": text_color,
-                        "fontSize": "18px",
-                        "padding": "6px 12px",
-                        "borderRadius": "6px",
-                        "cursor": "pointer",
-                        "transition": "all 0.2s",
-                        "marginLeft": "10px"
-                    }
-                )
             ], style={"display": "flex", "alignItems": "center"})
         ],
         style={
@@ -4618,7 +4600,7 @@ def navbar(theme="dark"):
             "display": "flex",
             "alignItems": "center",
             "justifyContent": "space-between",
-            "boxShadow": "0 2px 8px rgba(0,0,0,0.3)" if is_dark else "0 2px 8px rgba(0,0,0,0.1)",
+            "boxShadow": "0 2px 8px rgba(0,0,0,0.3)",
             "marginBottom": "0",
             "borderBottom": f"1px solid {border_color}",
             "transition": "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease"
@@ -5269,68 +5251,24 @@ app.layout = html.Div(
         html.Div(id="navbar-container"),
         dcc.Location(id="url"),
         html.Div(id="page-content"),
-        dcc.Store(id=STORE_THEME, data="dark"),
-        dcc.Store(id=STORE_THEME_CLICKS, data=0)
     ],
     id="app-container",
     style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
            "minHeight":"100vh","padding":"0", "margin":"0",
+           "background": "#0a0a0a",
+           "color": "white",
            "transition": "background-color 0.3s ease, color 0.3s ease"}
 )
 
-# Theme toggle callback - handles button clicks
-# Use a timestamp-based approach to detect clicks even when button is recreated
-@app.callback(
-    Output(STORE_THEME, "data", allow_duplicate=True),
-    Input("theme-toggle", "n_clicks"),
-    State(STORE_THEME, "data"),
-    prevent_initial_call=True
-)
-def toggle_theme(n_clicks, current_theme):
-    # This callback fires whenever the button is clicked
-    # Even if n_clicks resets, this will still fire on a new click
-    
-    # Get current theme or default to dark
-    if current_theme is None or current_theme == "":
-        current_theme = "dark"
-    
-    # Simply toggle between dark and light
-    new_theme = "light" if current_theme == "dark" else "dark"
-    
-    return new_theme
-
-# Update click tracking store (separate to avoid conflicts)
-@app.callback(
-    Output(STORE_THEME_CLICKS, "data", allow_duplicate=True),
-    Input("theme-toggle", "n_clicks"),
-    State(STORE_THEME_CLICKS, "data"),
-    prevent_initial_call=True
-)
-def update_click_tracking(n_clicks, prev_count):
-    # Track clicks for debugging/monitoring
-    if n_clicks is None:
-        return prev_count if prev_count is not None else 0
-    return n_clicks if n_clicks is not None else (prev_count if prev_count is not None else 0)
-
-# Theme and Navbar callbacks - updates UI based on theme store
+# Navbar callback - always dark theme
 @app.callback(
     Output("navbar-container", "children"),
-    Output("app-container", "style"),
-    Input(STORE_THEME, "data"),
+    Input("url", "pathname"),
     prevent_initial_call=False
 )
-def update_navbar_and_theme(theme):
-    if theme is None:
-        theme = "dark"  # Default to dark if theme is None
-    is_dark = theme == "dark"
-    bg_style = {
-        "fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-        "minHeight":"100vh","padding":"0", "margin":"0",
-        "background": "#0a0a0a" if is_dark else "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-        "color": "white" if is_dark else "#1e293b",
-        "transition": "background-color 0.3s ease, color 0.3s ease"
-    }
-    return navbar(theme), bg_style
+def update_navbar(pathname):
+    # Always return dark theme navbar
+    return navbar()
 
 
 # Router
@@ -6218,8 +6156,6 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
 
 
 
