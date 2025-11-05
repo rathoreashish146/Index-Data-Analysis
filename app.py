@@ -129,21 +129,42 @@
 #             input[type="text"]::placeholder, input[type="number"]::placeholder {
 #                 color: rgba(255,255,255,0.5) !important;
 #             }
+#             .DateInput {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#             }
 #             .DateInput_input {
 #                 background-color: rgba(255,255,255,0.1) !important;
 #                 color: rgba(255,255,255,0.9) !important;
 #                 border-color: rgba(255,255,255,0.2) !important;
+#                 font-size: 14px !important;
+#                 padding: 8px 10px !important;
 #             }
 #             .DateInput_input__focused {
 #                 border-color: rgba(0,200,150,0.6) !important;
+#                 box-shadow: 0 0 0 2px rgba(0,200,150,0.2) !important;
 #             }
 #             .DateRangePickerInput {
 #                 background-color: rgba(255,255,255,0.1) !important;
 #                 border-color: rgba(255,255,255,0.2) !important;
+#                 border-radius: 4px !important;
+#             }
+#             .DateRangePickerInput__withBorder {
+#                 border-radius: 4px !important;
+#             }
+#             .DateRangePickerInput__disabled {
+#                 background-color: rgba(255,255,255,0.05) !important;
+#             }
+#             .DateRangePickerInput_arrow {
+#                 border-left-color: rgba(255,255,255,0.5) !important;
+#             }
+#             .DateRangePickerInput_arrow_svg {
+#                 fill: rgba(255,255,255,0.7) !important;
 #             }
 #             .DayPicker {
 #                 background-color: #1a1a1a !important;
 #                 color: rgba(255,255,255,0.9) !important;
+#                 border: 1px solid rgba(255,255,255,0.2) !important;
+#                 border-radius: 8px !important;
 #             }
 #             .DayPicker__week-header {
 #                 color: rgba(255,255,255,0.7) !important;
@@ -153,15 +174,43 @@
 #             }
 #             .DayPicker-Day--selected {
 #                 background-color: rgba(0,200,150,0.6) !important;
+#                 color: white !important;
 #             }
 #             .DayPicker-Day--hovered {
 #                 background-color: rgba(0,200,150,0.3) !important;
 #             }
+#             .DayPicker-Day--outside {
+#                 color: rgba(255,255,255,0.3) !important;
+#             }
+#             /* Color-coded radio buttons for Drop (red) and Gain (green) */
+#             #window-size-drop input[type="radio"],
+#             #min-threshold-drop input[type="radio"],
+#             #snap-month-drop input[type="checkbox"] {
+#                 accent-color: rgba(239,68,68,0.8) !important;
+#             }
+#             #window-size-gain input[type="radio"],
+#             #min-threshold-gain input[type="radio"],
+#             #snap-month-gain input[type="checkbox"] {
+#                 accent-color: rgba(34,197,94,0.8) !important;
+#             }
+#             /* Default accent for other radio/checkboxes */
 #             input[type="radio"] {
 #                 accent-color: rgba(0,200,150,0.8) !important;
 #             }
 #             input[type="checkbox"] {
 #                 accent-color: rgba(0,200,150,0.8) !important;
+#             }
+#             /* Improved spacing for radio buttons and inputs */
+#             .RadioItems, .Checklist {
+#                 margin-bottom: 8px !important;
+#             }
+#             .RadioItems label, .Checklist label {
+#                 margin-right: 12px !important;
+#                 margin-bottom: 4px !important;
+#             }
+#             /* Better visual grouping for custom inputs */
+#             input[type="number"] {
+#                 margin-top: 4px !important;
 #             }
 #         </style>
 #     </head>
@@ -819,30 +868,46 @@
 
 #                 html.Div([
 #                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
-#                     dcc.RadioItems(
-#                         id="window-size-drop",
-#                         options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
-#                                  {"label": "7", "value": 7}, {"label": "10", "value": 10}],
-#                         value=5, inline=True
-#                     ),
-#                     dcc.Input(
-#                         id="window-size-input-drop", type="number", min=1, step=1,
-#                         placeholder="custom", style={"marginLeft":"8px","width":"100px"}
-#                     )
+#                     html.Div([
+#                         dcc.RadioItems(
+#                             id="window-size-drop",
+#                             options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
+#                                      {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
+#                             value=5, inline=True,
+#                             inputStyle={"marginRight": "4px", "cursor": "pointer"},
+#                             labelStyle={"marginRight": "12px", "cursor": "pointer"}
+#                         ),
+#                     ], style={"marginBottom": "8px"}),
+#                     html.Div([
+#                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+#                         dcc.Input(
+#                             id="window-size-input-drop", type="number", min=1, step=1,
+#                             placeholder="custom", 
+#                             style={"width":"100px", "display": "inline-block"}
+#                         )
+#                     ], style={"marginTop": "4px"})
 #                 ], style={"margin":"6px 0"}),
 
 #                 html.Div([
 #                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
-#                     dcc.RadioItems(
-#                         id="min-threshold-drop",
-#                         options=[{"label":"1%","value":1},{"label":"3%","value":3},
-#                                  {"label":"5%","value":5},{"label":"10%","value":10}],
-#                         value=3, inline=True
-#                     ),
-#                     dcc.Input(
-#                         id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
-#                         placeholder="e.g. 2.7", style={"marginLeft":"8px","width":"120px"}
-#                     )
+#                     html.Div([
+#                         dcc.RadioItems(
+#                             id="min-threshold-drop",
+#                             options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
+#                                      {"label":" 5%","value":5},{"label":" 10%","value":10}],
+#                             value=3, inline=True,
+#                             inputStyle={"marginRight": "4px", "cursor": "pointer"},
+#                             labelStyle={"marginRight": "12px", "cursor": "pointer"}
+#                         ),
+#                     ], style={"marginBottom": "8px"}),
+#                     html.Div([
+#                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+#                         dcc.Input(
+#                             id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
+#                             placeholder="e.g. 2.7", 
+#                             style={"width":"120px", "display": "inline-block"}
+#                         )
+#                     ], style={"marginTop": "4px"})
 #                 ], style={"margin":"6px 0"}),
 #             ], style={
 #                 "flex":1, "minWidth":"420px", "padding":"24px",
@@ -897,30 +962,46 @@
 
 #                 html.Div([
 #                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
-#                     dcc.RadioItems(
-#                         id="window-size-gain",
-#                         options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
-#                                  {"label": "7", "value": 7}, {"label": "10", "value": 10}],
-#                         value=5, inline=True
-#                     ),
-#                     dcc.Input(
-#                         id="window-size-input-gain", type="number", min=1, step=1,
-#                         placeholder="custom", style={"marginLeft":"8px","width":"100px"}
-#                     )
+#                     html.Div([
+#                         dcc.RadioItems(
+#                             id="window-size-gain",
+#                             options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
+#                                      {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
+#                             value=5, inline=True,
+#                             inputStyle={"marginRight": "4px", "cursor": "pointer"},
+#                             labelStyle={"marginRight": "12px", "cursor": "pointer"}
+#                         ),
+#                     ], style={"marginBottom": "8px"}),
+#                     html.Div([
+#                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+#                         dcc.Input(
+#                             id="window-size-input-gain", type="number", min=1, step=1,
+#                             placeholder="custom", 
+#                             style={"width":"100px", "display": "inline-block"}
+#                         )
+#                     ], style={"marginTop": "4px"})
 #                 ], style={"margin":"6px 0"}),
 
 #                 html.Div([
 #                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
-#                     dcc.RadioItems(
-#                         id="min-threshold-gain",
-#                         options=[{"label":"1%","value":1},{"label":"3%","value":3},
-#                                  {"label":"5%","value":5},{"label":"10%","value":10}],
-#                         value=3, inline=True
-#                     ),
-#                     dcc.Input(
-#                         id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
-#                         placeholder="e.g. 2.7", style={"marginLeft":"8px","width":"120px"}
-#                     )
+#                     html.Div([
+#                         dcc.RadioItems(
+#                             id="min-threshold-gain",
+#                             options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
+#                                      {"label":" 5%","value":5},{"label":" 10%","value":10}],
+#                             value=3, inline=True,
+#                             inputStyle={"marginRight": "4px", "cursor": "pointer"},
+#                             labelStyle={"marginRight": "12px", "cursor": "pointer"}
+#                         ),
+#                     ], style={"marginBottom": "8px"}),
+#                     html.Div([
+#                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+#                         dcc.Input(
+#                             id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
+#                             placeholder="e.g. 2.7", 
+#                             style={"width":"120px", "display": "inline-block"}
+#                         )
+#                     ], style={"marginTop": "4px"})
 #                 ], style={"margin":"6px 0"}),
 #             ], style={
 #                 "flex":1, "minWidth":"420px", "padding":"24px",
@@ -1755,9 +1836,22 @@
 #         plot_bgcolor="rgba(26,26,26,0.8)",
 #         paper_bgcolor="rgba(10,10,10,0.8)",
 #         font=dict(color="rgba(255,255,255,0.9)"),
-#         margin=dict(t=40, r=10, l=40, b=40),
-#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-#         title="Indicators (weekend-aware where applicable)",
+#         margin=dict(t=80, r=10, l=40, b=40),
+#         legend=dict(
+#             orientation="h",
+#             yanchor="bottom",
+#             y=-0.15,
+#             xanchor="center",
+#             x=0.5,
+#             itemwidth=30,
+#             font=dict(size=10)
+#         ),
+#         title=dict(
+#             text="Indicators (weekend-aware where applicable)",
+#             x=0.5,
+#             xanchor="center",
+#             font=dict(size=16)
+#         ),
 #         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
 #         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
 #     )
@@ -2250,7 +2344,8 @@
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
 
 
-# ==================================================================================================================================================================================================================
+# ============================================================================================================================================================================================================
+
 
 
 import os
@@ -3124,8 +3219,8 @@ def single_layout():
                 html.Div([
                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
                     html.Div([
-                        dcc.RadioItems(
-                            id="window-size-drop",
+                    dcc.RadioItems(
+                        id="window-size-drop",
                             options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
                                      {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
                             value=5, inline=True,
@@ -3135,19 +3230,19 @@ def single_layout():
                     ], style={"marginBottom": "8px"}),
                     html.Div([
                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="window-size-input-drop", type="number", min=1, step=1,
+                    dcc.Input(
+                        id="window-size-input-drop", type="number", min=1, step=1,
                             placeholder="custom", 
                             style={"width":"100px", "display": "inline-block"}
-                        )
+                    )
                     ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
 
                 html.Div([
                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
                     html.Div([
-                        dcc.RadioItems(
-                            id="min-threshold-drop",
+                    dcc.RadioItems(
+                        id="min-threshold-drop",
                             options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
                                      {"label":" 5%","value":5},{"label":" 10%","value":10}],
                             value=3, inline=True,
@@ -3157,11 +3252,11 @@ def single_layout():
                     ], style={"marginBottom": "8px"}),
                     html.Div([
                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
+                    dcc.Input(
+                        id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
                             placeholder="e.g. 2.7", 
                             style={"width":"120px", "display": "inline-block"}
-                        )
+                    )
                     ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
             ], style={
@@ -3218,8 +3313,8 @@ def single_layout():
                 html.Div([
                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
                     html.Div([
-                        dcc.RadioItems(
-                            id="window-size-gain",
+                    dcc.RadioItems(
+                        id="window-size-gain",
                             options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
                                      {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
                             value=5, inline=True,
@@ -3229,19 +3324,19 @@ def single_layout():
                     ], style={"marginBottom": "8px"}),
                     html.Div([
                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="window-size-input-gain", type="number", min=1, step=1,
+                    dcc.Input(
+                        id="window-size-input-gain", type="number", min=1, step=1,
                             placeholder="custom", 
                             style={"width":"100px", "display": "inline-block"}
-                        )
+                    )
                     ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
 
                 html.Div([
                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
                     html.Div([
-                        dcc.RadioItems(
-                            id="min-threshold-gain",
+                    dcc.RadioItems(
+                        id="min-threshold-gain",
                             options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
                                      {"label":" 5%","value":5},{"label":" 10%","value":10}],
                             value=3, inline=True,
@@ -3251,11 +3346,11 @@ def single_layout():
                     ], style={"marginBottom": "8px"}),
                     html.Div([
                         html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
+                    dcc.Input(
+                        id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
                             placeholder="e.g. 2.7", 
                             style={"width":"120px", "display": "inline-block"}
-                        )
+                    )
                     ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
             ], style={
@@ -3312,6 +3407,45 @@ def single_layout():
                 }
             )
         ], style={"textAlign":"right","margin":"24px 0 32px"}),
+        
+        # Progress overlay
+        html.Div(id="progress-overlay-single", style={"display": "none"}, children=[
+        html.Div([
+            html.Div([
+                    html.Div("Analyzing...", style={
+                        "fontSize": "24px", "fontWeight": 600, "color": "white",
+                        "marginBottom": "20px", "textAlign": "center"
+                    }),
+                    html.Div(id="progress-bar-container", style={
+                        "width": "400px", "height": "30px",
+                        "background": "rgba(255,255,255,0.1)", "borderRadius": "15px",
+                        "overflow": "hidden", "position": "relative"
+                    }, children=[
+                        html.Div(id="progress-bar-fill", style={
+                            "height": "100%", "width": "0%",
+                            "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+                            "transition": "width 0.3s ease",
+                            "display": "flex", "alignItems": "center", "justifyContent": "center",
+                            "color": "white", "fontWeight": 600, "fontSize": "14px"
+                        }, children="0%")
+                    ]),
+                    html.Div(id="progress-text", style={
+                        "marginTop": "12px", "color": "rgba(255,255,255,0.8)",
+                        "fontSize": "16px", "textAlign": "center"
+                    }, children="Initializing...")
+                ], style={
+                    "padding": "40px", "background": "rgba(10,10,10,0.95)",
+                    "borderRadius": "16px", "boxShadow": "0 8px 32px rgba(0,0,0,0.5)",
+                    "border": "1px solid rgba(255,255,255,0.1)"
+                })
+            ], style={
+                "position": "fixed", "top": "0", "left": "0", "right": "0", "bottom": "0",
+                "background": "rgba(0,0,0,0.7)", "display": "flex",
+                "alignItems": "center", "justifyContent": "center", "zIndex": 10000
+            })
+        ]),
+        
+        dcc.Interval(id="progress-interval-single", interval=100, disabled=True, n_intervals=0),
 
         # ---------- Results (Drop / Gain) ----------
         html.Div(id="results-container", style={"display": "none"}, children=[
@@ -3515,6 +3649,45 @@ def cross_layout():
                         }
                     )
                 ], style={"textAlign":"right","margin":"24px 0 12px"}),
+                
+                # Progress overlay for cross index
+                html.Div(id="progress-overlay-cross", style={"display": "none"}, children=[
+            html.Div([
+                        html.Div([
+                            html.Div("Analyzing...", style={
+                                "fontSize": "24px", "fontWeight": 600, "color": "white",
+                                "marginBottom": "20px", "textAlign": "center"
+                            }),
+                            html.Div(id="progress-bar-container-cross", style={
+                                "width": "400px", "height": "30px",
+                                "background": "rgba(255,255,255,0.1)", "borderRadius": "15px",
+                                "overflow": "hidden", "position": "relative"
+                            }, children=[
+                                html.Div(id="progress-bar-fill-cross", style={
+                                    "height": "100%", "width": "0%",
+                                    "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+                                    "transition": "width 0.3s ease",
+                                    "display": "flex", "alignItems": "center", "justifyContent": "center",
+                                    "color": "white", "fontWeight": 600, "fontSize": "14px"
+                                }, children="0%")
+                            ]),
+                            html.Div(id="progress-text-cross", style={
+                                "marginTop": "12px", "color": "rgba(255,255,255,0.8)",
+                                "fontSize": "16px", "textAlign": "center"
+                            }, children="Initializing...")
+                        ], style={
+                            "padding": "40px", "background": "rgba(10,10,10,0.95)",
+                            "borderRadius": "16px", "boxShadow": "0 8px 32px rgba(0,0,0,0.5)",
+                            "border": "1px solid rgba(255,255,255,0.1)"
+                        })
+                    ], style={
+                        "position": "fixed", "top": "0", "left": "0", "right": "0", "bottom": "0",
+                        "background": "rgba(0,0,0,0.7)", "display": "flex",
+                        "alignItems": "center", "justifyContent": "center", "zIndex": 10000
+                    })
+                ]),
+                
+                dcc.Interval(id="progress-interval-cross", interval=100, disabled=True, n_intervals=0),
             ], style={
                 "background":"rgba(255,255,255,0.05)","border":"1px solid rgba(255,255,255,0.1)",
                 "borderRadius":"16px","padding":"24px",
@@ -3729,6 +3902,48 @@ def jump_gain(year, month, _cur):
     return no_update
 
 # -----------------------------
+# Progress overlay callbacks (Single page)
+# -----------------------------
+@app.callback(
+    # Progress overlay visibility
+    Output("progress-overlay-single", "style"),
+    Output("progress-interval-single", "disabled"),
+    Input("analyze", "n_clicks"),
+    prevent_initial_call=True
+)
+def toggle_progress_single(n_clicks):
+    if n_clicks:
+        return {"display": "block"}, False
+    return {"display": "none"}, True
+
+@app.callback(
+    Output("progress-bar-fill", "style"),
+    Output("progress-text", "children"),
+    Output("progress-overlay-single", "style", allow_duplicate=True),
+    Input("progress-interval-single", "n_intervals"),
+    State("progress-interval-single", "disabled"),
+    prevent_initial_call=True
+)
+def update_progress_single(n_intervals, disabled):
+    if disabled:
+        return (
+            {"height": "100%", "width": "100%", "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)", "transition": "width 0.3s ease", "display": "flex", "alignItems": "center", "justifyContent": "center", "color": "white", "fontWeight": 600, "fontSize": "14px"},
+            "Complete!",
+            {"display": "none"}
+        )
+    
+    # Progress from 0 to 95% over ~2 seconds (20 intervals)
+    progress = min(95, (n_intervals * 95) // 20)
+    status = "Loading data..." if progress < 30 else "Processing analysis..." if progress < 60 else "Generating charts..." if progress < 85 else "Finalizing..."
+    return {
+        "height": "100%", "width": f"{progress}%",
+        "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+        "transition": "width 0.3s ease",
+        "display": "flex", "alignItems": "center", "justifyContent": "center",
+        "color": "white", "fontWeight": 600, "fontSize": "14px"
+    }, f"{progress}% - {status}", {"display": "block"}
+
+# -----------------------------
 # Analyze callback (Single page)
 # -----------------------------
 @app.callback(
@@ -3748,6 +3963,11 @@ def jump_gain(year, month, _cur):
     Output("indicators-container", "children"),
     # Results container visibility
     Output("results-container", "style"),
+    # Progress completion
+    Output("progress-bar-fill", "style", allow_duplicate=True),
+    Output("progress-text", "children", allow_duplicate=True),
+    Output("progress-interval-single", "disabled", allow_duplicate=True),
+    Output("progress-overlay-single", "style", allow_duplicate=True),
     Input("analyze", "n_clicks"),
     State(STORE_RAW, "data"),
     State("analysis-types", "value"),
@@ -3777,12 +3997,21 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
                  preset_drop, sd_drop, ed_drop, snap_drop, ws_drop, ws_in_drop, th_drop, th_in_drop,
                  preset_gain, sd_gain, ed_gain, snap_gain, ws_gain, ws_in_gain, th_gain, th_in_gain,
                  indicators_selected):
+    # Progress completion styles
+    progress_complete = {
+        "height": "100%", "width": "100%",
+        "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+        "transition": "width 0.3s ease",
+        "display": "flex", "alignItems": "center", "justifyContent": "center",
+        "color": "white", "fontWeight": 600, "fontSize": "14px"
+    }
+    
     if not n_clicks:
-        return (no_update,) * 12
+        return (no_update,) * 16
     if not raw_payload:
         # Hide all results when no data
         hidden_style = {"display": "none"}
-        return (None, None, None, None, None, None, None, None, None, None, None, hidden_style)
+        return (None, None, None, None, None, None, None, None, None, None, None, hidden_style, progress_complete, "100% - Complete!", True, {"display": "none"})
 
     try:
         csv_bytes = base64.b64decode(raw_payload["csv_b64"].encode())
@@ -3790,7 +4019,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
     except Exception as e:
         # Hide all results on error
         hidden_style = {"display": "none"}
-        return (None, None, None, None, None, None, None, None, None, None, None, hidden_style)
+        return (None, None, None, None, None, None, None, None, None, None, None, hidden_style, progress_complete, "100% - Complete!", True, {"display": "none"})
 
     df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
     df["index"] = pd.to_numeric(df["index"], errors="coerce")
@@ -3947,7 +4176,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
 
         # Trade windows list
         trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
-        
+
         # Wrap graphs and tables in containers with proper styling
         return_chart_container = html.Div([
             dcc.Graph(figure=line_fig, config={"displayModeBar": False}, style={"height": "320px"})
@@ -4078,11 +4307,17 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
     # Row 3: MACD (if needed)
     if row3_needed:
         cur_row += 1
-        fig_ind.add_trace(go.Bar(x=time, y=feats["macd_hist"], name="MACD Hist"),
+        fig_ind.add_trace(go.Bar(
+            x=time, 
+            y=feats["macd_hist"], 
+            name="MACD Hist",
+            marker_color="rgba(255,165,0,0.6)",
+            marker_line_color="rgba(255,165,0,0.8)",
+            marker_line_width=0.5
+        ), row=cur_row, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["macd"],     mode="lines", name="MACD", line=dict(width=2)),
                           row=cur_row, col=1, secondary_y=False)
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["macd"],     mode="lines", name="MACD"),
-                          row=cur_row, col=1, secondary_y=False)
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["macd_sig"], mode="lines", name="MACD Signal"),
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["macd_sig"], mode="lines", name="MACD Signal", line=dict(width=2)),
                           row=cur_row, col=1, secondary_y=False)
         fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
 
@@ -4133,7 +4368,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
 
     return (drop_card, drop_line, drop_bar, drop_stats, drop_table,
             gain_card, gain_line, gain_bar, gain_stats, gain_table,
-            indicators_container, results_style)
+            indicators_container, results_style, progress_complete, "100% - Complete!", True, {"display": "none"})
 
 # -----------------------------
 # Upload callback (CROSS page)
@@ -4338,6 +4573,46 @@ def jump_cross(year, month, _cur):
     return no_update
 
 # -----------------------------
+# Progress overlay callbacks (Cross page)
+# -----------------------------
+@app.callback(
+    Output("progress-overlay-cross", "style"),
+    Output("progress-interval-cross", "disabled"),
+    Input("x-analyze", "n_clicks"),
+    prevent_initial_call=True
+)
+def toggle_progress_cross(n_clicks):
+    if n_clicks:
+        return {"display": "block"}, False
+    return {"display": "none"}, True
+
+@app.callback(
+    Output("progress-bar-fill-cross", "style"),
+    Output("progress-text-cross", "children"),
+    Output("progress-overlay-cross", "style", allow_duplicate=True),
+    Input("progress-interval-cross", "n_intervals"),
+    State("progress-interval-cross", "disabled"),
+    prevent_initial_call=True
+)
+def update_progress_cross(n_intervals, disabled):
+    if disabled:
+        return (
+            {"height": "100%", "width": "100%", "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)", "transition": "width 0.3s ease", "display": "flex", "alignItems": "center", "justifyContent": "center", "color": "white", "fontWeight": 600, "fontSize": "14px"},
+            "Complete!",
+            {"display": "none"}
+        )
+    
+    progress = min(95, (n_intervals * 95) // 20)
+    status = "Loading data..." if progress < 30 else "Processing analysis..." if progress < 60 else "Generating charts..." if progress < 85 else "Finalizing..."
+    return {
+        "height": "100%", "width": f"{progress}%",
+        "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+        "transition": "width 0.3s ease",
+        "display": "flex", "alignItems": "center", "justifyContent": "center",
+        "color": "white", "fontWeight": 600, "fontSize": "14px"
+    }, f"{progress}% - {status}", {"display": "block"}
+
+# -----------------------------
 # Analyze callback (CROSS page)
 # -----------------------------
 @app.callback(
@@ -4347,6 +4622,11 @@ def jump_cross(year, month, _cur):
     Output("x-stats", "children"),
     Output("x-trade-windows-container", "children"),
     Output("x-results-container", "style"),
+    # Progress completion
+    Output("progress-bar-fill-cross", "style", allow_duplicate=True),
+    Output("progress-text-cross", "children", allow_duplicate=True),
+    Output("progress-interval-cross", "disabled", allow_duplicate=True),
+    Output("progress-overlay-cross", "style", allow_duplicate=True),
     Input("x-analyze", "n_clicks"),
     State(STORE_A, "data"),
     State(STORE_B, "data"),
@@ -4358,12 +4638,20 @@ def jump_cross(year, month, _cur):
     prevent_initial_call=True,
 )
 def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
+    progress_complete = {
+        "height": "100%", "width": "100%",
+        "background": "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+        "transition": "width 0.3s ease",
+        "display": "flex", "alignItems": "center", "justifyContent": "center",
+        "color": "white", "fontWeight": 600, "fontSize": "14px"
+    }
+    
     if not n_clicks:
-        return (no_update,) * 6
+        return (no_update,) * 9
     if not rawA or not rawB:
         # Hide all results when no data
         hidden_style = {"display": "none"}
-        return None, None, None, None, None, hidden_style
+        return None, None, None, None, None, hidden_style, progress_complete, "100% - Complete!", True, {"display": "none"}
 
     # Load A & B
     try:
@@ -4372,7 +4660,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     except Exception as e:
         # Hide all results on error
         hidden_style = {"display": "none"}
-        return None, None, None, None, None, hidden_style
+        return None, None, None, None, None, hidden_style, progress_complete, "100% - Complete!", True, {"display": "none"}
 
     for df in (dfA, dfB):
         df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
@@ -4386,7 +4674,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     if data_min >= data_max:
         # Hide all results when no overlap
         hidden_style = {"display": "none"}
-        return None, None, None, None, None, hidden_style
+        return None, None, None, None, None, hidden_style, progress_complete, "100% - Complete!", True, {"display": "none"}
 
     snap = ("snap" in (snap_val or []))
     start, end = compute_range(preset, sd, ed, data_min, data_max, snap)
@@ -4398,7 +4686,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     if levels.empty:
         # Hide all results when no data in range
         hidden_style = {"display": "none"}
-        return None, None, None, None, None, hidden_style
+        return None, None, None, None, None, hidden_style, progress_complete, "100% - Complete!", True, {"display": "none"}
 
     # -------- Chart 1: Levels normalized to 100 at range start --------
     baseA = levels["A"].iloc[0]
@@ -4550,9 +4838,9 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
             "marginTop":"32px", "marginBottom":"16px"
         }),
         html.Div([
-            html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
-            html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
-        ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
+        html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
+        html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
+    ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
     ], style={
         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
         "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
@@ -4590,13 +4878,14 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     # Show results container
     results_style = {"marginTop": "32px"}
 
-    return levels_container, scatter_container, returns_container, stats_view, twin, results_style
+    return levels_container, scatter_container, returns_container, stats_view, twin, results_style, progress_complete, "100% - Complete!", True, {"display": "none"}
 
 
 # Local run (useful for dev & Render health checks)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
 
