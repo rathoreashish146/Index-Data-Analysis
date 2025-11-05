@@ -3049,7 +3049,7 @@ def single_layout():
         ], style={"textAlign":"right","margin":"24px 0 32px"}),
 
         # ---------- Results (Drop / Gain) ----------
-        html.Div(id="results-container", children=[
+        html.Div(id="results-container", style={"display": "none"}, children=[
             html.Div([
                 html.H2("Drop Analysis", style={
                     "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
@@ -3061,10 +3061,10 @@ def single_layout():
                     "background": "rgba(239,68,68,0.08)",
                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
                 }),
-                html.Div(id="return-chart-drop-container", style={"display": "none"}),
-                html.Div(id="bar-chart-drop-container", style={"display": "none"}),
+                html.Div(id="return-chart-drop-container"),
+                html.Div(id="bar-chart-drop-container"),
                 html.Div(id="stats-drop", style={"margin": "24px 0"}),
-                html.Div(id="trade-windows-drop-container", style={"display": "none"}),
+                html.Div(id="trade-windows-drop-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
 
             html.Div([
@@ -3078,15 +3078,15 @@ def single_layout():
                     "background": "rgba(34,197,94,0.08)",
                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
                 }),
-                html.Div(id="return-chart-gain-container", style={"display": "none"}),
-                html.Div(id="bar-chart-gain-container", style={"display": "none"}),
+                html.Div(id="return-chart-gain-container"),
+                html.Div(id="bar-chart-gain-container"),
                 html.Div(id="stats-gain", style={"margin": "24px 0"}),
-                html.Div(id="trade-windows-gain-container", style={"display": "none"}),
+                html.Div(id="trade-windows-gain-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
         ], style={"display": "flex", "gap": "20px", "flexWrap": "wrap"}),
 
         # ---------- Indicators figure ----------
-        html.Div(id="indicators-container", style={"display": "none"}),
+        html.Div(id="indicators-container"),
 
         html.Hr(),
         html.Div(id="preview", style={
@@ -3258,11 +3258,11 @@ def cross_layout():
 
             # ---- Results ----
             html.Div(id="x-results-container", children=[
-                html.Div(id="x-line-levels-container", style={"display": "none"}),
-                html.Div(id="x-scatter-returns-container", style={"display": "none"}),
-                html.Div(id="x-line-returns-container", style={"display": "none"}),
+                html.Div(id="x-line-levels-container"),
+                html.Div(id="x-scatter-returns-container"),
+                html.Div(id="x-line-returns-container"),
                 html.Div(id="x-stats", style={"margin":"24px 0"}),
-                html.Div(id="x-trade-windows-container", style={"display": "none"}),
+                html.Div(id="x-trade-windows-container"),
             ], style={"marginTop":"32px"}),
 
             dcc.Store(id=STORE_A),
