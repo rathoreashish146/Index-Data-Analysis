@@ -3083,7 +3083,7 @@ def single_layout():
                 html.Div(id="stats-gain", style={"margin": "24px 0"}),
                 html.Div(id="trade-windows-gain-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
-        ], style={"display": "flex", "gap": "20px", "flexWrap": "wrap"}),
+        ]),
 
         # ---------- Indicators figure ----------
         html.Div(id="indicators-container"),
@@ -4280,6 +4280,8 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
 
 
 
