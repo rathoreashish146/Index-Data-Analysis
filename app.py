@@ -1,3 +1,4 @@
+
 # import os
 # import base64
 # import io
@@ -909,7 +910,7 @@
 #         ], style={"textAlign":"right","margin":"24px 0 32px"}),
 
 #         # ---------- Results (Drop / Gain) ----------
-#         html.Div([
+#         html.Div(id="results-container", style={"display": "none"}, children=[
 #             html.Div([
 #                 html.H2("Drop Analysis", style={
 #                     "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
@@ -921,32 +922,10 @@
 #                     "background": "rgba(239,68,68,0.08)",
 #                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
 #                 }),
-#                 html.Div([
-#                 dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-#                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
-#                 html.Div([
-#                 dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-#                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
+#                 html.Div(id="return-chart-drop-container"),
+#                 html.Div(id="bar-chart-drop-container"),
 #                 html.Div(id="stats-drop", style={"margin": "24px 0"}),
-#                 html.H4("Trade windows (first and last day)", style={
-#                     "fontSize":"20px", "fontWeight":600, "color":"inherit",
-#                     "marginTop":"32px", "marginBottom":"16px"
-#                 }),
-#                 html.Div(id="trade-windows-drop", style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-#                     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
+#                 html.Div(id="trade-windows-drop-container"),
 #             ], style={"flex": 1, "minWidth": "420px"}),
 
 #             html.Div([
@@ -960,47 +939,15 @@
 #                     "background": "rgba(34,197,94,0.08)",
 #                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
 #                 }),
-#                 html.Div([
-#                 dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-#                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
-#                 html.Div([
-#                 dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-#                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
+#                 html.Div(id="return-chart-gain-container"),
+#                 html.Div(id="bar-chart-gain-container"),
 #                 html.Div(id="stats-gain", style={"margin": "24px 0"}),
-#                 html.H4("Trade windows (first and last day)", style={
-#                     "fontSize":"20px", "fontWeight":600, "color":"inherit",
-#                     "marginTop":"32px", "marginBottom":"16px"
-#                 }),
-#                 html.Div(id="trade-windows-gain", style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-#                     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
+#                 html.Div(id="trade-windows-gain-container"),
 #             ], style={"flex": 1, "minWidth": "420px"}),
-#         ], style={"display": "flex", "gap": "20px", "flexWrap": "wrap"}),
+#         ]),
 
 #         # ---------- Indicators figure ----------
-#         html.H3("Indicator Charts", style={
-#             "fontSize":"28px", "fontWeight":700, "color":"inherit",
-#             "marginTop":"40px", "marginBottom":"20px"
-#         }),
-#         html.Div([
-#         dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
-#         ], style={
-#             "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-#             "padding":"20px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-#             "border":"1px solid rgba(255,255,255,0.1)"
-#         }),
+#         html.Div(id="indicators-container"),
 
 #         html.Hr(),
 #         html.Div(id="preview", style={
@@ -1171,50 +1118,17 @@
 #             }),
 
 #             # ---- Results ----
-#             html.Div([
-#             html.Div([
-#                 dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-#                     "padding":"20px", "marginBottom":"24px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
-#                 html.Div([
-#                 dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-#                     "padding":"20px", "marginBottom":"24px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
-#                 html.Div([
-#                 dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
-#                 ], style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-#                     "padding":"20px", "marginBottom":"24px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
+#             html.Div(id="x-results-container", children=[
+#                 html.Div(id="x-line-levels-container"),
+#                 html.Div(id="x-scatter-returns-container"),
+#                 html.Div(id="x-line-returns-container"),
 #                 html.Div(id="x-stats", style={"margin":"24px 0"}),
-#                 html.H4("Trade windows (first and last day)", style={
-#                     "fontSize":"22px", "fontWeight":600, "color":"inherit",
-#                     "marginTop":"32px", "marginBottom":"16px"
-#                 }),
-#                 html.Div(id="x-trade-windows", style={
-#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-#                     "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-#                     "border":"1px solid rgba(255,255,255,0.1)"
-#                 }),
+#                 html.Div(id="x-trade-windows-container"),
 #             ], style={"marginTop":"32px"}),
 
 #             dcc.Store(id=STORE_A),
 #             dcc.Store(id=STORE_B),
 
-#             html.Div(dcc.Link("← Back to Home", href="/", style={
-#                 "textDecoration":"none", "color":"#00c896", "fontWeight":500,
-#                 "fontSize":"16px", "marginTop":"32px", "display":"inline-block"
-#             }))
 #         ],
 #         style={"maxWidth":"1400px","margin":"0 auto","padding":"32px 24px"}
 #     )
@@ -1416,18 +1330,20 @@
 # @app.callback(
 #     # DROP outputs
 #     Output("analysis-output-drop", "children"),
-#     Output("return-chart-drop", "figure"),
-#     Output("bar-chart-drop", "figure"),
+#     Output("return-chart-drop-container", "children"),
+#     Output("bar-chart-drop-container", "children"),
 #     Output("stats-drop", "children"),
-#     Output("trade-windows-drop", "children"),
+#     Output("trade-windows-drop-container", "children"),
 #     # GAIN outputs
 #     Output("analysis-output-gain", "children"),
-#     Output("return-chart-gain", "figure"),
-#     Output("bar-chart-gain", "figure"),
+#     Output("return-chart-gain-container", "children"),
+#     Output("bar-chart-gain-container", "children"),
 #     Output("stats-gain", "children"),
-#     Output("trade-windows-gain", "children"),
+#     Output("trade-windows-gain-container", "children"),
 #     # INDICATOR figure
-#     Output("indicators-figure", "figure"),
+#     Output("indicators-container", "children"),
+#     # Results container visibility
+#     Output("results-container", "style"),
 #     Input("analyze", "n_clicks"),
 #     State(STORE_RAW, "data"),
 #     State("analysis-types", "value"),
@@ -1458,19 +1374,19 @@
 #                  preset_gain, sd_gain, ed_gain, snap_gain, ws_gain, ws_in_gain, th_gain, th_in_gain,
 #                  indicators_selected):
 #     if not n_clicks:
-#         return (no_update,) * 11
+#         return (no_update,) * 12
 #     if not raw_payload:
-#         msg = html.Div("Please upload a CSV first.", style={"color": "crimson"})
-#         empty = go.Figure()
-#         return msg, empty, empty, None, None, msg, empty, empty, None, None, empty
+#         # Hide all results when no data
+#         hidden_style = {"display": "none"}
+#         return (None, None, None, None, None, None, None, None, None, None, None, hidden_style)
 
 #     try:
 #         csv_bytes = base64.b64decode(raw_payload["csv_b64"].encode())
 #         df = pd.read_csv(io.BytesIO(csv_bytes))
 #     except Exception as e:
-#         msg = html.Div(f"Failed to load stored data: {e}", style={"color": "crimson"})
-#         empty = go.Figure()
-#         return msg, empty, empty, None, None, msg, empty, empty, None, None, empty
+#         # Hide all results on error
+#         hidden_style = {"display": "none"}
+#         return (None, None, None, None, None, None, None, None, None, None, None, hidden_style)
 
 #     df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
 #     df["index"] = pd.to_numeric(df["index"], errors="coerce")
@@ -1612,19 +1528,50 @@
 
 #         # Trade windows list
 #         trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
+        
+#         # Wrap graphs and tables in containers with proper styling
+#         return_chart_container = html.Div([
+#             dcc.Graph(figure=line_fig, config={"displayModeBar": False}, style={"height": "320px"})
+#         ], style={
+#             "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+#             "padding":"16px", "marginBottom":"16px",
+#             "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#             "border":"1px solid rgba(255,255,255,0.1)"
+#         })
+        
+#         bar_chart_container = html.Div([
+#             dcc.Graph(figure=bar_fig, config={"displayModeBar": False}, style={"height": "320px"})
+#         ], style={
+#             "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+#             "padding":"16px", "marginBottom":"16px",
+#             "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#             "border":"1px solid rgba(255,255,255,0.1)"
+#         })
+        
+#         trade_windows_container = html.Div([
+#             html.H4("Trade windows (first and last day)", style={
+#                 "fontSize":"20px", "fontWeight":600, "color":"inherit",
+#                 "marginTop":"32px", "marginBottom":"16px"
+#             }),
+#             trade_table
+#         ], style={
+#             "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+#             "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#             "border":"1px solid rgba(255,255,255,0.1)"
+#         })
 
-#         return card, line_fig, bar_fig, stats_view, trade_table, dff
+#         return card, return_chart_container, bar_chart_container, stats_view, trade_windows_container, dff
 
 #     want_drop = "drop" in (analysis_types or [])
 #     want_gain = "gain" in (analysis_types or [])
 
 #     drop_out = build_outputs("drop",
 #                              preset_drop, sd_drop, ed_drop, snap_drop, ws_drop, ws_in_drop, th_drop, th_in_drop) \
-#                if want_drop else (html.Div("Drop disabled"), go.Figure(), go.Figure(), None, None, None)
+#                if want_drop else (html.Div("Drop disabled"), None, None, None, None, None)
 
 #     gain_out = build_outputs("gain",
 #                              preset_gain, sd_gain, ed_gain, snap_gain, ws_gain, ws_in_gain, th_gain, th_in_gain) \
-#                if want_gain else (html.Div("Gain disabled"), go.Figure(), go.Figure(), None, None, None)
+#                if want_gain else (html.Div("Gain disabled"), None, None, None, None, None)
 
 #     # Build indicators figure from the union of the filtered range (prefer gain range if both same; else use full df slice)
 #     # We'll use the DROP slice if available, else GAIN slice, else overall df.
@@ -1730,10 +1677,26 @@
 #     # Unpack results for return
 #     drop_card, drop_line, drop_bar, drop_stats, drop_table, _dff_drop = drop_out
 #     gain_card, gain_line, gain_bar, gain_stats, gain_table, _dff_gain = gain_out
+    
+#     # Wrap indicators figure in container
+#     indicators_container = html.Div([
+#         html.H3("Indicator Charts", style={
+#             "fontSize":"28px", "fontWeight":700, "color":"inherit",
+#             "marginTop":"40px", "marginBottom":"20px"
+#         }),
+#         dcc.Graph(figure=fig_ind, config={"displayModeBar": False}, style={"height":"540px"})
+#     ], style={
+#         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#         "padding":"20px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#         "border":"1px solid rgba(255,255,255,0.1)"
+#     })
+    
+#     # Show results container
+#     results_style = {"display": "flex", "gap": "20px", "flexWrap": "wrap"}
 
 #     return (drop_card, drop_line, drop_bar, drop_stats, drop_table,
 #             gain_card, gain_line, gain_bar, gain_stats, gain_table,
-#             fig_ind)
+#             indicators_container, results_style)
 
 # # -----------------------------
 # # Upload callback (CROSS page)
@@ -1941,11 +1904,12 @@
 # # Analyze callback (CROSS page)
 # # -----------------------------
 # @app.callback(
-#     Output("x-line-levels", "figure"),
-#     Output("x-scatter-returns", "figure"),
-#     Output("x-line-returns", "figure"),
+#     Output("x-line-levels-container", "children"),
+#     Output("x-scatter-returns-container", "children"),
+#     Output("x-line-returns-container", "children"),
 #     Output("x-stats", "children"),
-#     Output("x-trade-windows", "children"),
+#     Output("x-trade-windows-container", "children"),
+#     Output("x-results-container", "style"),
 #     Input("x-analyze", "n_clicks"),
 #     State(STORE_A, "data"),
 #     State(STORE_B, "data"),
@@ -1957,20 +1921,21 @@
 #     prevent_initial_call=True,
 # )
 # def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
-#     empty = go.Figure()
 #     if not n_clicks:
-#         return empty, empty, empty, None, None
+#         return (no_update,) * 6
 #     if not rawA or not rawB:
-#         msg = html.Div("Please upload both Index A and Index B CSVs.", style={"color":"crimson"})
-#         return empty, empty, empty, msg, None
+#         # Hide all results when no data
+#         hidden_style = {"display": "none"}
+#         return None, None, None, None, None, hidden_style
 
 #     # Load A & B
 #     try:
 #         dfA = pd.read_csv(io.BytesIO(base64.b64decode(rawA["csv_b64"].encode())))
 #         dfB = pd.read_csv(io.BytesIO(base64.b64decode(rawB["csv_b64"].encode())))
 #     except Exception as e:
-#         msg = html.Div(f"Failed to load stored data: {e}", style={"color":"crimson"})
-#         return empty, empty, empty, msg, None
+#         # Hide all results on error
+#         hidden_style = {"display": "none"}
+#         return None, None, None, None, None, hidden_style
 
 #     for df in (dfA, dfB):
 #         df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
@@ -1982,8 +1947,9 @@
 #     data_min = max(dfA["datetime"].min(), dfB["datetime"].min())
 #     data_max = min(dfA["datetime"].max(), dfB["datetime"].max())
 #     if data_min >= data_max:
-#         msg = html.Div("No overlapping dates between A and B.", style={"color":"crimson"})
-#         return empty, empty, empty, msg, None
+#         # Hide all results when no overlap
+#         hidden_style = {"display": "none"}
+#         return None, None, None, None, None, hidden_style
 
 #     snap = ("snap" in (snap_val or []))
 #     start, end = compute_range(preset, sd, ed, data_min, data_max, snap)
@@ -1993,8 +1959,9 @@
 #     B_in = dfB[(dfB["datetime"]>=start) & (dfB["datetime"]<=end)][["datetime","index"]].rename(columns={"index":"B"})
 #     levels = pd.merge(A_in, B_in, on="datetime", how="inner")
 #     if levels.empty:
-#         msg = html.Div("No overlapping data inside the selected date range.", style={"color":"crimson"})
-#         return empty, empty, empty, msg, None
+#         # Hide all results when no data in range
+#         hidden_style = {"display": "none"}
+#         return None, None, None, None, None, hidden_style
 
 #     # -------- Chart 1: Levels normalized to 100 at range start --------
 #     baseA = levels["A"].iloc[0]
@@ -2030,8 +1997,9 @@
 #     ).dropna(subset=["retA","retB"])
 
 #     if rets.empty:
-#         msg = html.Div("Not enough data to compute weekend-aware windowed returns in this range.", style={"color":"crimson"})
-#         return fig_levels, empty, empty, msg, None
+#         # Hide all results when no returns data
+#         hidden_style = {"display": "none"}
+#         return None, None, None, None, None, hidden_style
 
 #     # -------- Chart 2: Correlation scatter (windowed returns) --------
 #     x = rets["retB"].values * 100.0
@@ -2121,11 +2089,52 @@
 #     tableA = build_trade_window_table(tmpA[["datetime","index"]], win, limit=200)
 #     tableB = build_trade_window_table(tmpB[["datetime","index"]], win, limit=200)
 #     twin = html.Div([
-#         html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
-#         html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
-#     ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
+#         html.H4("Trade windows (first and last day)", style={
+#             "fontSize":"22px", "fontWeight":600, "color":"inherit",
+#             "marginTop":"32px", "marginBottom":"16px"
+#         }),
+#         html.Div([
+#             html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
+#             html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
+#         ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
+#     ], style={
+#         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#         "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#         "border":"1px solid rgba(255,255,255,0.1)"
+#     })
+    
+#     # Wrap graphs in containers
+#     levels_container = html.Div([
+#         dcc.Graph(figure=fig_levels, config={"displayModeBar": False}, style={"height":"360px"})
+#     ], style={
+#         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#         "padding":"20px", "marginBottom":"24px",
+#         "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#         "border":"1px solid rgba(255,255,255,0.1)"
+#     })
+    
+#     scatter_container = html.Div([
+#         dcc.Graph(figure=fig_scatter, config={"displayModeBar": False}, style={"height":"360px"})
+#     ], style={
+#         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#         "padding":"20px", "marginBottom":"24px",
+#         "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#         "border":"1px solid rgba(255,255,255,0.1)"
+#     })
+    
+#     returns_container = html.Div([
+#         dcc.Graph(figure=fig_returns, config={"displayModeBar": False}, style={"height":"360px"})
+#     ], style={
+#         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#         "padding":"20px", "marginBottom":"24px",
+#         "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#         "border":"1px solid rgba(255,255,255,0.1)"
+#     })
+    
+#     # Show results container
+#     results_style = {"marginTop": "32px"}
 
-#     return fig_levels, fig_scatter, fig_returns, stats_view, twin
+#     return levels_container, scatter_container, returns_container, stats_view, twin, results_style
 
 
 # # Local run (useful for dev & Render health checks)
@@ -2135,7 +2144,8 @@
 
 
 
-# ================================================================================================================================================================================================================
+# =============================================================================================================================================================================================================
+
 
 
 import os
@@ -2233,6 +2243,75 @@ app.index_string = '''
             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody td {
                 border-color: rgba(255,255,255,0.1) !important;
                 color: rgba(255,255,255,0.9) !important;
+            }
+            /* Dark theme for form inputs */
+            .Select-control, .Select-input, .Select-placeholder, .Select-value, .Select-value-label {
+                background-color: rgba(255,255,255,0.1) !important;
+                color: rgba(255,255,255,0.9) !important;
+                border-color: rgba(255,255,255,0.2) !important;
+            }
+            .Select-menu-outer {
+                background-color: #1a1a1a !important;
+                border-color: rgba(255,255,255,0.2) !important;
+            }
+            .Select-option {
+                background-color: #1a1a1a !important;
+                color: rgba(255,255,255,0.9) !important;
+            }
+            .Select-option.is-focused {
+                background-color: rgba(0,200,150,0.2) !important;
+            }
+            .Select-option.is-selected {
+                background-color: rgba(0,200,150,0.4) !important;
+            }
+            input[type="text"], input[type="number"], input[type="date"] {
+                background-color: rgba(255,255,255,0.1) !important;
+                color: rgba(255,255,255,0.9) !important;
+                border: 1px solid rgba(255,255,255,0.2) !important;
+                border-radius: 4px !important;
+                padding: 6px 8px !important;
+            }
+            input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+                border-color: rgba(0,200,150,0.6) !important;
+                outline: none !important;
+                box-shadow: 0 0 0 2px rgba(0,200,150,0.2) !important;
+            }
+            input[type="text"]::placeholder, input[type="number"]::placeholder {
+                color: rgba(255,255,255,0.5) !important;
+            }
+            .DateInput_input {
+                background-color: rgba(255,255,255,0.1) !important;
+                color: rgba(255,255,255,0.9) !important;
+                border-color: rgba(255,255,255,0.2) !important;
+            }
+            .DateInput_input__focused {
+                border-color: rgba(0,200,150,0.6) !important;
+            }
+            .DateRangePickerInput {
+                background-color: rgba(255,255,255,0.1) !important;
+                border-color: rgba(255,255,255,0.2) !important;
+            }
+            .DayPicker {
+                background-color: #1a1a1a !important;
+                color: rgba(255,255,255,0.9) !important;
+            }
+            .DayPicker__week-header {
+                color: rgba(255,255,255,0.7) !important;
+            }
+            .DayPicker-Day {
+                color: rgba(255,255,255,0.9) !important;
+            }
+            .DayPicker-Day--selected {
+                background-color: rgba(0,200,150,0.6) !important;
+            }
+            .DayPicker-Day--hovered {
+                background-color: rgba(0,200,150,0.3) !important;
+            }
+            input[type="radio"] {
+                accent-color: rgba(0,200,150,0.8) !important;
+            }
+            input[type="checkbox"] {
+                accent-color: rgba(0,200,150,0.8) !important;
             }
         </style>
     </head>
@@ -2881,7 +2960,7 @@ def single_layout():
                 ], style={"margin":"6px 4px 4px 0"}),
 
                 html.Div([
-                    html.Span("Jump to:", style={"marginRight":"6px"}),
+                    html.Span("Navigate to Date:", style={"marginRight":"6px"}),
                     dcc.Dropdown(id="jump-year-drop", options=[], placeholder="Year",
                                  style={"width":"100px","display":"inline-block","marginRight":"6px"}),
                     dcc.Dropdown(id="jump-month-drop", options=MONTH_OPTIONS, placeholder="Month",
@@ -2889,7 +2968,7 @@ def single_layout():
                 ], style={"marginBottom":"8px"}),
 
                 html.Div([
-                    html.Label("Change over (days)", style={"fontWeight": "600"}),
+                    html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
                     dcc.RadioItems(
                         id="window-size-drop",
                         options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
@@ -2903,7 +2982,7 @@ def single_layout():
                 ], style={"margin":"6px 0"}),
 
                 html.Div([
-                    html.Label("Min % Threshold", style={"fontWeight": "600"}),
+                    html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
                     dcc.RadioItems(
                         id="min-threshold-drop",
                         options=[{"label":"1%","value":1},{"label":"3%","value":3},
@@ -2959,7 +3038,7 @@ def single_layout():
                 ], style={"margin":"6px 4px 4px 0"}),
 
                 html.Div([
-                    html.Span("Jump to:", style={"marginRight":"6px"}),
+                    html.Span("Navigate to Date:", style={"marginRight":"6px"}),
                     dcc.Dropdown(id="jump-year-gain", options=[], placeholder="Year",
                                  style={"width":"100px","display":"inline-block","marginRight":"6px"}),
                     dcc.Dropdown(id="jump-month-gain", options=MONTH_OPTIONS, placeholder="Month",
@@ -2967,7 +3046,7 @@ def single_layout():
                 ], style={"marginBottom":"8px"}),
 
                 html.Div([
-                    html.Label("Change over (days)", style={"fontWeight": "600"}),
+                    html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
                     dcc.RadioItems(
                         id="window-size-gain",
                         options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
@@ -2981,7 +3060,7 @@ def single_layout():
                 ], style={"margin":"6px 0"}),
 
                 html.Div([
-                    html.Label("Min % Threshold", style={"fontWeight": "600"}),
+                    html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
                     dcc.RadioItems(
                         id="min-threshold-gain",
                         options=[{"label":"1%","value":1},{"label":"3%","value":3},
@@ -3224,7 +3303,7 @@ def cross_layout():
                 ], style={"marginBottom":"8px"}),
 
                 html.Div([
-                    html.Span("Jump to:", style={"marginRight":"6px"}),
+                    html.Span("Navigate to Date:", style={"marginRight":"6px"}),
                     dcc.Dropdown(id="jump-year-cross", options=[], placeholder="Year",
                                  style={"width":"100px","display":"inline-block","marginRight":"6px"}),
                     dcc.Dropdown(id="jump-month-cross", options=MONTH_OPTIONS, placeholder="Month",
@@ -3232,7 +3311,7 @@ def cross_layout():
                 ], style={"marginBottom":"12px"}),
 
                 html.Div([
-                    html.Label("Window size (days) for returns", style={"fontWeight":"600","marginRight":"8px"}),
+                    html.Label("Return Calculation Period (days)", style={"fontWeight":"600","marginRight":"8px"}),
                     dcc.Input(id="x-window", type="number", min=1, step=1, value=5,
                               style={"width":"140px"}),
                 ], style={"marginBottom":"6px"}),
@@ -3602,9 +3681,18 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             z = np.polyfit(idx, y_pct, 1)
             trend = z[0]*idx + z[1]
             line_fig.add_trace(go.Scatter(x=x_time, y=trend, mode="lines", name="Trend", line=dict(dash="dot")))
-        line_fig.update_layout(template="plotly_white", margin=dict(t=30, r=10, l=40, b=40),
-                               xaxis_title="Time", yaxis_title="% change",
-                               legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+        line_fig.update_layout(
+            template="plotly_dark",
+            plot_bgcolor="rgba(26,26,26,0.8)",
+            paper_bgcolor="rgba(10,10,10,0.8)",
+            font=dict(color="rgba(255,255,255,0.9)"),
+            margin=dict(t=30, r=10, l=40, b=40),
+            xaxis_title="Time", 
+            yaxis_title="% change",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
+        )
 
         # Bar chart (counts & probabilities by threshold)
         ret_clean = ret.dropna()
@@ -3634,10 +3722,16 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         max_prob = float(probs.max()) if len(probs) else 0.0
         y2_top = max(5.0, np.ceil(max_prob * 1.15 / 5.0) * 5.0)
         bar_fig.update_layout(
-            template="plotly_white", title=bar_title + (f"  · N={N}" if N else ""),
+            template="plotly_dark",
+            plot_bgcolor="rgba(26,26,26,0.8)",
+            paper_bgcolor="rgba(10,10,10,0.8)",
+            font=dict(color="rgba(255,255,255,0.9)"),
+            title=bar_title + (f"  · N={N}" if N else ""),
             margin=dict(t=50, r=10, l=40, b=40),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            bargap=0.2,
+            xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+            bargap=0.2
         )
         bar_fig.update_yaxes(title_text="Count of events", secondary_y=False)
         bar_fig.update_yaxes(title_text="Probability (%)", range=[0, y2_top], secondary_y=True)
@@ -3807,10 +3901,15 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
 
     fig_ind.update_layout(
-        template="plotly_white",
+        template="plotly_dark",
+        plot_bgcolor="rgba(26,26,26,0.8)",
+        paper_bgcolor="rgba(10,10,10,0.8)",
+        font=dict(color="rgba(255,255,255,0.9)"),
         margin=dict(t=40, r=10, l=40, b=40),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        title="Indicators (weekend-aware where applicable)"
+        title="Indicators (weekend-aware where applicable)",
+        xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
     )
 
     # Unpack results for return
@@ -4112,10 +4211,17 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     fig_levels.add_trace(go.Scatter(x=levels["datetime"], y=normA, mode="lines", name="Index A (norm. to 100)"))
     fig_levels.add_trace(go.Scatter(x=levels["datetime"], y=normB, mode="lines", name="Index B (norm. to 100)"))
     fig_levels.update_layout(
-        template="plotly_white", title=f"Both Indexes (normalized) · {start.date()} → {end.date()}",
+        template="plotly_dark",
+        plot_bgcolor="rgba(26,26,26,0.8)",
+        paper_bgcolor="rgba(10,10,10,0.8)",
+        font=dict(color="rgba(255,255,255,0.9)"),
+        title=f"Both Indexes (normalized) · {start.date()} → {end.date()}",
         margin=dict(t=50, r=10, l=40, b=40),
-        xaxis_title="Date", yaxis_title="Indexed level (start=100)",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        xaxis_title="Date", 
+        yaxis_title="Indexed level (start=100)",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
     )
 
     # -------- Weekend-aware returns (window size in calendar days) --------
@@ -4162,10 +4268,16 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     else:
         subtitle = "Pearson corr = n/a"
     fig_scatter.update_layout(
-        template="plotly_white", title=f"Correlation (windowed returns) — {subtitle}",
+        template="plotly_dark",
+        plot_bgcolor="rgba(26,26,26,0.8)",
+        paper_bgcolor="rgba(10,10,10,0.8)",
+        font=dict(color="rgba(255,255,255,0.9)"),
+        title=f"Correlation (windowed returns) — {subtitle}",
         margin=dict(t=60, r=10, l=50, b=50),
         xaxis_title=f"Index B {win}-day return (%)",
-        yaxis_title=f"Index A {win}-day return (%)"
+        yaxis_title=f"Index A {win}-day return (%)",
+        xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
     )
 
     # -------- Chart 3: Windowed returns through time --------
@@ -4178,11 +4290,17 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         x=ret_time["datetime"], y=ret_time["retB"]*100.0, mode="lines", name=f"B {win}-day %"
     ))
     fig_returns.update_layout(
-        template="plotly_white",
+        template="plotly_dark",
+        plot_bgcolor="rgba(26,26,26,0.8)",
+        paper_bgcolor="rgba(10,10,10,0.8)",
+        font=dict(color="rgba(255,255,255,0.9)"),
         title=f"{win}-day Returns Over Time · {start.date()} → {end.date()}",
         margin=dict(t=50, r=10, l=40, b=40),
-        xaxis_title="Date", yaxis_title=f"{win}-day return (%)",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        xaxis_title="Date", 
+        yaxis_title=f"{win}-day return (%)",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
     )
 
     # -------- Stats card --------
@@ -4280,8 +4398,5 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
-
 
 
