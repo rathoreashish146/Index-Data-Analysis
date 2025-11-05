@@ -1839,7 +1839,10 @@
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
 
 
-# ===============================================================================================================================================================================================================
+# =================================================================================================================================================================================================================
+
+
+
 
 # import os
 # import base64
@@ -1858,6 +1861,97 @@
 # # -----------------------------
 # app = Dash(__name__, suppress_callback_exceptions=True)
 # app.title = "Index Data Analysis"
+
+# # Custom CSS to remove white borders and enhance dark theme
+# app.index_string = '''
+# <!DOCTYPE html>
+# <html>
+#     <head>
+#         {%metas%}
+#         <title>{%title%}</title>
+#         {%favicon%}
+#         {%css%}
+#         <style>
+#             * {
+#                 margin: 0;
+#                 padding: 0;
+#                 box-sizing: border-box;
+#             }
+#             body {
+#                 margin: 0;
+#                 padding: 0;
+#                 border: none !important;
+#                 transition: background-color 0.3s ease, color 0.3s ease;
+#             }
+#             html {
+#                 margin: 0;
+#                 padding: 0;
+#                 border: none !important;
+#             }
+#             #react-entry-point {
+#                 margin: 0;
+#                 padding: 0;
+#                 border: none !important;
+#             }
+#             ._dash-loading {
+#                 margin: 0;
+#                 padding: 0;
+#             }
+#             #app-container {
+#                 transition: background-color 0.3s ease, color 0.3s ease;
+#             }
+#             #navbar-container {
+#                 transition: background-color 0.3s ease, color 0.3s ease;
+#             }
+#             #page-content {
+#                 transition: color 0.3s ease;
+#             }
+#             /* Upload box hover effect */
+#             [id="uploader"]:hover, [id="uploader-a"]:hover, [id="uploader-b"]:hover {
+#                 border-color: rgba(0,200,150,0.6) !important;
+#                 background: rgba(0,200,150,0.1) !important;
+#                 transform: scale(1.01);
+#                 box-shadow: 0 4px 16px rgba(0,200,150,0.2) !important;
+#             }
+#             [id="uploader"]:hover span:last-child, [id="uploader-a"]:hover span:last-child, [id="uploader-b"]:hover span:last-child {
+#                 opacity: 1 !important;
+#                 transform: scale(1.1);
+#             }
+#             /* DataTable dark theme styles */
+#             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+#                 background-color: #1a1a1a !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#             }
+#             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table thead th {
+#                 background-color: #252525 !important;
+#                 color: rgba(255,255,255,0.95) !important;
+#                 border-color: rgba(0,200,150,0.3) !important;
+#             }
+#             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody tr {
+#                 background-color: #1a1a1a !important;
+#             }
+#             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody tr:nth-child(even) {
+#                 background-color: #222222 !important;
+#             }
+#             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody tr:hover {
+#                 background-color: rgba(0,200,150,0.15) !important;
+#             }
+#             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody td {
+#                 border-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#             }
+#         </style>
+#     </head>
+#     <body>
+#         {%app_entry%}
+#         <footer>
+#             {%config%}
+#             {%scripts%}
+#             {%renderer%}
+#         </footer>
+#     </body>
+# </html>
+# '''
 
 # # Expose the underlying Flask server for Gunicorn
 # server = app.server
@@ -2219,8 +2313,38 @@
 #         data=df_out.to_dict("records"),
 #         columns=[{"name": c, "id": c} for c in df_out.columns],
 #         page_size=min(20, len(df_out)) or 5,
-#         style_table={"overflowX": "auto"},
-#         style_cell={"textAlign": "left", "minWidth": "160px"},
+#         style_table={"overflowX": "auto", "backgroundColor": "#1a1a1a"},
+#         style_cell={
+#             "textAlign": "left", 
+#             "minWidth": "160px",
+#             "backgroundColor": "#1a1a1a",
+#             "color": "rgba(255,255,255,0.9)",
+#             "border": "1px solid rgba(255,255,255,0.1)",
+#             "fontFamily": "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+#         },
+#         style_header={
+#             "backgroundColor": "#252525",
+#             "color": "rgba(255,255,255,0.95)",
+#             "fontWeight": "600",
+#             "border": "1px solid rgba(0,200,150,0.3)",
+#             "textAlign": "left"
+#         },
+#         style_data={
+#             "backgroundColor": "#1a1a1a",
+#             "color": "rgba(255,255,255,0.9)",
+#             "border": "1px solid rgba(255,255,255,0.1)"
+#         },
+#         style_data_conditional=[
+#             {
+#                 "if": {"row_index": "even"},
+#                 "backgroundColor": "#222222",
+#             },
+#             {
+#                 "if": {"state": "selected"},
+#                 "backgroundColor": "rgba(0,200,150,0.2)",
+#                 "border": "1px solid rgba(0,200,150,0.5)"
+#             }
+#         ],
 #     )
 #     return table
 
@@ -2229,7 +2353,8 @@
 # # -----------------------------
 
 # card_style = {
-#     "display": "inline-block",
+#     "display": "flex",
+#     "flexDirection": "column",
 #     "padding": "32px 36px",
 #     "borderRadius": "20px",
 #     "border": "none",
@@ -2238,8 +2363,13 @@
 #     "textDecoration": "none",
 #     "color": "white",
 #     "width": "320px",
+#     "minHeight": "280px",
+#     "height": "280px",
 #     "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 #     "cursor": "pointer",
+#     "justifyContent": "center",
+#     "alignItems": "center",
+#     "boxSizing": "border-box",
 # }
 # card_style_hover = {
 #     "transform": "translateY(-4px)",
@@ -2312,7 +2442,8 @@
 #             "justifyContent": "space-between",
 #             "boxShadow": "0 2px 8px rgba(0,0,0,0.3)" if is_dark else "0 2px 8px rgba(0,0,0,0.1)",
 #             "marginBottom": "0",
-#             "borderBottom": f"1px solid {border_color}"
+#             "borderBottom": f"1px solid {border_color}",
+#             "transition": "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease"
 #         }
 #     )
 
@@ -2344,7 +2475,7 @@
 #                             style={**card_style, "textAlign":"center"}
 #                         ),
 #                         href="/single",
-#                         style={"marginRight": "24px", "textDecoration":"none"}
+#                         style={"textDecoration":"none", "display":"flex"}
 #                     ),
 #                     dcc.Link(
 #                         html.Div(
@@ -2358,10 +2489,17 @@
 #                             style={**card_style, "background":"linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", "textAlign":"center"}
 #                         ),
 #                         href="/cross",
-#                         style={"textDecoration":"none"}
+#                         style={"textDecoration":"none", "display":"flex"}
 #                     ),
 #                 ],
-#                 style={"marginTop": "12px", "display":"flex", "justifyContent":"center", "flexWrap":"wrap"}
+#                 style={
+#                     "marginTop": "12px", 
+#                     "display":"flex", 
+#                     "justifyContent":"center", 
+#                     "alignItems":"center",
+#                     "flexWrap":"wrap",
+#                     "gap":"24px"
+#                 }
 #             ),
 #         ],
 #         style={"maxWidth":"1200px","margin":"0 auto","padding":"48px 24px", "marginTop":"0"}
@@ -2375,27 +2513,27 @@
 #                 "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
 #                 "color":"inherit"
 #             }),
-#             html.Div([
-#                 html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
-#                     "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"0", "display":"inline-block", "marginRight":"12px"
-#                 }),
-#                 html.Span("📁", style={"fontSize":"20px", "verticalAlign":"middle", "display":"inline-block"}),
-#             ], style={"marginBottom":"32px"}),
+#             html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
+#                 "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"32px"
+#             }),
 #         ]),
-        
+
 #         dcc.Upload(
 #             id="uploader",
 #             children=html.Div([
-#                 html.Div("Drag and Drop or ", style={"fontSize":"16px", "color":"#64748b"}),
-#                 html.A("Select CSV File", style={"fontSize":"16px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
-#             ]),
+#                 html.Div([
+#                     html.Span("Drag and Drop or ", style={"fontSize":"16px", "color":"rgba(255,255,255,0.7)"}),
+#                     html.A("Select CSV File", style={"fontSize":"16px", "color":"#00c896", "fontWeight":600, "textDecoration":"underline"})
+#                 ], style={"display":"flex", "alignItems":"center", "gap":"8px"}),
+#                 html.Span("📁", style={"fontSize":"24px", "marginLeft":"12px", "opacity":0.8, "transition":"all 0.3s"}),
+#             ], style={"display":"flex", "alignItems":"center", "justifyContent":"center"}),
 #             style={
 #                 "width":"100%","height":"100px",
-#                 "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
+#                 "borderWidth":"2px","borderStyle":"dashed","borderColor":"rgba(0,200,150,0.3)",
 #                 "borderRadius":"16px","textAlign":"center","margin":"10px 0",
-#                 "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+#                 "background":"rgba(0,200,150,0.05)",
 #                 "transition":"all 0.3s", "cursor":"pointer",
-#                 "display":"flex", "flexDirection":"column", "justifyContent":"center", "alignItems":"center"
+#                 "display":"flex", "flexDirection":"row", "justifyContent":"center", "alignItems":"center"
 #             },
 #             multiple=False, accept=".csv",
 #         ),
@@ -2433,7 +2571,7 @@
 #             html.Div([
 #                 html.H3("Drop Options", style={
 #                     "marginBottom": "16px", "fontSize":"22px",
-#                     "fontWeight":600, "color":"#dc2626"
+#                     "fontWeight":600, "color":"#ef4444"
 #                 }),
 
 #                 # Date range + Jump to
@@ -2503,16 +2641,16 @@
 #                 ], style={"margin":"6px 0"}),
 #             ], style={
 #                 "flex":1, "minWidth":"420px", "padding":"24px",
-#                 "background":"white", "borderRadius":"16px",
-#                 "boxShadow":"0 4px 12px rgba(0,0,0,0.08)",
-#                 "border":"2px solid #fee2e2"
+#                 "background":"rgba(239,68,68,0.08)", "borderRadius":"16px",
+#                 "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                 "border":"1px solid rgba(239,68,68,0.3)"
 #             }),
 
 #             # -------------------- GAIN CONTROLS --------------------
 #             html.Div([
 #                 html.H3("Gain Options", style={
 #                     "marginBottom": "16px", "fontSize":"22px",
-#                     "fontWeight":600, "color":"#16a34a"
+#                     "fontWeight":600, "color":"#22c55e"
 #                 }),
 
 #                 html.Div([
@@ -2581,9 +2719,9 @@
 #                 ], style={"margin":"6px 0"}),
 #             ], style={
 #                 "flex":1, "minWidth":"420px", "padding":"24px",
-#                 "background":"white", "borderRadius":"16px",
-#                 "boxShadow":"0 4px 12px rgba(0,0,0,0.08)",
-#                 "border":"2px solid #dcfce7"
+#                 "background":"rgba(34,197,94,0.08)", "borderRadius":"16px",
+#                 "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                 "border":"1px solid rgba(34,197,94,0.3)"
 #             }),
 
 #         ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"8px"}),
@@ -2615,8 +2753,9 @@
 #             ),
 #         ], style={
 #             "margin":"24px 0", "padding":"24px",
-#             "background":"white", "borderRadius":"16px",
-#             "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#             "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#             "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#             "border":"1px solid rgba(255,255,255,0.1)"
 #         }),
 
 #         html.Div([
@@ -2637,94 +2776,102 @@
 #         html.Div([
 #             html.Div([
 #                 html.H2("Drop Analysis", style={
-#                     "fontSize":"28px", "fontWeight":700, "color":"#dc2626",
+#                     "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
 #                     "marginBottom":"20px"
 #                 }),
 #                 html.Div(id="analysis-output-drop", style={
-#                     "border": "2px solid #fee2e2", "borderRadius": "16px",
+#                     "border": "1px solid rgba(239,68,68,0.3)", "borderRadius": "16px",
 #                     "padding": "20px", "margin": "10px 0",
-#                     "background": "linear-gradient(135deg, #fef2f2 0%, #ffffff 100%)",
-#                     "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"
+#                     "background": "rgba(239,68,68,0.08)",
+#                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
 #                 }),
 #                 html.Div([
-#                     dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
+#                 dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"12px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
 #                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div([
-#                     dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
+#                 dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"12px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
 #                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div(id="stats-drop", style={"margin": "24px 0"}),
 #                 html.H4("Trade windows (first and last day)", style={
-#                     "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
+#                     "fontSize":"20px", "fontWeight":600, "color":"inherit",
 #                     "marginTop":"32px", "marginBottom":"16px"
 #                 }),
 #                 html.Div(id="trade-windows-drop", style={
-#                     "background":"white", "borderRadius":"12px",
-#                     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+#                     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #             ], style={"flex": 1, "minWidth": "420px"}),
 
 #             html.Div([
 #                 html.H2("Gain Analysis", style={
-#                     "fontSize":"28px", "fontWeight":700, "color":"#16a34a",
+#                     "fontSize":"28px", "fontWeight":700, "color":"#22c55e",
 #                     "marginBottom":"20px"
 #                 }),
 #                 html.Div(id="analysis-output-gain", style={
-#                     "border": "2px solid #dcfce7", "borderRadius": "16px",
+#                     "border": "1px solid rgba(34,197,94,0.3)", "borderRadius": "16px",
 #                     "padding": "20px", "margin": "10px 0",
-#                     "background": "linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)",
-#                     "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"
+#                     "background": "rgba(34,197,94,0.08)",
+#                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
 #                 }),
 #                 html.Div([
-#                     dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
+#                 dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"12px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
 #                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div([
-#                     dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
+#                 dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"12px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
 #                     "padding":"16px", "marginBottom":"16px",
-#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+#                     "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div(id="stats-gain", style={"margin": "24px 0"}),
 #                 html.H4("Trade windows (first and last day)", style={
-#                     "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
+#                     "fontSize":"20px", "fontWeight":600, "color":"inherit",
 #                     "marginTop":"32px", "marginBottom":"16px"
 #                 }),
 #                 html.Div(id="trade-windows-gain", style={
-#                     "background":"white", "borderRadius":"12px",
-#                     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+#                     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #             ], style={"flex": 1, "minWidth": "420px"}),
 #         ], style={"display": "flex", "gap": "20px", "flexWrap": "wrap"}),
 
 #         # ---------- Indicators figure ----------
 #         html.H3("Indicator Charts", style={
-#             "fontSize":"28px", "fontWeight":700, "color":"#1e293b",
+#             "fontSize":"28px", "fontWeight":700, "color":"inherit",
 #             "marginTop":"40px", "marginBottom":"20px"
 #         }),
 #         html.Div([
-#             dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
+#         dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
 #         ], style={
-#             "background":"white", "borderRadius":"16px",
-#             "padding":"20px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#             "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#             "padding":"20px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#             "border":"1px solid rgba(255,255,255,0.1)"
 #         }),
 
 #         html.Hr(),
 #         html.Div(id="preview", style={
 #             "marginTop":"40px", "padding":"24px",
-#             "background":"white", "borderRadius":"16px",
-#             "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#             "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#             "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#             "border":"1px solid rgba(255,255,255,0.1)"
 #         }),  # <<< Data Preview lives here (first 10 rows)
 
 #         dcc.Store(id=STORE_RAW),
@@ -2739,33 +2886,35 @@
 #             html.Div([
 #                 html.H1("Cross Index Analysis", style={
 #                     "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
-#                     "color":"#1e293b"
+#                     "color":"inherit"
 #                 }),
 #                 html.P("Compare two indexes side by side with correlation analysis", style={
-#                     "fontSize":"16px", "color":"#64748b", "marginBottom":"32px"
+#                     "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"32px"
 #                 }),
 #             ]),
 
 #             html.Div([
 #                 html.Div([
-#                     html.H3("Upload Index A (CSV)", style={
-#                         "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
-#                         "marginBottom":"16px"
-#                     }),
+#                 html.H3("Upload Index A (CSV)", style={
+#                     "fontSize":"20px", "fontWeight":600, "color":"inherit",
+#                     "marginBottom":"16px"
+#                 }),
 #                     dcc.Upload(
 #                         id="uploader-a",
 #                         children=html.Div([
-#                             html.Div("📁", style={"fontSize":"28px", "marginBottom":"6px"}),
-#                             html.Div("Drag & drop or ", style={"fontSize":"15px", "color":"#64748b"}),
-#                             html.A("Select CSV", style={"fontSize":"15px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
-#                         ]),
+#                             html.Div([
+#                                 html.Span("Drag & drop or ", style={"fontSize":"15px", "color":"rgba(255,255,255,0.7)"}),
+#                                 html.A("Select CSV", style={"fontSize":"15px", "color":"#00c896", "fontWeight":600, "textDecoration":"underline"})
+#                             ], style={"display":"flex", "alignItems":"center", "gap":"8px"}),
+#                             html.Span("📁", style={"fontSize":"24px", "marginLeft":"12px", "opacity":0.8, "transition":"all 0.3s"}),
+#                         ], style={"display":"flex", "alignItems":"center", "justifyContent":"center"}),
 #                         style={
 #                             "width":"100%","height":"100px",
-#                             "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
+#                             "borderWidth":"2px","borderStyle":"dashed","borderColor":"rgba(0,200,150,0.3)",
 #                             "borderRadius":"16px","textAlign":"center",
 #                             "margin":"10px 0",
-#                             "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-#                             "display":"flex", "flexDirection":"column", "justifyContent":"center", "alignItems":"center",
+#                             "background":"rgba(0,200,150,0.05)",
+#                             "display":"flex", "flexDirection":"row", "justifyContent":"center", "alignItems":"center",
 #                             "cursor":"pointer", "transition":"all 0.3s"
 #                         },
 #                         multiple=False, accept=".csv",
@@ -2775,29 +2924,32 @@
 #                     html.Div(id="preview-a"),
 #                 ], style={
 #                     "flex":1, "minWidth":"420px", "padding":"24px",
-#                     "background":"white", "borderRadius":"16px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 
 #                 html.Div([
-#                     html.H3("Upload Index B (CSV)", style={
-#                         "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
-#                         "marginBottom":"16px"
-#                     }),
+#                 html.H3("Upload Index B (CSV)", style={
+#                     "fontSize":"20px", "fontWeight":600, "color":"inherit",
+#                     "marginBottom":"16px"
+#                 }),
 #                     dcc.Upload(
 #                         id="uploader-b",
 #                         children=html.Div([
-#                             html.Div("📁", style={"fontSize":"28px", "marginBottom":"6px"}),
-#                             html.Div("Drag & drop or ", style={"fontSize":"15px", "color":"#64748b"}),
-#                             html.A("Select CSV", style={"fontSize":"15px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
-#                         ]),
+#                             html.Div([
+#                                 html.Span("Drag & drop or ", style={"fontSize":"15px", "color":"rgba(255,255,255,0.7)"}),
+#                                 html.A("Select CSV", style={"fontSize":"15px", "color":"#00c896", "fontWeight":600, "textDecoration":"underline"})
+#                             ], style={"display":"flex", "alignItems":"center", "gap":"8px"}),
+#                             html.Span("📁", style={"fontSize":"24px", "marginLeft":"12px", "opacity":0.8, "transition":"all 0.3s"}),
+#                         ], style={"display":"flex", "alignItems":"center", "justifyContent":"center"}),
 #                         style={
 #                             "width":"100%","height":"100px",
-#                             "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
+#                             "borderWidth":"2px","borderStyle":"dashed","borderColor":"rgba(0,200,150,0.3)",
 #                             "borderRadius":"16px","textAlign":"center",
 #                             "margin":"10px 0",
-#                             "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-#                             "display":"flex", "flexDirection":"column", "justifyContent":"center", "alignItems":"center",
+#                             "background":"rgba(0,200,150,0.05)",
+#                             "display":"flex", "flexDirection":"row", "justifyContent":"center", "alignItems":"center",
 #                             "cursor":"pointer", "transition":"all 0.3s"
 #                         },
 #                         multiple=False, accept=".csv",
@@ -2807,8 +2959,9 @@
 #                     html.Div(id="preview-b"),
 #                 ], style={
 #                     "flex":1, "minWidth":"420px", "padding":"24px",
-#                     "background":"white", "borderRadius":"16px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #             ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"32px"}),
 
@@ -2816,7 +2969,7 @@
 
 #             html.Div([
 #                 html.H3("Analysis Settings", style={
-#                     "fontSize":"24px", "fontWeight":600, "color":"#1e293b",
+#                     "fontSize":"24px", "fontWeight":600, "color":"inherit",
 #                     "marginBottom":"20px"
 #                 }),
 #                 html.Div([
@@ -2876,42 +3029,46 @@
 #                     )
 #                 ], style={"textAlign":"right","margin":"24px 0 12px"}),
 #             ], style={
-#                 "background":"white","border":"none",
+#                 "background":"rgba(255,255,255,0.05)","border":"1px solid rgba(255,255,255,0.1)",
 #                 "borderRadius":"16px","padding":"24px",
-#                 "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                 "boxShadow":"0 4px 12px rgba(0,0,0,0.3)"
 #             }),
 
 #             # ---- Results ----
 #             html.Div([
-#                 html.Div([
-#                     dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
+#             html.Div([
+#                 dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"16px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
 #                     "padding":"20px", "marginBottom":"24px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div([
-#                     dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
+#                 dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"16px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
 #                     "padding":"20px", "marginBottom":"24px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div([
-#                     dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
+#                 dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
 #                 ], style={
-#                     "background":"white", "borderRadius":"16px",
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
 #                     "padding":"20px", "marginBottom":"24px",
-#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                     "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #                 html.Div(id="x-stats", style={"margin":"24px 0"}),
 #                 html.H4("Trade windows (first and last day)", style={
-#                     "fontSize":"22px", "fontWeight":600, "color":"#1e293b",
+#                     "fontSize":"22px", "fontWeight":600, "color":"inherit",
 #                     "marginTop":"32px", "marginBottom":"16px"
 #                 }),
 #                 html.Div(id="x-trade-windows", style={
-#                     "background":"white", "borderRadius":"16px",
-#                     "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+#                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+#                     "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+#                     "border":"1px solid rgba(255,255,255,0.1)"
 #                 }),
 #             ], style={"marginTop":"32px"}),
 
@@ -2919,7 +3076,7 @@
 #             dcc.Store(id=STORE_B),
 
 #             html.Div(dcc.Link("← Back to Home", href="/", style={
-#                 "textDecoration":"none", "color":"#667eea", "fontWeight":500,
+#                 "textDecoration":"none", "color":"#00c896", "fontWeight":500,
 #                 "fontSize":"16px", "marginTop":"32px", "display":"inline-block"
 #             }))
 #         ],
@@ -2934,11 +3091,12 @@
 #         html.Div(id="navbar-container"),
 #         dcc.Location(id="url"),
 #         html.Div(id="page-content"),
-#         dcc.Store(id=STORE_THEME, data="dark")
+#         dcc.Store(id=STORE_THEME, data="dark", storage_type="memory")
 #     ],
 #     id="app-container",
 #     style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-#            "minHeight":"100vh","padding":"0", "margin":"0"}
+#            "minHeight":"100vh","padding":"0", "margin":"0",
+#            "transition": "background-color 0.3s ease, color 0.3s ease"}
 # )
 
 # # Theme toggle callback
@@ -2949,6 +3107,10 @@
 #     prevent_initial_call=True
 # )
 # def toggle_theme(n_clicks, current_theme):
+#     # Handle first click and subsequent clicks
+#     if current_theme is None or current_theme == "":
+#         return "light"  # If no theme set, toggle to light
+#     # Toggle between dark and light
 #     return "light" if current_theme == "dark" else "dark"
 
 # # Theme and Navbar callbacks
@@ -2958,12 +3120,15 @@
 #     Input(STORE_THEME, "data")
 # )
 # def update_navbar_and_theme(theme):
+#     if theme is None:
+#         theme = "dark"  # Default to dark if theme is None
 #     is_dark = theme == "dark"
 #     bg_style = {
 #         "fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
 #         "minHeight":"100vh","padding":"0", "margin":"0",
 #         "background": "#0a0a0a" if is_dark else "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-#         "color": "white" if is_dark else "#1e293b"
+#         "color": "white" if is_dark else "#1e293b",
+#         "transition": "background-color 0.3s ease, color 0.3s ease"
 #     }
 #     return navbar(theme), bg_style
 
@@ -3033,8 +3198,39 @@
 #     table = dash_table.DataTable(
 #         data=df.head(10).to_dict("records"),
 #         columns=[{"name": c, "id": c} for c in df.columns],
-#         page_size=10, style_table={"overflowX": "auto"},
-#         style_cell={"textAlign": "left", "minWidth": "120px"},
+#         page_size=10, 
+#         style_table={"overflowX": "auto", "backgroundColor": "#1a1a1a"},
+#         style_cell={
+#             "textAlign": "left", 
+#             "minWidth": "120px",
+#             "backgroundColor": "#1a1a1a",
+#             "color": "rgba(255,255,255,0.9)",
+#             "border": "1px solid rgba(255,255,255,0.1)",
+#             "fontFamily": "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+#         },
+#         style_header={
+#             "backgroundColor": "#252525",
+#             "color": "rgba(255,255,255,0.95)",
+#             "fontWeight": "600",
+#             "border": "1px solid rgba(0,200,150,0.3)",
+#             "textAlign": "left"
+#         },
+#         style_data={
+#             "backgroundColor": "#1a1a1a",
+#             "color": "rgba(255,255,255,0.9)",
+#             "border": "1px solid rgba(255,255,255,0.1)"
+#         },
+#         style_data_conditional=[
+#             {
+#                 "if": {"row_index": "even"},
+#                 "backgroundColor": "#222222",
+#             },
+#             {
+#                 "if": {"state": "selected"},
+#                 "backgroundColor": "rgba(0,200,150,0.2)",
+#                 "border": "1px solid rgba(0,200,150,0.5)"
+#             }
+#         ],
 #     )
 
 #     raw_payload = {
@@ -3187,7 +3383,7 @@
 #             title = "Gain Event Analysis"
 #             label = "Min Gain: "
 #             sign = +1
-#             color = "#3b82f6"
+#             color = "#22c55e"
 #         else:
 #             summary = drop_event_analysis(dff, minimum_per_drop=th_frac, windows_size=ws)
 #             title = "Drop Event Analysis"
@@ -3196,26 +3392,28 @@
 #             color = "#ef4444"
 
 #         (k, v), = summary.items()
+#         bg_color = "rgba(34,197,94,0.08)" if mode == "gain" else "rgba(239,68,68,0.08)"
+#         border_color = "rgba(34,197,94,0.3)" if mode == "gain" else "rgba(239,68,68,0.3)"
 #         card = html.Div([
-#             html.H3(title, style={"marginTop": 0, "fontSize": "24px", "fontWeight": 700, "color": "#1e293b"}),
+#             html.H3(title, style={"marginTop": 0, "fontSize": "24px", "fontWeight": 700, "color": "inherit"}),
 #             html.P([
 #                 html.Strong("Change over: "), f"{ws} calendar days (weekend-aware) ",
 #                 html.Span(" · "),
 #                 html.Strong("Range: "), f"{start.date()} → {end.date()} ",
 #                 html.Span(" · "),
 #                 html.Strong(label), f"{th_pct:.2f}%",
-#             ], style={"fontSize": "14px", "color": "#64748b", "marginBottom": "20px"}),
+#             ], style={"fontSize": "14px", "color": "inherit", "opacity": 0.8, "marginBottom": "20px"}),
 #             html.Div([
 #                 html.Div([
-#                     html.Div("Events", style={"color": "#64748b", "fontSize": "13px", "textTransform": "uppercase", "letterSpacing": "0.5px"}),
+#                     html.Div("Events", style={"color": "rgba(255,255,255,0.7)", "fontSize": "13px", "textTransform": "uppercase", "letterSpacing": "0.5px"}),
 #                     html.Div(str(v["events"]), style={"fontSize": "36px", "fontWeight": 700, "color": color, "marginTop": "8px"}),
-#                 ], style={"flex": 1, "textAlign": "center", "padding": "16px", "background": "white", "borderRadius": "12px"}),
+#                 ], style={"flex": 1, "textAlign": "center", "padding": "16px", "background": "rgba(255,255,255,0.05)", "borderRadius": "12px", "border": "1px solid rgba(255,255,255,0.1)"}),
 #                 html.Div([
-#                     html.Div("Probability", style={"color": "#64748b", "fontSize": "13px", "textTransform": "uppercase", "letterSpacing": "0.5px"}),
+#                     html.Div("Probability", style={"color": "rgba(255,255,255,0.7)", "fontSize": "13px", "textTransform": "uppercase", "letterSpacing": "0.5px"}),
 #                     html.Div(v["probability"], style={"fontSize": "36px", "fontWeight": 700, "color": color, "marginTop": "8px"}),
-#                 ], style={"flex": 1, "textAlign": "center", "padding": "16px", "background": "white", "borderRadius": "12px"}),
+#                 ], style={"flex": 1, "textAlign": "center", "padding": "16px", "background": "rgba(255,255,255,0.05)", "borderRadius": "12px", "border": "1px solid rgba(255,255,255,0.1)"}),
 #             ], style={"display": "flex", "gap": "16px", "marginTop": "12px"}),
-#         ], style={"border": "none", "borderRadius": "16px", "padding": "24px", "background": "linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)", "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"})
+#         ], style={"border": f"1px solid {border_color}", "borderRadius": "16px", "padding": "24px", "background": bg_color, "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"})
 
 #         # Weekend-aware returns for visuals
 #         ret = compute_windowed_returns_calendar(dff, ws)
@@ -3290,12 +3488,12 @@
 #         else:
 #             stats_list = [("Data points", "0")]
 #         stats_view = html.Div([
-#             html.H4("Change summary", style={"margin": "0 0 16px 0", "fontSize": "20px", "fontWeight": 600, "color": "#1e293b"}),
-#             html.Ul([html.Li(html.Span([html.Strong(k + ": ", style={"color": "#1e293b"}), v]), style={
-#                 "marginBottom": "8px", "fontSize": "14px", "color": "#475569"
+#             html.H4("Change summary", style={"margin": "0 0 16px 0", "fontSize": "20px", "fontWeight": 600, "color": "inherit"}),
+#             html.Ul([html.Li(html.Span([html.Strong(k + ": ", style={"color": "inherit"}), v]), style={
+#                 "marginBottom": "8px", "fontSize": "14px", "color": "inherit", "opacity": 0.9
 #             }) for k, v in stats_list], style={"listStyle": "none", "padding": 0})
-#         ], style={"background": "linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)", "border": "none",
-#                   "borderRadius": "16px", "padding": "24px", "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"})
+#         ], style={"background": "rgba(255,255,255,0.05)", "border": "1px solid rgba(255,255,255,0.1)",
+#                   "borderRadius": "16px", "padding": "24px", "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"})
 
 #         # Trade windows list
 #         trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
@@ -3471,8 +3669,39 @@
 #             tableA = dash_table.DataTable(
 #                 data=dfA.head(10).to_dict("records"),
 #                 columns=[{"name": c, "id": c} for c in dfA.columns],
-#                 page_size=10, style_table={"overflowX":"auto"},
-#                 style_cell={"textAlign":"left","minWidth":"120px"}
+#                 page_size=10, 
+#                 style_table={"overflowX":"auto", "backgroundColor": "#1a1a1a"},
+#                 style_cell={
+#                     "textAlign":"left",
+#                     "minWidth":"120px",
+#                     "backgroundColor": "#1a1a1a",
+#                     "color": "rgba(255,255,255,0.9)",
+#                     "border": "1px solid rgba(255,255,255,0.1)",
+#                     "fontFamily": "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+#                 },
+#                 style_header={
+#                     "backgroundColor": "#252525",
+#                     "color": "rgba(255,255,255,0.95)",
+#                     "fontWeight": "600",
+#                     "border": "1px solid rgba(0,200,150,0.3)",
+#                     "textAlign": "left"
+#                 },
+#                 style_data={
+#                     "backgroundColor": "#1a1a1a",
+#                     "color": "rgba(255,255,255,0.9)",
+#                     "border": "1px solid rgba(255,255,255,0.1)"
+#                 },
+#                 style_data_conditional=[
+#                     {
+#                         "if": {"row_index": "even"},
+#                         "backgroundColor": "#222222",
+#                     },
+#                     {
+#                         "if": {"state": "selected"},
+#                         "backgroundColor": "rgba(0,200,150,0.2)",
+#                         "border": "1px solid rgba(0,200,150,0.5)"
+#                     }
+#                 ],
 #             )
 #             out[2] = html.Div([html.H4("Preview A (first 10)"), tableA])
 #             out[3] = {
@@ -3496,8 +3725,39 @@
 #             tableB = dash_table.DataTable(
 #                 data=dfB.head(10).to_dict("records"),
 #                 columns=[{"name": c, "id": c} for c in dfB.columns],
-#                 page_size=10, style_table={"overflowX":"auto"},
-#                 style_cell={"textAlign":"left","minWidth":"120px"}
+#                 page_size=10, 
+#                 style_table={"overflowX":"auto", "backgroundColor": "#1a1a1a"},
+#                 style_cell={
+#                     "textAlign":"left",
+#                     "minWidth":"120px",
+#                     "backgroundColor": "#1a1a1a",
+#                     "color": "rgba(255,255,255,0.9)",
+#                     "border": "1px solid rgba(255,255,255,0.1)",
+#                     "fontFamily": "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+#                 },
+#                 style_header={
+#                     "backgroundColor": "#252525",
+#                     "color": "rgba(255,255,255,0.95)",
+#                     "fontWeight": "600",
+#                     "border": "1px solid rgba(0,200,150,0.3)",
+#                     "textAlign": "left"
+#                 },
+#                 style_data={
+#                     "backgroundColor": "#1a1a1a",
+#                     "color": "rgba(255,255,255,0.9)",
+#                     "border": "1px solid rgba(255,255,255,0.1)"
+#                 },
+#                 style_data_conditional=[
+#                     {
+#                         "if": {"row_index": "even"},
+#                         "backgroundColor": "#222222",
+#                     },
+#                     {
+#                         "if": {"state": "selected"},
+#                         "backgroundColor": "rgba(0,200,150,0.2)",
+#                         "border": "1px solid rgba(0,200,150,0.5)"
+#                     }
+#                 ],
 #             )
 #             out[6] = html.Div([html.H4("Preview B (first 10)"), tableB])
 #             out[7] = {
@@ -3717,22 +3977,22 @@
 #             ("Max %",       f"{desc['max']*100:.2f}%"),
 #         ]
 #         return html.Div([
-#             html.H4(name, style={"margin":"0 0 16px 0", "fontSize":"18px", "fontWeight":600, "color":"#1e293b"}),
-#             html.Ul([html.Li(html.Span([html.Strong(k + ": ", style={"color":"#1e293b"}), v]), style={
-#                 "marginBottom":"8px", "fontSize":"14px", "color":"#475569"
+#             html.H4(name, style={"margin":"0 0 16px 0", "fontSize":"18px", "fontWeight":600, "color":"inherit"}),
+#             html.Ul([html.Li(html.Span([html.Strong(k + ": ", style={"color":"inherit"}), v]), style={
+#                 "marginBottom":"8px", "fontSize":"14px", "color":"inherit", "opacity":0.9
 #             }) for k, v in items], style={"listStyle":"none", "padding":0})
-#         ], style={"flex":1, "background":"linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)","border":"none",
-#                   "borderRadius":"16px","padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"})
+#         ], style={"flex":1, "background":"rgba(255,255,255,0.05)","border":"1px solid rgba(255,255,255,0.1)",
+#                   "borderRadius":"16px","padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)"})
 
 #     corr_text = html.Div([
-#         html.H4("Relationship", style={"margin":"0 0 12px 0", "fontSize":"18px", "fontWeight":600, "color":"#1e293b"}),
+#         html.H4("Relationship", style={"margin":"0 0 12px 0", "fontSize":"18px", "fontWeight":600, "color":"inherit"}),
 #         html.P(f"Pearson correlation (windowed returns): {corr:.2f}" if np.isfinite(corr) else
 #                "Pearson correlation (windowed returns): n/a", style={
-#                    "fontSize":"16px", "color":"#475569", "margin":0,
+#                    "fontSize":"16px", "color":"inherit", "opacity":0.9, "margin":0,
 #                    "fontWeight":500 if np.isfinite(corr) else 400
 #                })
-#     ], style={"flex":1, "background":"linear-gradient(135deg, #fff7ed 0%, #ffffff 100%)","border":"2px solid #fde68a",
-#               "borderRadius":"16px","padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"})
+#     ], style={"flex":1, "background":"rgba(0,200,150,0.08)","border":"1px solid rgba(0,200,150,0.3)",
+#               "borderRadius":"16px","padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)"})
 
 #     stats_view = html.Div([
 #         html.Div([
@@ -3760,10 +4020,7 @@
 
 
 
-# ==============================================================================================================================================================================================================
-
-
-
+# ================================================================================================================================================================================================================
 
 import os
 import base64
@@ -4340,7 +4597,6 @@ def navbar(theme="dark"):
                 html.Button(
                     "🌙" if is_dark else "☀️",
                     id="theme-toggle",
-                    n_clicks=0,
                     style={
                         "background": "transparent",
                         "border": f"1px solid {border_color}",
@@ -5012,7 +5268,7 @@ app.layout = html.Div(
         html.Div(id="navbar-container"),
         dcc.Location(id="url"),
         html.Div(id="page-content"),
-        dcc.Store(id=STORE_THEME, data="dark", storage_type="memory")
+        dcc.Store(id=STORE_THEME, data="dark")
     ],
     id="app-container",
     style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
@@ -5020,25 +5276,33 @@ app.layout = html.Div(
            "transition": "background-color 0.3s ease, color 0.3s ease"}
 )
 
-# Theme toggle callback
+# Theme toggle callback - handles button clicks
+# This callback must be defined before the navbar callback to ensure proper execution order
 @app.callback(
-    Output(STORE_THEME, "data"),
+    Output(STORE_THEME, "data", allow_duplicate=True),
     Input("theme-toggle", "n_clicks"),
     State(STORE_THEME, "data"),
     prevent_initial_call=True
 )
 def toggle_theme(n_clicks, current_theme):
-    # Handle first click and subsequent clicks
+    # Triggered only when button is clicked (prevent_initial_call=True)
+    # n_clicks will be >= 1 when this callback fires
+    
+    # Get current theme or default to dark
     if current_theme is None or current_theme == "":
-        return "light"  # If no theme set, toggle to light
+        current_theme = "dark"
+    
     # Toggle between dark and light
-    return "light" if current_theme == "dark" else "dark"
+    # If current is "dark", return "light"; if "light", return "dark"
+    new_theme = "light" if current_theme == "dark" else "dark"
+    return new_theme
 
-# Theme and Navbar callbacks
+# Theme and Navbar callbacks - updates UI based on theme store
 @app.callback(
     Output("navbar-container", "children"),
     Output("app-container", "style"),
-    Input(STORE_THEME, "data")
+    Input(STORE_THEME, "data"),
+    prevent_initial_call=False
 )
 def update_navbar_and_theme(theme):
     if theme is None:
@@ -5052,6 +5316,7 @@ def update_navbar_and_theme(theme):
         "transition": "background-color 0.3s ease, color 0.3s ease"
     }
     return navbar(theme), bg_style
+
 
 # Router
 @app.callback(
@@ -5938,5 +6203,6 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
