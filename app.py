@@ -1837,9 +1837,6 @@
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 8050))
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
-
 import os
 import base64
 import io
@@ -1857,147 +1854,6 @@ from plotly.subplots import make_subplots
 # -----------------------------
 app = Dash(__name__, suppress_callback_exceptions=True)
 app.title = "Index Data Analysis"
-
-# --- Minimal, dependency-free UI theme ---
-# Adds a modern look: sticky navbar, improved cards/buttons, subtle animations, and CSS variables
-app.index_string = """
-<!DOCTYPE html>
-<html>
-    <head>
-        {%metas%}
-        <title>{%title%}</title>
-        {%favicon%}
-        {%css%}
-        <style>
-            :root{
-                --bg: #f6f7fb;
-                --card-bg: #ffffff;
-                --text: #0f172a;
-                --muted: #64748b;
-                --border: #e6e8ee;
-                --primary: #0d6efd;
-                --primary-600:#2b6ef6;
-                --danger: #ef4444;
-                --success:#16a34a;
-                --shadow-sm: 0 1px 3px rgba(15, 23, 42, .06);
-                --shadow-md: 0 8px 24px rgba(15, 23, 42, .08);
-                --radius: 14px;
-            }
-            * { box-sizing: border-box; }
-            html, body { height: 100%; }
-            body {
-                margin: 0;
-                background: var(--bg);
-                color: var(--text);
-                font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-            }
-            .container { max-width: 1200px; margin: 0 auto; padding: 8px 12px; }
-            .nav {
-                position: sticky; top: 0; z-index: 50;
-                backdrop-filter: saturate(180%) blur(8px);
-                background: rgba(255,255,255,.75);
-                border-bottom: 1px solid var(--border);
-            }
-            .nav-inner {
-                display: flex; gap: 16px; align-items: center; height: 56px;
-                max-width: 1200px; margin: 0 auto; padding: 0 18px;
-            }
-            .nav a {
-                color: var(--text);
-                text-decoration: none;
-                font-weight: 600;
-                padding: 8px 12px;
-                border-radius: 10px;
-                transition: background .15s ease, color .15s ease;
-            }
-            .nav a:hover { background: #eef2ff; color: #1d4ed8; }
-
-            .card {
-                display: inline-block;
-                padding: 22px 26px;
-                border-radius: var(--radius);
-                border: 1px solid var(--border);
-                background: var(--card-bg);
-                color: var(--text);
-                box-shadow: var(--shadow-sm);
-                width: 320px;
-                transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease;
-            }
-            .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color:#d9dbe3; }
-            .card h3 { margin: 0 0 6px; }
-            .card p { margin: 0; color: var(--muted); }
-
-            .btn {
-                display: inline-flex; align-items: center; justify-content: center;
-                padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border);
-                font-weight: 600; cursor: pointer; text-decoration: none;
-                transition: transform .06s ease, box-shadow .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
-                user-select: none;
-            }
-            .btn:active { transform: translateY(1px); }
-            .btn-primary {
-                background: var(--primary);
-                color: white;
-                border-color: transparent;
-                box-shadow: 0 6px 16px rgba(13, 110, 253, .25);
-            }
-            .btn-primary:hover { background: var(--primary-600); }
-            .btn-ghost {
-                background: transparent;
-            }
-            .section {
-                background: var(--card-bg);
-                border: 1px solid var(--border);
-                border-radius: var(--radius);
-                box-shadow: var(--shadow-sm);
-                padding: 12px;
-            }
-            .section h3 { margin: 0 0 6px; }
-            .section + .section { margin-top: 10px; }
-
-            /* Upload dropzones */
-            .upl {
-                width: 100%; height: 80px; line-height: 80px;
-                border: 1px dashed var(--border);
-                border-radius: 12px; text-align: center;
-                margin: 10px 0; background: #fafafa;
-                color: var(--muted);
-                transition: border-color .15s ease, background .15s ease;
-            }
-            .upl:hover { border-color:#cdd0d8; background: #f7f7fb; }
-
-            /* DataTable tweaks */
-            .dash-table-container .row { margin: 0; }
-            .dash-table-container .dash-spreadsheet-container { border-radius: 10px; border: 1px solid var(--border); }
-            .dash-table-container table { border-radius: 10px; overflow: hidden; }
-
-            /* Headings spacing */
-            h1 { margin: 8px 0 4px; }
-            h2 { margin: 10px 0 6px; }
-            h4 { margin: 6px 0; }
-
-            /* Utility */
-            .grid { display:flex; gap:24px; flex-wrap:wrap; }
-            .col { flex:1; min-width:420px; }
-            .muted { color: var(--muted); }
-            .link { color: #0d6efd; text-decoration: none; }
-            .link:hover { text-decoration: underline; }
-        </style>
-    </head>
-    <body>
-        <div id="react-entry-point">
-            {%app_entry%}
-        </div>
-        <footer>
-            {%config%}
-            {%scripts%}
-            {%renderer%}
-        </footer>
-    </body>
-</html>
-"""
 
 # Expose the underlying Flask server for Gunicorn
 server = app.server
@@ -2358,7 +2214,6 @@ def build_trade_window_table(df: pd.DataFrame, window_size_days: int, limit: int
         page_size=min(20, len(df_out)) or 5,
         style_table={"overflowX": "auto"},
         style_cell={"textAlign": "left", "minWidth": "160px"},
-        style_header={"backgroundColor":"#f1f5f9","fontWeight":"700","border":"1px solid #e5e7eb"},
     )
     return table
 
@@ -2368,72 +2223,154 @@ def build_trade_window_table(df: pd.DataFrame, window_size_days: int, limit: int
 
 card_style = {
     "display": "inline-block",
-    "padding": "24px 28px",
-    "borderRadius": "16px",
-    "border": "1px solid #e6e6e6",
-    "boxShadow": "0 3px 12px rgba(0,0,0,0.06)",
-    "background": "white",
+    "padding": "32px 36px",
+    "borderRadius": "20px",
+    "border": "none",
+    "boxShadow": "0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
+    "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     "textDecoration": "none",
-    "color": "#0f172a",
+    "color": "white",
     "width": "320px",
-    "transition": "transform .08s ease",
+    "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    "cursor": "pointer",
+}
+card_style_hover = {
+    "transform": "translateY(-4px)",
+    "boxShadow": "0 12px 32px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.12)",
 }
 
 def navbar():
     return html.Div(
-        html.Div(
-            [
-                dcc.Link("Home", href="/", className="link"),
-                dcc.Link("Single Index", href="/single", className="link"),
-                dcc.Link("Cross Index", href="/cross", className="link"),
-            ],
-            className="nav-inner"
-        ),
-        className="nav"
+        [
+            # Left side: Logo and Results finder
+            html.Div([
+                html.Img(
+                    src="https://starlab-public.s3.us-east-1.amazonaws.com/starlab_images/transparent-slc-rgb.png",
+                    style={
+                        "height": "36px",
+                        "marginRight": "20px",
+                        "objectFit": "contain"
+                    }
+                ),
+                html.Div([
+                    html.Span("▶", style={"color": "#00d4aa", "marginRight": "8px", "fontSize": "10px"}),
+                    html.Span("Results finder", style={"color": "white", "fontSize": "14px", "fontWeight": 500})
+                ], style={"display": "flex", "alignItems": "center"})
+            ], style={"display": "flex", "alignItems": "center", "flex": 1}),
+            
+            # Right side: Navigation elements
+            html.Div([
+                dcc.Link("Home", href="/", style={
+                    "marginRight": "20px", "textDecoration": "none",
+                    "color": "white", "fontSize": "14px", "fontWeight": 500,
+                    "padding": "6px 12px", "borderRadius": "4px",
+                    "transition": "all 0.2s"
+                }),
+                dcc.Link("Single Index", href="/single", style={
+                    "marginRight": "20px", "textDecoration": "none",
+                    "color": "white", "fontSize": "14px", "fontWeight": 500,
+                    "padding": "6px 12px", "borderRadius": "4px",
+                    "transition": "all 0.2s"
+                }),
+                dcc.Link("Cross Index", href="/cross", style={
+                    "textDecoration": "none", "color": "white",
+                    "fontSize": "14px", "fontWeight": 500,
+                    "padding": "6px 12px", "borderRadius": "4px",
+                    "transition": "all 0.2s"
+                }),
+            ], style={"display": "flex", "alignItems": "center"})
+        ],
+        style={
+            "padding": "14px 32px",
+            "background": "#0a0a0a",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "space-between",
+            "boxShadow": "0 2px 8px rgba(0,0,0,0.3)",
+            "marginBottom": "0",
+            "borderBottom": "1px solid rgba(255,255,255,0.1)"
+        }
     )
 
 def home_layout():
     return html.Div(
         [
-            html.H1("Index Data Analysis"),
-            html.P("Choose a workflow:", className="muted"),
+            html.Div([
+                html.H1("Index Data Analysis", style={
+                    "fontSize":"48px", "fontWeight":700, "marginBottom":"16px",
+                    "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    "WebkitBackgroundClip":"text", "WebkitTextFillColor":"transparent",
+                    "backgroundClip":"text"
+                }),
+                html.P("Choose a workflow to begin your analysis:", style={
+                    "fontSize":"18px", "color":"#64748b", "marginBottom":"40px"
+                }),
+            ], style={"textAlign":"center", "marginBottom":"48px"}),
             html.Div(
                 [
                     dcc.Link(
                         html.Div(
-                            [html.H3("Single Index"),
-                             html.P("Analyze one index")],
-                            className="card"
+                            [
+                                html.Div("📊", style={"fontSize":"48px", "marginBottom":"16px"}),
+                                html.H3("Single Index", style={"margin":"0 0 8px 0", "fontSize":"24px", "fontWeight":600}),
+                                html.P("Analyze one index with comprehensive indicators", style={
+                                    "margin":0, "fontSize":"14px", "opacity":0.9
+                                })
+                            ],
+                            style={**card_style, "textAlign":"center"}
                         ),
                         href="/single",
-                        style={"marginRight": "20px", "display":"inline-block"}
+                        style={"marginRight": "24px", "textDecoration":"none"}
                     ),
                     dcc.Link(
                         html.Div(
-                            [html.H3("Cross Index"),
-                             html.P("Compare two indexes")],
-                            className="card"
+                            [
+                                html.Div("🔀", style={"fontSize":"48px", "marginBottom":"16px"}),
+                                html.H3("Cross Index", style={"margin":"0 0 8px 0", "fontSize":"24px", "fontWeight":600}),
+                                html.P("Compare two indexes side by side", style={
+                                    "margin":0, "fontSize":"14px", "opacity":0.9
+                                })
+                            ],
+                            style={**card_style, "background":"linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", "textAlign":"center"}
                         ),
                         href="/cross",
-                        style={"display":"inline-block"}
+                        style={"textDecoration":"none"}
                     ),
                 ],
-                style={"marginTop": "12px"}
+                style={"marginTop": "12px", "display":"flex", "justifyContent":"center", "flexWrap":"wrap"}
             ),
         ],
-        className="container"
+        style={"maxWidth":"1200px","margin":"0 auto","padding":"48px 24px", "marginTop":"0"}
     )
 
 # ---------- Single Index (FULL) ----------
 def single_layout():
     return html.Div([
-        html.H1("Single Index — Analysis"),
-        html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", className="muted"),
+        html.Div([
+            html.H1("Single Index Analysis", style={
+                "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
+                "color":"#1e293b"
+            }),
+            html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
+                "fontSize":"16px", "color":"#64748b", "marginBottom":"32px"
+            }),
+        ]),
 
         dcc.Upload(
             id="uploader",
-            children=html.Div(["Drag and Drop or ", html.A("Select CSV File")]),
-            className="upl",
+            children=html.Div([
+                html.Div("📁", style={"fontSize":"32px", "marginBottom":"8px"}),
+                html.Div("Drag and Drop or ", style={"fontSize":"16px", "color":"#64748b"}),
+                html.A("Select CSV File", style={"fontSize":"16px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
+            ]),
+            style={
+                "width":"100%","height":"120px","lineHeight":"120px",
+                "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
+                "borderRadius":"16px","textAlign":"center","margin":"10px 0",
+                "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                "transition":"all 0.3s", "cursor":"pointer",
+                "display":"flex", "flexDirection":"column", "justifyContent":"center", "alignItems":"center"
+            },
             multiple=False, accept=".csv",
         ),
 
@@ -2441,23 +2378,36 @@ def single_layout():
         html.Div(id="warn-msg", style={"marginBottom": "8px"}),
 
         html.Div([
-            html.Label("Analysis Type(s)", style={"fontWeight": "600"}),
+            html.Label("Analysis Type(s)", style={
+                "fontWeight": "600", "fontSize":"16px", "color":"#1e293b",
+                "marginBottom":"12px", "display":"block"
+            }),
             dcc.Checklist(
                 id="analysis-types",
                 options=[{"label": " Drop", "value": "drop"},
                          {"label": " Gain", "value": "gain"}],
                 value=["drop", "gain"], inline=True,
-                inputStyle={"marginRight": "6px"},
-                labelStyle={"display": "inline-block", "marginRight": "10px"},
+                inputStyle={"marginRight": "8px", "cursor":"pointer"},
+                labelStyle={
+                    "display": "inline-block", "marginRight": "24px",
+                    "fontSize":"15px", "color":"#475569", "cursor":"pointer"
+                },
             ),
-        ], className="section", style={"marginBottom":"10px"}),
+        ], style={
+            "marginBottom": "24px", "padding":"20px",
+            "background":"white", "borderRadius":"12px",
+            "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+        }),
 
         # Controls row: Drop (left) & Gain (right)
         html.Div([
 
             # -------------------- DROP CONTROLS --------------------
             html.Div([
-                html.H3("Drop Options", style={"marginBottom": "6px"}),
+                html.H3("Drop Options", style={
+                    "marginBottom": "16px", "fontSize":"22px",
+                    "fontWeight":600, "color":"#dc2626"
+                }),
 
                 # Date range + Jump to
                 html.Div([
@@ -2524,11 +2474,19 @@ def single_layout():
                         placeholder="e.g. 2.7", style={"marginLeft":"8px","width":"120px"}
                     )
                 ], style={"margin":"6px 0"}),
-            ], className="section col"),
+            ], style={
+                "flex":1, "minWidth":"420px", "padding":"24px",
+                "background":"white", "borderRadius":"16px",
+                "boxShadow":"0 4px 12px rgba(0,0,0,0.08)",
+                "border":"2px solid #fee2e2"
+            }),
 
             # -------------------- GAIN CONTROLS --------------------
             html.Div([
-                html.H3("Gain Options", style={"marginBottom": "6px"}),
+                html.H3("Gain Options", style={
+                    "marginBottom": "16px", "fontSize":"22px",
+                    "fontWeight":600, "color":"#16a34a"
+                }),
 
                 html.Div([
                     html.Label("Date Range", style={"fontWeight": "600"}),
@@ -2594,13 +2552,21 @@ def single_layout():
                         placeholder="e.g. 2.7", style={"marginLeft":"8px","width":"120px"}
                     )
                 ], style={"margin":"6px 0"}),
-            ], className="section col"),
+            ], style={
+                "flex":1, "minWidth":"420px", "padding":"24px",
+                "background":"white", "borderRadius":"16px",
+                "boxShadow":"0 4px 12px rgba(0,0,0,0.08)",
+                "border":"2px solid #dcfce7"
+            }),
 
-        ], className="grid", style={"marginBottom":"8px"}),
+        ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"8px"}),
 
         # -------------------- INDICATORS TOGGLES --------------------
         html.Div([
-            html.H3("Indicators"),
+            html.H3("Indicators", style={
+                "marginBottom":"16px", "fontSize":"22px",
+                "fontWeight":600, "color":"#1e293b"
+            }),
             dcc.Checklist(
                 id="indicators-select",
                 options=[
@@ -2614,87 +2580,218 @@ def single_layout():
                 ],
                 value=["sma","ema","bb","rsi","macd","vol","dd"],
                 inline=True,
-                inputStyle={"marginRight":"6px"},
-                labelStyle={"display":"inline-block","marginRight":"12px"}
+                inputStyle={"marginRight":"8px", "cursor":"pointer"},
+                labelStyle={
+                    "display":"inline-block","marginRight":"16px",
+                    "fontSize":"14px", "color":"#475569", "cursor":"pointer"
+                }
             ),
-        ], className="section", style={"margin":"8px 0 4px"}),
+        ], style={
+            "margin":"24px 0", "padding":"24px",
+            "background":"white", "borderRadius":"16px",
+            "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+        }),
 
         html.Div([
-            html.Button("Analyze", id="analyze", n_clicks=0, className="btn btn-primary")
-        ], style={"textAlign":"right","margin":"6px 0 12px"}),
+            html.Button(
+                "Analyze", id="analyze", n_clicks=0,
+                style={
+                    "padding":"14px 32px","borderRadius":"12px","border":"none",
+                    "fontWeight":600,"cursor":"pointer",
+                    "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    "color":"white", "fontSize":"16px",
+                    "boxShadow":"0 4px 12px rgba(102, 126, 234, 0.4)",
+                    "transition":"all 0.3s"
+                }
+            )
+        ], style={"textAlign":"right","margin":"24px 0 32px"}),
 
         # ---------- Results (Drop / Gain) ----------
         html.Div([
             html.Div([
-                html.H2("Drop Analysis"),
-                html.Div(id="analysis-output-drop", className="section"),
-                dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
-                dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
-                html.Div(id="stats-drop", style={"margin": "6px 0 14px"}),
-                html.H4("Trade windows (first and last day)"),
-                html.Div(id="trade-windows-drop"),
+                html.H2("Drop Analysis", style={
+                    "fontSize":"28px", "fontWeight":700, "color":"#dc2626",
+                    "marginBottom":"20px"
+                }),
+                html.Div(id="analysis-output-drop", style={
+                    "border": "2px solid #fee2e2", "borderRadius": "16px",
+                    "padding": "20px", "margin": "10px 0",
+                    "background": "linear-gradient(135deg, #fef2f2 0%, #ffffff 100%)",
+                    "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"
+                }),
+                html.Div([
+                    dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
+                ], style={
+                    "background":"white", "borderRadius":"12px",
+                    "padding":"16px", "marginBottom":"16px",
+                    "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+                }),
+                html.Div([
+                    dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
+                ], style={
+                    "background":"white", "borderRadius":"12px",
+                    "padding":"16px", "marginBottom":"16px",
+                    "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+                }),
+                html.Div(id="stats-drop", style={"margin": "24px 0"}),
+                html.H4("Trade windows (first and last day)", style={
+                    "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
+                    "marginTop":"32px", "marginBottom":"16px"
+                }),
+                html.Div(id="trade-windows-drop", style={
+                    "background":"white", "borderRadius":"12px",
+                    "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+                }),
             ], style={"flex": 1, "minWidth": "420px"}),
 
             html.Div([
-                html.H2("Gain Analysis"),
-                html.Div(id="analysis-output-gain", className="section"),
-                dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
-                dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
-                html.Div(id="stats-gain", style={"margin": "6px 0 14px"}),
-                html.H4("Trade windows (first and last day)"),
-                html.Div(id="trade-windows-gain"),
+                html.H2("Gain Analysis", style={
+                    "fontSize":"28px", "fontWeight":700, "color":"#16a34a",
+                    "marginBottom":"20px"
+                }),
+                html.Div(id="analysis-output-gain", style={
+                    "border": "2px solid #dcfce7", "borderRadius": "16px",
+                    "padding": "20px", "margin": "10px 0",
+                    "background": "linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)",
+                    "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"
+                }),
+                html.Div([
+                    dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
+                ], style={
+                    "background":"white", "borderRadius":"12px",
+                    "padding":"16px", "marginBottom":"16px",
+                    "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+                }),
+                html.Div([
+                    dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
+                ], style={
+                    "background":"white", "borderRadius":"12px",
+                    "padding":"16px", "marginBottom":"16px",
+                    "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+                }),
+                html.Div(id="stats-gain", style={"margin": "24px 0"}),
+                html.H4("Trade windows (first and last day)", style={
+                    "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
+                    "marginTop":"32px", "marginBottom":"16px"
+                }),
+                html.Div(id="trade-windows-gain", style={
+                    "background":"white", "borderRadius":"12px",
+                    "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+                }),
             ], style={"flex": 1, "minWidth": "420px"}),
         ], style={"display": "flex", "gap": "20px", "flexWrap": "wrap"}),
 
         # ---------- Indicators figure ----------
-        html.H3("Indicator Charts"),
-        dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
+        html.H3("Indicator Charts", style={
+            "fontSize":"28px", "fontWeight":700, "color":"#1e293b",
+            "marginTop":"40px", "marginBottom":"20px"
+        }),
+        html.Div([
+            dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
+        ], style={
+            "background":"white", "borderRadius":"16px",
+            "padding":"20px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+        }),
 
         html.Hr(),
-        html.Div(id="preview"),  # <<< Data Preview lives here (first 10 rows)
+        html.Div(id="preview", style={
+            "marginTop":"40px", "padding":"24px",
+            "background":"white", "borderRadius":"16px",
+            "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+        }),  # <<< Data Preview lives here (first 10 rows)
 
         dcc.Store(id=STORE_RAW),
         dcc.Store(id=STORE_META),
     ],
-    className="container")
+    style={"maxWidth":"1400px","margin":"0 auto","padding":"32px 24px", "marginTop":"0"})
 
 # ---------- Cross Index ----------
 def cross_layout():
     return html.Div(
         [
-            html.H1("Cross Index — Compare Two Indexes"),
+            html.Div([
+                html.H1("Cross Index Analysis", style={
+                    "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
+                    "color":"#1e293b"
+                }),
+                html.P("Compare two indexes side by side with correlation analysis", style={
+                    "fontSize":"16px", "color":"#64748b", "marginBottom":"32px"
+                }),
+            ]),
+
             html.Div([
                 html.Div([
-                    html.H3("Upload Index A (CSV)"),
+                    html.H3("Upload Index A (CSV)", style={
+                        "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
+                        "marginBottom":"16px"
+                    }),
                     dcc.Upload(
                         id="uploader-a",
-                        children=html.Div(["Drag & drop or ", html.A("Select CSV")]),
-                        className="upl",
+                        children=html.Div([
+                            html.Div("📁", style={"fontSize":"28px", "marginBottom":"6px"}),
+                            html.Div("Drag & drop or ", style={"fontSize":"15px", "color":"#64748b"}),
+                            html.A("Select CSV", style={"fontSize":"15px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
+                        ]),
+                        style={
+                            "width":"100%","height":"100px",
+                            "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
+                            "borderRadius":"16px","textAlign":"center",
+                            "margin":"10px 0",
+                            "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                            "display":"flex", "flexDirection":"column", "justifyContent":"center", "alignItems":"center",
+                            "cursor":"pointer", "transition":"all 0.3s"
+                        },
                         multiple=False, accept=".csv",
                     ),
                     html.Div(id="file-msg-a", style={"marginBottom": "6px"}),
                     html.Div(id="warn-msg-a", style={"marginBottom": "6px"}),
                     html.Div(id="preview-a"),
-                ], className="col"),
+                ], style={
+                    "flex":1, "minWidth":"420px", "padding":"24px",
+                    "background":"white", "borderRadius":"16px",
+                    "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+                }),
 
                 html.Div([
-                    html.H3("Upload Index B (CSV)"),
+                    html.H3("Upload Index B (CSV)", style={
+                        "fontSize":"20px", "fontWeight":600, "color":"#1e293b",
+                        "marginBottom":"16px"
+                    }),
                     dcc.Upload(
                         id="uploader-b",
-                        children=html.Div(["Drag & drop or ", html.A("Select CSV")]),
-                        className="upl",
+                        children=html.Div([
+                            html.Div("📁", style={"fontSize":"28px", "marginBottom":"6px"}),
+                            html.Div("Drag & drop or ", style={"fontSize":"15px", "color":"#64748b"}),
+                            html.A("Select CSV", style={"fontSize":"15px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
+                        ]),
+                        style={
+                            "width":"100%","height":"100px",
+                            "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
+                            "borderRadius":"16px","textAlign":"center",
+                            "margin":"10px 0",
+                            "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                            "display":"flex", "flexDirection":"column", "justifyContent":"center", "alignItems":"center",
+                            "cursor":"pointer", "transition":"all 0.3s"
+                        },
                         multiple=False, accept=".csv",
                     ),
                     html.Div(id="file-msg-b", style={"marginBottom": "6px"}),
                     html.Div(id="warn-msg-b", style={"marginBottom": "6px"}),
                     html.Div(id="preview-b"),
-                ], className="col"),
-            ], className="grid", style={"marginBottom":"10px"}),
+                ], style={
+                    "flex":1, "minWidth":"420px", "padding":"24px",
+                    "background":"white", "borderRadius":"16px",
+                    "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+                }),
+            ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"32px"}),
 
             html.Hr(),
 
             html.Div([
-                html.H3("Analysis Settings"),
+                html.H3("Analysis Settings", style={
+                    "fontSize":"24px", "fontWeight":600, "color":"#1e293b",
+                    "marginBottom":"20px"
+                }),
                 html.Div([
                     html.Label("Date Range", style={"fontWeight":"600","marginRight":"8px"}),
                     dcc.Dropdown(
@@ -2739,26 +2836,67 @@ def cross_layout():
                 ], style={"marginBottom":"6px"}),
 
                 html.Div([
-                    html.Button("Analyze", id="x-analyze", n_clicks=0, className="btn btn-primary")
-                ], style={"textAlign":"right","margin":"8px 0 12px"}),
-            ], className="section"),
+                    html.Button(
+                        "Analyze", id="x-analyze", n_clicks=0,
+                        style={
+                            "padding":"14px 32px","borderRadius":"12px","border":"none",
+                            "fontWeight":600,"cursor":"pointer",
+                            "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            "color":"white", "fontSize":"16px",
+                            "boxShadow":"0 4px 12px rgba(102, 126, 234, 0.4)",
+                            "transition":"all 0.3s"
+                        }
+                    )
+                ], style={"textAlign":"right","margin":"24px 0 12px"}),
+            ], style={
+                "background":"white","border":"none",
+                "borderRadius":"16px","padding":"24px",
+                "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+            }),
 
             # ---- Results ----
             html.Div([
-                dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
-                dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
-                dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
-                html.Div(id="x-stats", style={"margin":"8px 0 16px"}),
-                html.H4("Trade windows (first and last day)"),
-                html.Div(id="x-trade-windows"),
-            ], style={"marginTop":"10px"}),
+                html.Div([
+                    dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
+                ], style={
+                    "background":"white", "borderRadius":"16px",
+                    "padding":"20px", "marginBottom":"24px",
+                    "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+                }),
+                html.Div([
+                    dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
+                ], style={
+                    "background":"white", "borderRadius":"16px",
+                    "padding":"20px", "marginBottom":"24px",
+                    "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+                }),
+                html.Div([
+                    dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
+                ], style={
+                    "background":"white", "borderRadius":"16px",
+                    "padding":"20px", "marginBottom":"24px",
+                    "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+                }),
+                html.Div(id="x-stats", style={"margin":"24px 0"}),
+                html.H4("Trade windows (first and last day)", style={
+                    "fontSize":"22px", "fontWeight":600, "color":"#1e293b",
+                    "marginTop":"32px", "marginBottom":"16px"
+                }),
+                html.Div(id="x-trade-windows", style={
+                    "background":"white", "borderRadius":"16px",
+                    "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"
+                }),
+            ], style={"marginTop":"32px"}),
 
             dcc.Store(id=STORE_A),
             dcc.Store(id=STORE_B),
 
-            html.Div(dcc.Link("← Back to Home", href="/", className="link"), style={"marginTop":"8px"})
+            html.Div(dcc.Link("← Back to Home", href="/", style={
+                "textDecoration":"none", "color":"#667eea", "fontWeight":500,
+                "fontSize":"16px", "marginTop":"32px", "display":"inline-block"
+            }))
         ],
-        className="container"
+        style={"maxWidth":"1400px","margin":"0 auto","padding":"32px 24px"}
     )
 
 # -----------------------------
@@ -2770,7 +2908,8 @@ app.layout = html.Div(
         dcc.Location(id="url"),
         html.Div(id="page-content")
     ],
-    style={"minHeight":"100vh"}
+    style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+           "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)","minHeight":"100vh","padding":"0", "margin":"0"}
 )
 
 # Router
@@ -2828,7 +2967,7 @@ def on_upload_single(contents, filename):
         html.Strong("Uploaded:"), html.Span(f" {filename} "),
         html.Span(" · Detected columns: ['datetime','index']"),
         html.Span(f" · Rows: {len(df)}"),
-    ], className="muted")
+    ])
     warn_block = (html.Div([html.Strong("Warnings:"),
                    html.Ul([html.Li(w) for w in warns])], style={"color":"#996800"}) if warns else None)
 
@@ -2838,7 +2977,6 @@ def on_upload_single(contents, filename):
         columns=[{"name": c, "id": c} for c in df.columns],
         page_size=10, style_table={"overflowX": "auto"},
         style_cell={"textAlign": "left", "minWidth": "120px"},
-        style_header={"backgroundColor":"#f1f5f9","fontWeight":"700","border":"1px solid #e5e7eb"},
     )
 
     raw_payload = {
@@ -2855,7 +2993,7 @@ def on_upload_single(contents, filename):
     year_options = [{"label": str(y), "value": y} for y in years]
 
     return (
-        info, warn_block, html.Div([html.H3("Preview (first 10 rows)"), table], className="section"),
+        info, warn_block, html.Div([html.H3("Preview (first 10 rows)"), table]),
         raw_payload, meta,
         min_d, max_d, min_d, max_d,
         min_d, max_d, min_d, max_d,
@@ -3001,25 +3139,25 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
 
         (k, v), = summary.items()
         card = html.Div([
-            html.H3(title, style={"marginTop": 0}),
+            html.H3(title, style={"marginTop": 0, "fontSize": "24px", "fontWeight": 700, "color": "#1e293b"}),
             html.P([
                 html.Strong("Change over: "), f"{ws} calendar days (weekend-aware) ",
                 html.Span(" · "),
                 html.Strong("Range: "), f"{start.date()} → {end.date()} ",
                 html.Span(" · "),
                 html.Strong(label), f"{th_pct:.2f}%",
-            ], className="muted"),
+            ], style={"fontSize": "14px", "color": "#64748b", "marginBottom": "20px"}),
             html.Div([
                 html.Div([
-                    html.Div("Events", style={"color": "#6b7280", "fontSize": "12px"}),
-                    html.Div(str(v["events"]), style={"fontSize": "28px", "fontWeight": 700}),
-                ], style={"flex": 1, "textAlign": "center"}),
+                    html.Div("Events", style={"color": "#64748b", "fontSize": "13px", "textTransform": "uppercase", "letterSpacing": "0.5px"}),
+                    html.Div(str(v["events"]), style={"fontSize": "36px", "fontWeight": 700, "color": color, "marginTop": "8px"}),
+                ], style={"flex": 1, "textAlign": "center", "padding": "16px", "background": "white", "borderRadius": "12px"}),
                 html.Div([
-                    html.Div("Probability", style={"color": "#6b7280", "fontSize": "12px"}),
-                    html.Div(v["probability"], style={"fontSize": "28px", "fontWeight": 700}),
-                ], style={"flex": 1, "textAlign": "center"}),
-            ], style={"display": "flex", "gap": "12px"}),
-        ], className="section")
+                    html.Div("Probability", style={"color": "#64748b", "fontSize": "13px", "textTransform": "uppercase", "letterSpacing": "0.5px"}),
+                    html.Div(v["probability"], style={"fontSize": "36px", "fontWeight": 700, "color": color, "marginTop": "8px"}),
+                ], style={"flex": 1, "textAlign": "center", "padding": "16px", "background": "white", "borderRadius": "12px"}),
+            ], style={"display": "flex", "gap": "16px", "marginTop": "12px"}),
+        ], style={"border": "none", "borderRadius": "16px", "padding": "24px", "background": "linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)", "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"})
 
         # Weekend-aware returns for visuals
         ret = compute_windowed_returns_calendar(dff, ws)
@@ -3094,9 +3232,12 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         else:
             stats_list = [("Data points", "0")]
         stats_view = html.Div([
-            html.H4("Change summary"),
-            html.Ul([html.Li(html.Span([html.Strong(k + ": "), v])) for k, v in stats_list])
-        ], className="section")
+            html.H4("Change summary", style={"margin": "0 0 16px 0", "fontSize": "20px", "fontWeight": 600, "color": "#1e293b"}),
+            html.Ul([html.Li(html.Span([html.Strong(k + ": ", style={"color": "#1e293b"}), v]), style={
+                "marginBottom": "8px", "fontSize": "14px", "color": "#475569"
+            }) for k, v in stats_list], style={"listStyle": "none", "padding": 0})
+        ], style={"background": "linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)", "border": "none",
+                  "borderRadius": "16px", "padding": "24px", "boxShadow": "0 4px 12px rgba(0,0,0,0.08)"})
 
         # Trade windows list
         trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
@@ -3115,10 +3256,12 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
                if want_gain else (html.Div("Gain disabled"), go.Figure(), go.Figure(), None, None, None)
 
     # Build indicators figure from the union of the filtered range (prefer gain range if both same; else use full df slice)
+    # We'll use the DROP slice if available, else GAIN slice, else overall df.
     dff_for_indicators = None
     if drop_out[-1] is not None:
         dff_for_indicators = drop_out[-1]
     if gain_out[-1] is not None:
+        # if both exist, take intersection of their date windows to keep consistent
         if dff_for_indicators is not None:
             s1, e1 = dff_for_indicators["datetime"].min(), dff_for_indicators["datetime"].max()
             s2, e2 = gain_out[-1]["datetime"].min(), gain_out[-1]["datetime"].max()
@@ -3142,7 +3285,8 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
     show_vol  = "vol"  in (indicators_selected or [])
     show_dd   = "dd"   in (indicators_selected or [])
 
-    row1_needed = True
+    # Determine which rows to show
+    row1_needed = any([True, show_sma, show_ema, show_bb, show_vol, show_dd])  # price always shown
     row2_needed = show_rsi
     row3_needed = show_macd
 
@@ -3157,32 +3301,35 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         specs=[[{"secondary_y": True}] for _ in range(rows)]
     )
 
+    # helper to map logical row numbers
+    cur_row = 1
+    row_price = cur_row
     # Row 1: Price + overlays
-    fig_ind.add_trace(go.Scatter(x=time, y=price, mode="lines", name="Price"), row=1, col=1, secondary_y=False)
+    fig_ind.add_trace(go.Scatter(x=time, y=price, mode="lines", name="Price"), row=row_price, col=1, secondary_y=False)
 
     if show_sma:
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["sma_5"],  mode="lines", name="SMA 5"),  row=1, col=1, secondary_y=False)
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["sma_20"], mode="lines", name="SMA 20"), row=1, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["sma_5"],  mode="lines", name="SMA 5"),  row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["sma_20"], mode="lines", name="SMA 20"), row=row_price, col=1, secondary_y=False)
     if show_ema:
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["ema_12"], mode="lines", name="EMA 12"), row=1, col=1, secondary_y=False)
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["ema_26"], mode="lines", name="EMA 26"), row=1, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["ema_12"], mode="lines", name="EMA 12"), row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["ema_26"], mode="lines", name="EMA 26"), row=row_price, col=1, secondary_y=False)
     if show_bb:
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_mid"], mode="lines", name="BB Mid"),   row=1, col=1, secondary_y=False)
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_up"],  mode="lines", name="BB Upper"), row=1, col=1, secondary_y=False)
-        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_lo"],  mode="lines", name="BB Lower"), row=1, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_mid"], mode="lines", name="BB Mid"),   row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_up"],  mode="lines", name="BB Upper"), row=row_price, col=1, secondary_y=False)
+        fig_ind.add_trace(go.Scatter(x=time, y=feats["bb_lo"],  mode="lines", name="BB Lower"), row=row_price, col=1, secondary_y=False)
     if show_vol:
+        # plot vol_20 on secondary y to keep scales tidy
         fig_ind.add_trace(go.Scatter(x=time, y=feats["vol_20"], mode="lines", name="Vol 20 (stdev)"),
-                          row=1, col=1, secondary_y=True)
+                          row=row_price, col=1, secondary_y=True)
     if show_dd:
         fig_ind.add_trace(go.Scatter(x=time, y=feats["dd"], mode="lines", name="Drawdown"),
-                          row=1, col=1, secondary_y=True)
+                          row=row_price, col=1, secondary_y=True)
 
-    fig_ind.update_yaxes(title_text="Price", row=1, col=1, secondary_y=False)
+    fig_ind.update_yaxes(title_text="Price", row=row_price, col=1, secondary_y=False)
     if show_vol or show_dd:
-        fig_ind.update_yaxes(title_text="Vol / DD", row=1, col=1, secondary_y=True)
+        fig_ind.update_yaxes(title_text="Vol / DD", row=row_price, col=1, secondary_y=True)
 
-    # Row 2: RSI
-    cur_row = 1
+    # Row 2: RSI (if needed)
     if row2_needed:
         cur_row += 1
         fig_ind.add_trace(go.Scatter(x=time, y=feats["rsi_14"], mode="lines", name="RSI (14)"),
@@ -3191,7 +3338,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         fig_ind.add_hline(y=30, line=dict(dash="dash"), row=cur_row, col=1)
         fig_ind.update_yaxes(title_text="RSI", range=[0, 100], row=cur_row, col=1)
 
-    # Row 3: MACD
+    # Row 3: MACD (if needed)
     if row3_needed:
         cur_row += 1
         fig_ind.add_trace(go.Bar(x=time, y=feats["macd_hist"], name="MACD Hist"),
@@ -3260,17 +3407,16 @@ def upload_cross(contents_a, filename_a, contents_b, filename_b):
             out[2] = None
             out[3] = None
         else:
-            out[0] = html.Div([html.Strong("A uploaded:"), f" {filename_a} · Rows: {len(dfA)}"], className="muted")
+            out[0] = html.Div([html.Strong("A uploaded:"), f" {filename_a} · Rows: {len(dfA)}"])
             out[1] = (html.Div([html.Strong("Warnings:"), html.Ul([html.Li(w) for w in warnsA])],
                                style={"color":"#996800"}) if warnsA else None)
             tableA = dash_table.DataTable(
                 data=dfA.head(10).to_dict("records"),
                 columns=[{"name": c, "id": c} for c in dfA.columns],
                 page_size=10, style_table={"overflowX":"auto"},
-                style_cell={"textAlign":"left","minWidth":"120px"},
-                style_header={"backgroundColor":"#f1f5f9","fontWeight":"700","border":"1px solid #e5e7eb"},
+                style_cell={"textAlign":"left","minWidth":"120px"}
             )
-            out[2] = html.Div([html.H4("Preview A (first 10)"), tableA], className="section")
+            out[2] = html.Div([html.H4("Preview A (first 10)"), tableA])
             out[3] = {
                 "filename": filename_a,
                 "csv_b64": base64.b64encode(dfA.to_csv(index=False).encode()).decode()
@@ -3286,17 +3432,16 @@ def upload_cross(contents_a, filename_a, contents_b, filename_b):
             out[6] = None
             out[7] = None
         else:
-            out[4] = html.Div([html.Strong("B uploaded:"), f" {filename_b} · Rows: {len(dfB)}"], className="muted")
+            out[4] = html.Div([html.Strong("B uploaded:"), f" {filename_b} · Rows: {len(dfB)}"])
             out[5] = (html.Div([html.Strong("Warnings:"), html.Ul([html.Li(w) for w in warnsB])],
                                style={"color":"#996800"}) if warnsB else None)
             tableB = dash_table.DataTable(
                 data=dfB.head(10).to_dict("records"),
                 columns=[{"name": c, "id": c} for c in dfB.columns],
                 page_size=10, style_table={"overflowX":"auto"},
-                style_cell={"textAlign":"left","minWidth":"120px"},
-                style_header={"backgroundColor":"#f1f5f9","fontWeight":"700","border":"1px solid #e5e7eb"},
+                style_cell={"textAlign":"left","minWidth":"120px"}
             )
-            out[6] = html.Div([html.H4("Preview B (first 10)"), tableB], className="section")
+            out[6] = html.Div([html.H4("Preview B (first 10)"), tableB])
             out[7] = {
                 "filename": filename_b,
                 "csv_b64": base64.b64encode(dfB.to_csv(index=False).encode()).decode()
@@ -3514,15 +3659,22 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
             ("Max %",       f"{desc['max']*100:.2f}%"),
         ]
         return html.Div([
-            html.H4(name),
-            html.Ul([html.Li(html.Span([html.Strong(k + ": "), v])) for k, v in items])
-        ], className="section", style={"flex":1})
+            html.H4(name, style={"margin":"0 0 16px 0", "fontSize":"18px", "fontWeight":600, "color":"#1e293b"}),
+            html.Ul([html.Li(html.Span([html.Strong(k + ": ", style={"color":"#1e293b"}), v]), style={
+                "marginBottom":"8px", "fontSize":"14px", "color":"#475569"
+            }) for k, v in items], style={"listStyle":"none", "padding":0})
+        ], style={"flex":1, "background":"linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)","border":"none",
+                  "borderRadius":"16px","padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"})
 
     corr_text = html.Div([
-        html.H4("Relationship"),
+        html.H4("Relationship", style={"margin":"0 0 12px 0", "fontSize":"18px", "fontWeight":600, "color":"#1e293b"}),
         html.P(f"Pearson correlation (windowed returns): {corr:.2f}" if np.isfinite(corr) else
-               "Pearson correlation (windowed returns): n/a", className="muted")
-    ], className="section", style={"flex":1, "background":"#fff7ed","border":"1px solid #fde68a"})
+               "Pearson correlation (windowed returns): n/a", style={
+                   "fontSize":"16px", "color":"#475569", "margin":0,
+                   "fontWeight":500 if np.isfinite(corr) else 400
+               })
+    ], style={"flex":1, "background":"linear-gradient(135deg, #fff7ed 0%, #ffffff 100%)","border":"2px solid #fde68a",
+              "borderRadius":"16px","padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.08)"})
 
     stats_view = html.Div([
         html.Div([
@@ -3536,8 +3688,8 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     tableA = build_trade_window_table(tmpA[["datetime","index"]], win, limit=200)
     tableB = build_trade_window_table(tmpB[["datetime","index"]], win, limit=200)
     twin = html.Div([
-        html.Div([html.H5("Index A trade windows"), tableA], className="section", style={"flex":1,"minWidth":"380px"}),
-        html.Div([html.H5("Index B trade windows"), tableB], className="section", style={"flex":1,"minWidth":"380px"}),
+        html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
+        html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
     ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
 
     return fig_levels, fig_scatter, fig_returns, stats_view, twin
@@ -3547,3 +3699,5 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
