@@ -5278,37 +5278,39 @@ app.layout = html.Div(
            "transition": "background-color 0.3s ease, color 0.3s ease"}
 )
 
-# Theme toggle callback - handles button clicks directly
-# Use a pattern that works even when button is recreated
+# Theme toggle callback - handles button clicks
+# Use a timestamp-based approach to detect clicks even when button is recreated
 @app.callback(
-    [Output(STORE_THEME, "data", allow_duplicate=True),
-     Output(STORE_THEME_CLICKS, "data", allow_duplicate=True)],
+    Output(STORE_THEME, "data", allow_duplicate=True),
     Input("theme-toggle", "n_clicks"),
-    [State(STORE_THEME, "data"),
-     State(STORE_THEME_CLICKS, "data")],
+    State(STORE_THEME, "data"),
     prevent_initial_call=True
 )
-def toggle_theme(n_clicks, current_theme, prev_click_count):
-    # When button is clicked, n_clicks will be 1, 2, 3, etc.
-    # We need to detect if this is a new click (n_clicks > prev_click_count)
+def toggle_theme(n_clicks, current_theme):
+    # This callback fires whenever the button is clicked
+    # Even if n_clicks resets, this will still fire on a new click
     
-    # Handle first click
-    if prev_click_count is None:
-        prev_click_count = 0
-    
-    # If n_clicks hasn't changed or is None, don't update
-    if n_clicks is None or n_clicks == prev_click_count:
-        return no_update, no_update
-    
-    # This is a new click - toggle the theme
+    # Get current theme or default to dark
     if current_theme is None or current_theme == "":
         current_theme = "dark"
     
-    # Toggle between dark and light
+    # Simply toggle between dark and light
     new_theme = "light" if current_theme == "dark" else "dark"
     
-    # Return both the new theme and the updated click count
-    return new_theme, n_clicks
+    return new_theme
+
+# Update click tracking store (separate to avoid conflicts)
+@app.callback(
+    Output(STORE_THEME_CLICKS, "data", allow_duplicate=True),
+    Input("theme-toggle", "n_clicks"),
+    State(STORE_THEME_CLICKS, "data"),
+    prevent_initial_call=True
+)
+def update_click_tracking(n_clicks, prev_count):
+    # Track clicks for debugging/monitoring
+    if n_clicks is None:
+        return prev_count if prev_count is not None else 0
+    return n_clicks if n_clicks is not None else (prev_count if prev_count is not None else 0)
 
 # Theme and Navbar callbacks - updates UI based on theme store
 @app.callback(
@@ -6216,6 +6218,7 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
 
