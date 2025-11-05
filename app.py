@@ -3802,6 +3802,7 @@ app.index_string = '''
                 margin: 0;
                 padding: 0;
                 border: none !important;
+                transition: background-color 0.3s ease, color 0.3s ease;
             }
             html {
                 margin: 0;
@@ -3816,6 +3817,15 @@ app.index_string = '''
             ._dash-loading {
                 margin: 0;
                 padding: 0;
+            }
+            #app-container {
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+            #navbar-container {
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+            #page-content {
+                transition: color 0.3s ease;
             }
             /* Upload box hover effect */
             [id="uploader"]:hover, [id="uploader-a"]:hover, [id="uploader-b"]:hover {
@@ -4264,7 +4274,8 @@ def build_trade_window_table(df: pd.DataFrame, window_size_days: int, limit: int
 # -----------------------------
 
 card_style = {
-    "display": "inline-block",
+    "display": "flex",
+    "flexDirection": "column",
     "padding": "32px 36px",
     "borderRadius": "20px",
     "border": "none",
@@ -4273,8 +4284,13 @@ card_style = {
     "textDecoration": "none",
     "color": "white",
     "width": "320px",
+    "minHeight": "280px",
+    "height": "280px",
     "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     "cursor": "pointer",
+    "justifyContent": "center",
+    "alignItems": "center",
+    "boxSizing": "border-box",
 }
 card_style_hover = {
     "transform": "translateY(-4px)",
@@ -4347,7 +4363,8 @@ def navbar(theme="dark"):
             "justifyContent": "space-between",
             "boxShadow": "0 2px 8px rgba(0,0,0,0.3)" if is_dark else "0 2px 8px rgba(0,0,0,0.1)",
             "marginBottom": "0",
-            "borderBottom": f"1px solid {border_color}"
+            "borderBottom": f"1px solid {border_color}",
+            "transition": "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease"
         }
     )
 
@@ -4379,7 +4396,7 @@ def home_layout():
                             style={**card_style, "textAlign":"center"}
                         ),
                         href="/single",
-                        style={"marginRight": "24px", "textDecoration":"none"}
+                        style={"textDecoration":"none", "display":"flex"}
                     ),
                     dcc.Link(
                         html.Div(
@@ -4393,10 +4410,17 @@ def home_layout():
                             style={**card_style, "background":"linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", "textAlign":"center"}
                         ),
                         href="/cross",
-                        style={"textDecoration":"none"}
+                        style={"textDecoration":"none", "display":"flex"}
                     ),
                 ],
-                style={"marginTop": "12px", "display":"flex", "justifyContent":"center", "flexWrap":"wrap"}
+                style={
+                    "marginTop": "12px", 
+                    "display":"flex", 
+                    "justifyContent":"center", 
+                    "alignItems":"center",
+                    "flexWrap":"wrap",
+                    "gap":"24px"
+                }
             ),
         ],
         style={"maxWidth":"1200px","margin":"0 auto","padding":"48px 24px", "marginTop":"0"}
@@ -4414,7 +4438,7 @@ def single_layout():
                 "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"32px"
             }),
         ]),
-        
+
         dcc.Upload(
             id="uploader",
             children=html.Div([
@@ -4683,7 +4707,7 @@ def single_layout():
                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
                 }),
                 html.Div([
-                    dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
+                dcc.Graph(id="return-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
                     "padding":"16px", "marginBottom":"16px",
@@ -4691,7 +4715,7 @@ def single_layout():
                     "border":"1px solid rgba(255,255,255,0.1)"
                 }),
                 html.Div([
-                    dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
+                dcc.Graph(id="bar-chart-drop", config={"displayModeBar": False}, style={"height": "320px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
                     "padding":"16px", "marginBottom":"16px",
@@ -4722,7 +4746,7 @@ def single_layout():
                     "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
                 }),
                 html.Div([
-                    dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
+                dcc.Graph(id="return-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
                     "padding":"16px", "marginBottom":"16px",
@@ -4730,7 +4754,7 @@ def single_layout():
                     "border":"1px solid rgba(255,255,255,0.1)"
                 }),
                 html.Div([
-                    dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
+                dcc.Graph(id="bar-chart-gain", config={"displayModeBar": False}, style={"height": "320px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
                     "padding":"16px", "marginBottom":"16px",
@@ -4756,7 +4780,7 @@ def single_layout():
             "marginTop":"40px", "marginBottom":"20px"
         }),
         html.Div([
-            dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
+        dcc.Graph(id="indicators-figure", config={"displayModeBar": False}, style={"height":"540px"}),
         ], style={
             "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
             "padding":"20px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
@@ -4933,8 +4957,8 @@ def cross_layout():
 
             # ---- Results ----
             html.Div([
-                html.Div([
-                    dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
+            html.Div([
+                dcc.Graph(id="x-line-levels", config={"displayModeBar": False}, style={"height":"360px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
                     "padding":"20px", "marginBottom":"24px",
@@ -4942,7 +4966,7 @@ def cross_layout():
                     "border":"1px solid rgba(255,255,255,0.1)"
                 }),
                 html.Div([
-                    dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
+                dcc.Graph(id="x-scatter-returns", config={"displayModeBar": False}, style={"height":"360px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
                     "padding":"20px", "marginBottom":"24px",
@@ -4950,7 +4974,7 @@ def cross_layout():
                     "border":"1px solid rgba(255,255,255,0.1)"
                 }),
                 html.Div([
-                    dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
+                dcc.Graph(id="x-line-returns", config={"displayModeBar": False}, style={"height":"360px"}),
                 ], style={
                     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
                     "padding":"20px", "marginBottom":"24px",
@@ -4988,11 +5012,12 @@ app.layout = html.Div(
         html.Div(id="navbar-container"),
         dcc.Location(id="url"),
         html.Div(id="page-content"),
-        dcc.Store(id=STORE_THEME, data="dark")
+        dcc.Store(id=STORE_THEME, data="dark", storage_type="memory")
     ],
     id="app-container",
     style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-           "minHeight":"100vh","padding":"0", "margin":"0"}
+           "minHeight":"100vh","padding":"0", "margin":"0",
+           "transition": "background-color 0.3s ease, color 0.3s ease"}
 )
 
 # Theme toggle callback
@@ -5003,6 +5028,10 @@ app.layout = html.Div(
     prevent_initial_call=True
 )
 def toggle_theme(n_clicks, current_theme):
+    # Handle first click and subsequent clicks
+    if current_theme is None or current_theme == "":
+        return "light"  # If no theme set, toggle to light
+    # Toggle between dark and light
     return "light" if current_theme == "dark" else "dark"
 
 # Theme and Navbar callbacks
@@ -5012,12 +5041,15 @@ def toggle_theme(n_clicks, current_theme):
     Input(STORE_THEME, "data")
 )
 def update_navbar_and_theme(theme):
+    if theme is None:
+        theme = "dark"  # Default to dark if theme is None
     is_dark = theme == "dark"
     bg_style = {
         "fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
         "minHeight":"100vh","padding":"0", "margin":"0",
         "background": "#0a0a0a" if is_dark else "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-        "color": "white" if is_dark else "#1e293b"
+        "color": "white" if is_dark else "#1e293b",
+        "transition": "background-color 0.3s ease, color 0.3s ease"
     }
     return navbar(theme), bg_style
 
