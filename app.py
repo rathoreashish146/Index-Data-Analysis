@@ -1837,6 +1837,10 @@
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 8050))
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
+
+
 import os
 import base64
 import io
@@ -1865,6 +1869,9 @@ STORE_META = "store_meta"
 # Stores (Cross page)
 STORE_A = "store_raw_a"
 STORE_B = "store_raw_b"
+
+# Store (Theme)
+STORE_THEME = "store_theme"
 
 MONTH_OPTIONS = [{"label": m, "value": i} for i, m in enumerate(
     ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], start=1
@@ -2239,10 +2246,15 @@ card_style_hover = {
     "boxShadow": "0 12px 32px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.12)",
 }
 
-def navbar():
+def navbar(theme="dark"):
+    is_dark = theme == "dark"
+    bg_color = "#0a0a0a" if is_dark else "#ffffff"
+    text_color = "white" if is_dark else "#1e293b"
+    border_color = "rgba(255,255,255,0.1)" if is_dark else "rgba(0,0,0,0.1)"
+    
     return html.Div(
         [
-            # Left side: Logo and Results finder
+            # Left side: Logo
             html.Div([
                 html.Img(
                     src="https://starlab-public.s3.us-east-1.amazonaws.com/starlab_images/transparent-slc-rgb.png",
@@ -2252,43 +2264,55 @@ def navbar():
                         "objectFit": "contain"
                     }
                 ),
-                html.Div([
-                    html.Span("▶", style={"color": "#00d4aa", "marginRight": "8px", "fontSize": "10px"}),
-                    html.Span("Results finder", style={"color": "white", "fontSize": "14px", "fontWeight": 500})
-                ], style={"display": "flex", "alignItems": "center"})
             ], style={"display": "flex", "alignItems": "center", "flex": 1}),
             
-            # Right side: Navigation elements
+            # Right side: Navigation elements and theme toggle
             html.Div([
                 dcc.Link("Home", href="/", style={
                     "marginRight": "20px", "textDecoration": "none",
-                    "color": "white", "fontSize": "14px", "fontWeight": 500,
+                    "color": text_color, "fontSize": "14px", "fontWeight": 500,
                     "padding": "6px 12px", "borderRadius": "4px",
                     "transition": "all 0.2s"
                 }),
                 dcc.Link("Single Index", href="/single", style={
                     "marginRight": "20px", "textDecoration": "none",
-                    "color": "white", "fontSize": "14px", "fontWeight": 500,
+                    "color": text_color, "fontSize": "14px", "fontWeight": 500,
                     "padding": "6px 12px", "borderRadius": "4px",
                     "transition": "all 0.2s"
                 }),
                 dcc.Link("Cross Index", href="/cross", style={
-                    "textDecoration": "none", "color": "white",
-                    "fontSize": "14px", "fontWeight": 500,
+                    "marginRight": "20px", "textDecoration": "none",
+                    "color": text_color, "fontSize": "14px", "fontWeight": 500,
                     "padding": "6px 12px", "borderRadius": "4px",
                     "transition": "all 0.2s"
                 }),
+                html.Button(
+                    "🌙" if is_dark else "☀️",
+                    id="theme-toggle",
+                    n_clicks=0,
+                    style={
+                        "background": "transparent",
+                        "border": f"1px solid {border_color}",
+                        "color": text_color,
+                        "fontSize": "18px",
+                        "padding": "6px 12px",
+                        "borderRadius": "6px",
+                        "cursor": "pointer",
+                        "transition": "all 0.2s",
+                        "marginLeft": "10px"
+                    }
+                )
             ], style={"display": "flex", "alignItems": "center"})
         ],
         style={
             "padding": "14px 32px",
-            "background": "#0a0a0a",
+            "background": bg_color,
             "display": "flex",
             "alignItems": "center",
             "justifyContent": "space-between",
-            "boxShadow": "0 2px 8px rgba(0,0,0,0.3)",
+            "boxShadow": "0 2px 8px rgba(0,0,0,0.3)" if is_dark else "0 2px 8px rgba(0,0,0,0.1)",
             "marginBottom": "0",
-            "borderBottom": "1px solid rgba(255,255,255,0.1)"
+            "borderBottom": f"1px solid {border_color}"
         }
     )
 
@@ -2349,22 +2373,24 @@ def single_layout():
         html.Div([
             html.H1("Single Index Analysis", style={
                 "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
-                "color":"#1e293b"
+                "color":"inherit"
             }),
-            html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
-                "fontSize":"16px", "color":"#64748b", "marginBottom":"32px"
-            }),
+            html.Div([
+                html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
+                    "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"0", "display":"inline-block", "marginRight":"12px"
+                }),
+                html.Span("📁", style={"fontSize":"20px", "verticalAlign":"middle", "display":"inline-block"}),
+            ], style={"marginBottom":"32px"}),
         ]),
-
+        
         dcc.Upload(
             id="uploader",
             children=html.Div([
-                html.Div("📁", style={"fontSize":"32px", "marginBottom":"8px"}),
                 html.Div("Drag and Drop or ", style={"fontSize":"16px", "color":"#64748b"}),
                 html.A("Select CSV File", style={"fontSize":"16px", "color":"#667eea", "fontWeight":600, "textDecoration":"underline"})
             ]),
             style={
-                "width":"100%","height":"120px","lineHeight":"120px",
+                "width":"100%","height":"100px",
                 "borderWidth":"2px","borderStyle":"dashed","borderColor":"#cbd5e1",
                 "borderRadius":"16px","textAlign":"center","margin":"10px 0",
                 "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
@@ -2379,7 +2405,7 @@ def single_layout():
 
         html.Div([
             html.Label("Analysis Type(s)", style={
-                "fontWeight": "600", "fontSize":"16px", "color":"#1e293b",
+                "fontWeight": "600", "fontSize":"16px", "color":"inherit",
                 "marginBottom":"12px", "display":"block"
             }),
             dcc.Checklist(
@@ -2395,8 +2421,9 @@ def single_layout():
             ),
         ], style={
             "marginBottom": "24px", "padding":"20px",
-            "background":"white", "borderRadius":"12px",
-            "boxShadow":"0 2px 8px rgba(0,0,0,0.06)"
+            "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+            "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+            "border":"1px solid rgba(255,255,255,0.1)"
         }),
 
         # Controls row: Drop (left) & Gain (right)
@@ -2904,16 +2931,47 @@ def cross_layout():
 # -----------------------------
 app.layout = html.Div(
     [
-        navbar(),
+        html.Div(id="navbar-container"),
         dcc.Location(id="url"),
-        html.Div(id="page-content")
+        html.Div(id="page-content"),
+        dcc.Store(id=STORE_THEME, data="dark")
     ],
+    id="app-container",
     style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-           "background":"linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)","minHeight":"100vh","padding":"0", "margin":"0"}
+           "minHeight":"100vh","padding":"0", "margin":"0"}
 )
 
+# Theme toggle callback
+@app.callback(
+    Output(STORE_THEME, "data"),
+    Input("theme-toggle", "n_clicks"),
+    State(STORE_THEME, "data"),
+    prevent_initial_call=True
+)
+def toggle_theme(n_clicks, current_theme):
+    return "light" if current_theme == "dark" else "dark"
+
+# Theme and Navbar callbacks
+@app.callback(
+    Output("navbar-container", "children"),
+    Output("app-container", "style"),
+    Input(STORE_THEME, "data")
+)
+def update_navbar_and_theme(theme):
+    is_dark = theme == "dark"
+    bg_style = {
+        "fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+        "minHeight":"100vh","padding":"0", "margin":"0",
+        "background": "#0a0a0a" if is_dark else "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+        "color": "white" if is_dark else "#1e293b"
+    }
+    return navbar(theme), bg_style
+
 # Router
-@app.callback(Output("page-content", "children"), Input("url", "pathname"))
+@app.callback(
+    Output("page-content", "children"),
+    Input("url", "pathname")
+)
 def render_page(pathname):
     if pathname == "/single":
         return single_layout()
