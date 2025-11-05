@@ -4144,6 +4144,7 @@ STORE_B = "store_raw_b"
 
 # Store (Theme)
 STORE_THEME = "store_theme"
+STORE_THEME_CLICKS = "store_theme_clicks"
 
 MONTH_OPTIONS = [{"label": m, "value": i} for i, m in enumerate(
     ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], start=1
@@ -5268,7 +5269,8 @@ app.layout = html.Div(
         html.Div(id="navbar-container"),
         dcc.Location(id="url"),
         html.Div(id="page-content"),
-        dcc.Store(id=STORE_THEME, data="dark")
+        dcc.Store(id=STORE_THEME, data="dark"),
+        dcc.Store(id=STORE_THEME_CLICKS, data=0)
     ],
     id="app-container",
     style={"fontFamily":"system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
@@ -5276,26 +5278,37 @@ app.layout = html.Div(
            "transition": "background-color 0.3s ease, color 0.3s ease"}
 )
 
-# Theme toggle callback - handles button clicks
-# This callback must be defined before the navbar callback to ensure proper execution order
+# Theme toggle callback - handles button clicks directly
+# Use a pattern that works even when button is recreated
 @app.callback(
-    Output(STORE_THEME, "data", allow_duplicate=True),
+    [Output(STORE_THEME, "data", allow_duplicate=True),
+     Output(STORE_THEME_CLICKS, "data", allow_duplicate=True)],
     Input("theme-toggle", "n_clicks"),
-    State(STORE_THEME, "data"),
+    [State(STORE_THEME, "data"),
+     State(STORE_THEME_CLICKS, "data")],
     prevent_initial_call=True
 )
-def toggle_theme(n_clicks, current_theme):
-    # Triggered only when button is clicked (prevent_initial_call=True)
-    # n_clicks will be >= 1 when this callback fires
+def toggle_theme(n_clicks, current_theme, prev_click_count):
+    # When button is clicked, n_clicks will be 1, 2, 3, etc.
+    # We need to detect if this is a new click (n_clicks > prev_click_count)
     
-    # Get current theme or default to dark
+    # Handle first click
+    if prev_click_count is None:
+        prev_click_count = 0
+    
+    # If n_clicks hasn't changed or is None, don't update
+    if n_clicks is None or n_clicks == prev_click_count:
+        return no_update, no_update
+    
+    # This is a new click - toggle the theme
     if current_theme is None or current_theme == "":
         current_theme = "dark"
     
     # Toggle between dark and light
-    # If current is "dark", return "light"; if "light", return "dark"
     new_theme = "light" if current_theme == "dark" else "dark"
-    return new_theme
+    
+    # Return both the new theme and the updated click count
+    return new_theme, n_clicks
 
 # Theme and Navbar callbacks - updates UI based on theme store
 @app.callback(
@@ -6203,6 +6216,8 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
 
 
 
