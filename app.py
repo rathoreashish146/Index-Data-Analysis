@@ -1,4 +1,3 @@
-
 # import os
 # import base64
 # import io
@@ -94,6 +93,75 @@
 #             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table tbody td {
 #                 border-color: rgba(255,255,255,0.1) !important;
 #                 color: rgba(255,255,255,0.9) !important;
+#             }
+#             /* Dark theme for form inputs */
+#             .Select-control, .Select-input, .Select-placeholder, .Select-value, .Select-value-label {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 border-color: rgba(255,255,255,0.2) !important;
+#             }
+#             .Select-menu-outer {
+#                 background-color: #1a1a1a !important;
+#                 border-color: rgba(255,255,255,0.2) !important;
+#             }
+#             .Select-option {
+#                 background-color: #1a1a1a !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#             }
+#             .Select-option.is-focused {
+#                 background-color: rgba(0,200,150,0.2) !important;
+#             }
+#             .Select-option.is-selected {
+#                 background-color: rgba(0,200,150,0.4) !important;
+#             }
+#             input[type="text"], input[type="number"], input[type="date"] {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 border: 1px solid rgba(255,255,255,0.2) !important;
+#                 border-radius: 4px !important;
+#                 padding: 6px 8px !important;
+#             }
+#             input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+#                 border-color: rgba(0,200,150,0.6) !important;
+#                 outline: none !important;
+#                 box-shadow: 0 0 0 2px rgba(0,200,150,0.2) !important;
+#             }
+#             input[type="text"]::placeholder, input[type="number"]::placeholder {
+#                 color: rgba(255,255,255,0.5) !important;
+#             }
+#             .DateInput_input {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 border-color: rgba(255,255,255,0.2) !important;
+#             }
+#             .DateInput_input__focused {
+#                 border-color: rgba(0,200,150,0.6) !important;
+#             }
+#             .DateRangePickerInput {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 border-color: rgba(255,255,255,0.2) !important;
+#             }
+#             .DayPicker {
+#                 background-color: #1a1a1a !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#             }
+#             .DayPicker__week-header {
+#                 color: rgba(255,255,255,0.7) !important;
+#             }
+#             .DayPicker-Day {
+#                 color: rgba(255,255,255,0.9) !important;
+#             }
+#             .DayPicker-Day--selected {
+#                 background-color: rgba(0,200,150,0.6) !important;
+#             }
+#             .DayPicker-Day--hovered {
+#                 background-color: rgba(0,200,150,0.3) !important;
+#             }
+#             input[type="radio"] {
+#                 accent-color: rgba(0,200,150,0.8) !important;
+#             }
+#             input[type="checkbox"] {
+#                 accent-color: rgba(0,200,150,0.8) !important;
 #             }
 #         </style>
 #     </head>
@@ -742,7 +810,7 @@
 #                 ], style={"margin":"6px 4px 4px 0"}),
 
 #                 html.Div([
-#                     html.Span("Jump to:", style={"marginRight":"6px"}),
+#                     html.Span("Navigate to Date:", style={"marginRight":"6px"}),
 #                     dcc.Dropdown(id="jump-year-drop", options=[], placeholder="Year",
 #                                  style={"width":"100px","display":"inline-block","marginRight":"6px"}),
 #                     dcc.Dropdown(id="jump-month-drop", options=MONTH_OPTIONS, placeholder="Month",
@@ -750,7 +818,7 @@
 #                 ], style={"marginBottom":"8px"}),
 
 #                 html.Div([
-#                     html.Label("Change over (days)", style={"fontWeight": "600"}),
+#                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
 #                     dcc.RadioItems(
 #                         id="window-size-drop",
 #                         options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
@@ -764,7 +832,7 @@
 #                 ], style={"margin":"6px 0"}),
 
 #                 html.Div([
-#                     html.Label("Min % Threshold", style={"fontWeight": "600"}),
+#                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
 #                     dcc.RadioItems(
 #                         id="min-threshold-drop",
 #                         options=[{"label":"1%","value":1},{"label":"3%","value":3},
@@ -820,7 +888,7 @@
 #                 ], style={"margin":"6px 4px 4px 0"}),
 
 #                 html.Div([
-#                     html.Span("Jump to:", style={"marginRight":"6px"}),
+#                     html.Span("Navigate to Date:", style={"marginRight":"6px"}),
 #                     dcc.Dropdown(id="jump-year-gain", options=[], placeholder="Year",
 #                                  style={"width":"100px","display":"inline-block","marginRight":"6px"}),
 #                     dcc.Dropdown(id="jump-month-gain", options=MONTH_OPTIONS, placeholder="Month",
@@ -828,7 +896,7 @@
 #                 ], style={"marginBottom":"8px"}),
 
 #                 html.Div([
-#                     html.Label("Change over (days)", style={"fontWeight": "600"}),
+#                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
 #                     dcc.RadioItems(
 #                         id="window-size-gain",
 #                         options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
@@ -842,7 +910,7 @@
 #                 ], style={"margin":"6px 0"}),
 
 #                 html.Div([
-#                     html.Label("Min % Threshold", style={"fontWeight": "600"}),
+#                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
 #                     dcc.RadioItems(
 #                         id="min-threshold-gain",
 #                         options=[{"label":"1%","value":1},{"label":"3%","value":3},
@@ -1085,7 +1153,7 @@
 #                 ], style={"marginBottom":"8px"}),
 
 #                 html.Div([
-#                     html.Span("Jump to:", style={"marginRight":"6px"}),
+#                     html.Span("Navigate to Date:", style={"marginRight":"6px"}),
 #                     dcc.Dropdown(id="jump-year-cross", options=[], placeholder="Year",
 #                                  style={"width":"100px","display":"inline-block","marginRight":"6px"}),
 #                     dcc.Dropdown(id="jump-month-cross", options=MONTH_OPTIONS, placeholder="Month",
@@ -1093,7 +1161,7 @@
 #                 ], style={"marginBottom":"12px"}),
 
 #                 html.Div([
-#                     html.Label("Window size (days) for returns", style={"fontWeight":"600","marginRight":"8px"}),
+#                     html.Label("Return Calculation Period (days)", style={"fontWeight":"600","marginRight":"8px"}),
 #                     dcc.Input(id="x-window", type="number", min=1, step=1, value=5,
 #                               style={"width":"140px"}),
 #                 ], style={"marginBottom":"6px"}),
@@ -1463,9 +1531,18 @@
 #             z = np.polyfit(idx, y_pct, 1)
 #             trend = z[0]*idx + z[1]
 #             line_fig.add_trace(go.Scatter(x=x_time, y=trend, mode="lines", name="Trend", line=dict(dash="dot")))
-#         line_fig.update_layout(template="plotly_white", margin=dict(t=30, r=10, l=40, b=40),
-#                                xaxis_title="Time", yaxis_title="% change",
-#                                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+#         line_fig.update_layout(
+#             template="plotly_dark",
+#             plot_bgcolor="rgba(26,26,26,0.8)",
+#             paper_bgcolor="rgba(10,10,10,0.8)",
+#             font=dict(color="rgba(255,255,255,0.9)"),
+#             margin=dict(t=30, r=10, l=40, b=40),
+#             xaxis_title="Time", 
+#             yaxis_title="% change",
+#             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+#             xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#             yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
+#         )
 
 #         # Bar chart (counts & probabilities by threshold)
 #         ret_clean = ret.dropna()
@@ -1495,10 +1572,16 @@
 #         max_prob = float(probs.max()) if len(probs) else 0.0
 #         y2_top = max(5.0, np.ceil(max_prob * 1.15 / 5.0) * 5.0)
 #         bar_fig.update_layout(
-#             template="plotly_white", title=bar_title + (f"  · N={N}" if N else ""),
+#             template="plotly_dark",
+#             plot_bgcolor="rgba(26,26,26,0.8)",
+#             paper_bgcolor="rgba(10,10,10,0.8)",
+#             font=dict(color="rgba(255,255,255,0.9)"),
+#             title=bar_title + (f"  · N={N}" if N else ""),
 #             margin=dict(t=50, r=10, l=40, b=40),
 #             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-#             bargap=0.2,
+#             xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#             yaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#             bargap=0.2
 #         )
 #         bar_fig.update_yaxes(title_text="Count of events", secondary_y=False)
 #         bar_fig.update_yaxes(title_text="Probability (%)", range=[0, y2_top], secondary_y=True)
@@ -1668,10 +1751,15 @@
 #         fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
 
 #     fig_ind.update_layout(
-#         template="plotly_white",
+#         template="plotly_dark",
+#         plot_bgcolor="rgba(26,26,26,0.8)",
+#         paper_bgcolor="rgba(10,10,10,0.8)",
+#         font=dict(color="rgba(255,255,255,0.9)"),
 #         margin=dict(t=40, r=10, l=40, b=40),
 #         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-#         title="Indicators (weekend-aware where applicable)"
+#         title="Indicators (weekend-aware where applicable)",
+#         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
 #     )
 
 #     # Unpack results for return
@@ -1973,10 +2061,17 @@
 #     fig_levels.add_trace(go.Scatter(x=levels["datetime"], y=normA, mode="lines", name="Index A (norm. to 100)"))
 #     fig_levels.add_trace(go.Scatter(x=levels["datetime"], y=normB, mode="lines", name="Index B (norm. to 100)"))
 #     fig_levels.update_layout(
-#         template="plotly_white", title=f"Both Indexes (normalized) · {start.date()} → {end.date()}",
+#         template="plotly_dark",
+#         plot_bgcolor="rgba(26,26,26,0.8)",
+#         paper_bgcolor="rgba(10,10,10,0.8)",
+#         font=dict(color="rgba(255,255,255,0.9)"),
+#         title=f"Both Indexes (normalized) · {start.date()} → {end.date()}",
 #         margin=dict(t=50, r=10, l=40, b=40),
-#         xaxis_title="Date", yaxis_title="Indexed level (start=100)",
-#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+#         xaxis_title="Date", 
+#         yaxis_title="Indexed level (start=100)",
+#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+#         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
 #     )
 
 #     # -------- Weekend-aware returns (window size in calendar days) --------
@@ -2023,10 +2118,16 @@
 #     else:
 #         subtitle = "Pearson corr = n/a"
 #     fig_scatter.update_layout(
-#         template="plotly_white", title=f"Correlation (windowed returns) — {subtitle}",
+#         template="plotly_dark",
+#         plot_bgcolor="rgba(26,26,26,0.8)",
+#         paper_bgcolor="rgba(10,10,10,0.8)",
+#         font=dict(color="rgba(255,255,255,0.9)"),
+#         title=f"Correlation (windowed returns) — {subtitle}",
 #         margin=dict(t=60, r=10, l=50, b=50),
 #         xaxis_title=f"Index B {win}-day return (%)",
-#         yaxis_title=f"Index A {win}-day return (%)"
+#         yaxis_title=f"Index A {win}-day return (%)",
+#         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
 #     )
 
 #     # -------- Chart 3: Windowed returns through time --------
@@ -2039,11 +2140,17 @@
 #         x=ret_time["datetime"], y=ret_time["retB"]*100.0, mode="lines", name=f"B {win}-day %"
 #     ))
 #     fig_returns.update_layout(
-#         template="plotly_white",
+#         template="plotly_dark",
+#         plot_bgcolor="rgba(26,26,26,0.8)",
+#         paper_bgcolor="rgba(10,10,10,0.8)",
+#         font=dict(color="rgba(255,255,255,0.9)"),
 #         title=f"{win}-day Returns Over Time · {start.date()} → {end.date()}",
 #         margin=dict(t=50, r=10, l=40, b=40),
-#         xaxis_title="Date", yaxis_title=f"{win}-day return (%)",
-#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+#         xaxis_title="Date", 
+#         yaxis_title=f"{win}-day return (%)",
+#         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+#         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+#         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
 #     )
 
 #     # -------- Stats card --------
@@ -2143,9 +2250,7 @@
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
 
 
-
-# =============================================================================================================================================================================================================
-
+# ==================================================================================================================================================================================================================
 
 
 import os
@@ -2279,21 +2384,42 @@ app.index_string = '''
             input[type="text"]::placeholder, input[type="number"]::placeholder {
                 color: rgba(255,255,255,0.5) !important;
             }
+            .DateInput {
+                background-color: rgba(255,255,255,0.1) !important;
+            }
             .DateInput_input {
                 background-color: rgba(255,255,255,0.1) !important;
                 color: rgba(255,255,255,0.9) !important;
                 border-color: rgba(255,255,255,0.2) !important;
+                font-size: 14px !important;
+                padding: 8px 10px !important;
             }
             .DateInput_input__focused {
                 border-color: rgba(0,200,150,0.6) !important;
+                box-shadow: 0 0 0 2px rgba(0,200,150,0.2) !important;
             }
             .DateRangePickerInput {
                 background-color: rgba(255,255,255,0.1) !important;
                 border-color: rgba(255,255,255,0.2) !important;
+                border-radius: 4px !important;
+            }
+            .DateRangePickerInput__withBorder {
+                border-radius: 4px !important;
+            }
+            .DateRangePickerInput__disabled {
+                background-color: rgba(255,255,255,0.05) !important;
+            }
+            .DateRangePickerInput_arrow {
+                border-left-color: rgba(255,255,255,0.5) !important;
+            }
+            .DateRangePickerInput_arrow_svg {
+                fill: rgba(255,255,255,0.7) !important;
             }
             .DayPicker {
                 background-color: #1a1a1a !important;
                 color: rgba(255,255,255,0.9) !important;
+                border: 1px solid rgba(255,255,255,0.2) !important;
+                border-radius: 8px !important;
             }
             .DayPicker__week-header {
                 color: rgba(255,255,255,0.7) !important;
@@ -2303,15 +2429,43 @@ app.index_string = '''
             }
             .DayPicker-Day--selected {
                 background-color: rgba(0,200,150,0.6) !important;
+                color: white !important;
             }
             .DayPicker-Day--hovered {
                 background-color: rgba(0,200,150,0.3) !important;
             }
+            .DayPicker-Day--outside {
+                color: rgba(255,255,255,0.3) !important;
+            }
+            /* Color-coded radio buttons for Drop (red) and Gain (green) */
+            #window-size-drop input[type="radio"],
+            #min-threshold-drop input[type="radio"],
+            #snap-month-drop input[type="checkbox"] {
+                accent-color: rgba(239,68,68,0.8) !important;
+            }
+            #window-size-gain input[type="radio"],
+            #min-threshold-gain input[type="radio"],
+            #snap-month-gain input[type="checkbox"] {
+                accent-color: rgba(34,197,94,0.8) !important;
+            }
+            /* Default accent for other radio/checkboxes */
             input[type="radio"] {
                 accent-color: rgba(0,200,150,0.8) !important;
             }
             input[type="checkbox"] {
                 accent-color: rgba(0,200,150,0.8) !important;
+            }
+            /* Improved spacing for radio buttons and inputs */
+            .RadioItems, .Checklist {
+                margin-bottom: 8px !important;
+            }
+            .RadioItems label, .Checklist label {
+                margin-right: 12px !important;
+                margin-bottom: 4px !important;
+            }
+            /* Better visual grouping for custom inputs */
+            input[type="number"] {
+                margin-top: 4px !important;
             }
         </style>
     </head>
@@ -2969,30 +3123,46 @@ def single_layout():
 
                 html.Div([
                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
-                    dcc.RadioItems(
-                        id="window-size-drop",
-                        options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
-                                 {"label": "7", "value": 7}, {"label": "10", "value": 10}],
-                        value=5, inline=True
-                    ),
-                    dcc.Input(
-                        id="window-size-input-drop", type="number", min=1, step=1,
-                        placeholder="custom", style={"marginLeft":"8px","width":"100px"}
-                    )
+                    html.Div([
+                        dcc.RadioItems(
+                            id="window-size-drop",
+                            options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
+                                     {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
+                            value=5, inline=True,
+                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
+                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
+                        ),
+                    ], style={"marginBottom": "8px"}),
+                    html.Div([
+                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+                        dcc.Input(
+                            id="window-size-input-drop", type="number", min=1, step=1,
+                            placeholder="custom", 
+                            style={"width":"100px", "display": "inline-block"}
+                        )
+                    ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
 
                 html.Div([
                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
-                    dcc.RadioItems(
-                        id="min-threshold-drop",
-                        options=[{"label":"1%","value":1},{"label":"3%","value":3},
-                                 {"label":"5%","value":5},{"label":"10%","value":10}],
-                        value=3, inline=True
-                    ),
-                    dcc.Input(
-                        id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
-                        placeholder="e.g. 2.7", style={"marginLeft":"8px","width":"120px"}
-                    )
+                    html.Div([
+                        dcc.RadioItems(
+                            id="min-threshold-drop",
+                            options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
+                                     {"label":" 5%","value":5},{"label":" 10%","value":10}],
+                            value=3, inline=True,
+                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
+                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
+                        ),
+                    ], style={"marginBottom": "8px"}),
+                    html.Div([
+                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+                        dcc.Input(
+                            id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
+                            placeholder="e.g. 2.7", 
+                            style={"width":"120px", "display": "inline-block"}
+                        )
+                    ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
             ], style={
                 "flex":1, "minWidth":"420px", "padding":"24px",
@@ -3047,30 +3217,46 @@ def single_layout():
 
                 html.Div([
                     html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
-                    dcc.RadioItems(
-                        id="window-size-gain",
-                        options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
-                                 {"label": "7", "value": 7}, {"label": "10", "value": 10}],
-                        value=5, inline=True
-                    ),
-                    dcc.Input(
-                        id="window-size-input-gain", type="number", min=1, step=1,
-                        placeholder="custom", style={"marginLeft":"8px","width":"100px"}
-                    )
+                    html.Div([
+                        dcc.RadioItems(
+                            id="window-size-gain",
+                            options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
+                                     {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
+                            value=5, inline=True,
+                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
+                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
+                        ),
+                    ], style={"marginBottom": "8px"}),
+                    html.Div([
+                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+                        dcc.Input(
+                            id="window-size-input-gain", type="number", min=1, step=1,
+                            placeholder="custom", 
+                            style={"width":"100px", "display": "inline-block"}
+                        )
+                    ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
 
                 html.Div([
                     html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
-                    dcc.RadioItems(
-                        id="min-threshold-gain",
-                        options=[{"label":"1%","value":1},{"label":"3%","value":3},
-                                 {"label":"5%","value":5},{"label":"10%","value":10}],
-                        value=3, inline=True
-                    ),
-                    dcc.Input(
-                        id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
-                        placeholder="e.g. 2.7", style={"marginLeft":"8px","width":"120px"}
-                    )
+                    html.Div([
+                        dcc.RadioItems(
+                            id="min-threshold-gain",
+                            options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
+                                     {"label":" 5%","value":5},{"label":" 10%","value":10}],
+                            value=3, inline=True,
+                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
+                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
+                        ),
+                    ], style={"marginBottom": "8px"}),
+                    html.Div([
+                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
+                        dcc.Input(
+                            id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
+                            placeholder="e.g. 2.7", 
+                            style={"width":"120px", "display": "inline-block"}
+                        )
+                    ], style={"marginTop": "4px"})
                 ], style={"margin":"6px 0"}),
             ], style={
                 "flex":1, "minWidth":"420px", "padding":"24px",
@@ -3905,9 +4091,22 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
         plot_bgcolor="rgba(26,26,26,0.8)",
         paper_bgcolor="rgba(10,10,10,0.8)",
         font=dict(color="rgba(255,255,255,0.9)"),
-        margin=dict(t=40, r=10, l=40, b=40),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        title="Indicators (weekend-aware where applicable)",
+        margin=dict(t=80, r=10, l=40, b=40),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=-0.15,
+            xanchor="center",
+            x=0.5,
+            itemwidth=30,
+            font=dict(size=10)
+        ),
+        title=dict(
+            text="Indicators (weekend-aware where applicable)",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=16)
+        ),
         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
     )
@@ -4398,5 +4597,6 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
