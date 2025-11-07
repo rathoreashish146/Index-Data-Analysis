@@ -3323,102 +3323,6 @@ app.index_string = '''
                 gap: 8px !important;
                 flex-wrap: wrap !important;
             }
-            /* Fix duplicate page number - ensure only one input is visible */
-            .dash-table-toolbar input[type="number"] {
-                background-color: rgba(255,255,255,0.1) !important;
-                color: rgba(255,255,255,0.9) !important;
-                border: 1px solid rgba(255,255,255,0.2) !important;
-                border-radius: 4px !important;
-                padding: 6px 10px !important;
-                width: 60px !important;
-                min-width: 60px !important;
-                max-width: 60px !important;
-                text-align: center !important;
-                font-weight: 500 !important;
-                font-size: 14px !important;
-                line-height: 1.2 !important;
-                height: 32px !important;
-                -moz-appearance: textfield !important;
-                box-sizing: border-box !important;
-            }
-            /* Hide spinner buttons on number input */
-            .dash-table-toolbar input[type="number"]::-webkit-inner-spin-button,
-            .dash-table-toolbar input[type="number"]::-webkit-outer-spin-button {
-                -webkit-appearance: none !important;
-                margin: 0 !important;
-            }
-            /* Remove duplicate page number spans/badges - hide any span/div that might duplicate the input value */
-            .dash-table-toolbar .page-number,
-            .dash-table-toolbar span[class*="page"],
-            .dash-table-toolbar div[class*="page"] {
-                display: none !important;
-            }
-            /* Ensure only one input is visible - hide any duplicate inputs */
-            .dash-table-toolbar input[type="number"]:not(:first-of-type) {
-                display: none !important;
-            }
-            /* Ensure input wrapper doesn't create duplicates */
-            .dash-table-toolbar > div {
-                display: inline-flex !important;
-                align-items: center !important;
-                position: relative !important;
-                height: 32px !important;
-            }
-            /* Fix duplicate page number - be specific about what to hide */
-            /* Hide duplicate page number badges/spans, but keep the "/ total" text */
-            .dash-table-toolbar .page-number,
-            .dash-table-toolbar div[class*="current-page"],
-            .dash-table-toolbar div[class*="page-input"] > span {
-                display: none !important;
-            }
-            /* Fix duplicate page number display */
-            /* Hide any spans/divs that might duplicate the input value */
-            /* Be careful not to hide the "/ total" text which is in a separate container */
-            .dash-table-toolbar > div:not(:last-child) > span,
-            .dash-table-toolbar > div:not(:last-child) > div:empty {
-                display: none !important;
-            }
-            /* Ensure input is the only element showing page number in its container */
-            .dash-table-toolbar > div:has(input[type="number"]) {
-                display: inline-flex !important;
-                align-items: center !important;
-            }
-            /* Hide any text nodes or overlays in the input container */
-            .dash-table-toolbar > div:has(input[type="number"]) > *:not(input) {
-                display: none !important;
-            }
-            /* Show only the input field itself - ensure it's visible and properly styled */
-            .dash-table-toolbar input[type="number"] {
-                display: inline-block !important;
-                visibility: visible !important;
-            }
-            /* Ensure the input container only shows the input, not duplicate text */
-            .dash-table-toolbar > div {
-                position: relative !important;
-                overflow: visible !important;
-            }
-            /* Hide any pseudo-elements or overlays that might duplicate content */
-            .dash-table-toolbar > div::before,
-            .dash-table-toolbar > div::after,
-            .dash-table-toolbar input[type="number"]::before,
-            .dash-table-toolbar input[type="number"]::after {
-                display: none !important;
-                content: none !important;
-            }
-            /* Keep the "/ total" text visible - ensure it's not hidden */
-            /* The "/ total" text is typically in the last child div */
-            .dash-table-toolbar > div:last-child {
-                display: inline-block !important;
-                color: rgba(255,255,255,0.7) !important;
-                font-size: 14px !important;
-                margin-left: 4px !important;
-            }
-            /* Ensure spans in text-only divs (like "/ total") are visible */
-            .dash-table-toolbar > div:last-child span,
-            .dash-table-toolbar > div:last-child {
-                display: inline-block !important;
-                visibility: visible !important;
-            }
             /* Style navigation buttons */
             .dash-table-toolbar .previous-page, 
             .dash-table-toolbar .next-page,
@@ -3454,11 +3358,81 @@ app.index_string = '''
                 opacity: 0.3 !important;
                 cursor: not-allowed !important;
             }
-            /* Style the "/ total" text */
-            .dash-table-toolbar > div:last-child {
+            /* Fix duplicate page number - hide all spans/divs that might show duplicate page number */
+            /* Target the container that holds the page input */
+            .dash-table-toolbar > div {
+                display: inline-flex !important;
+                align-items: center !important;
+                position: relative !important;
+                height: 32px !important;
+            }
+            /* Hide ALL child elements in the input container EXCEPT the input itself */
+            .dash-table-toolbar > div:has(input[type="number"]) > span,
+            .dash-table-toolbar > div:has(input[type="number"]) > div:not(:has(input)),
+            .dash-table-toolbar > div:has(input[type="number"]) > label,
+            .dash-table-toolbar > div:has(input[type="number"]) > *:not(input[type="number"]) {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            /* Style the page number input */
+            .dash-table-toolbar input[type="number"] {
+                background-color: rgba(255,255,255,0.1) !important;
+                color: rgba(255,255,255,0.9) !important;
+                border: 1px solid rgba(255,255,255,0.2) !important;
+                border-radius: 4px !important;
+                padding: 6px 10px !important;
+                width: 60px !important;
+                min-width: 60px !important;
+                max-width: 60px !important;
+                text-align: center !important;
+                font-weight: 500 !important;
+                font-size: 14px !important;
+                line-height: 1.2 !important;
+                height: 32px !important;
+                -moz-appearance: textfield !important;
+                box-sizing: border-box !important;
+                display: inline-block !important;
+                visibility: visible !important;
+                position: relative !important;
+                z-index: 1 !important;
+            }
+            /* Hide spinner buttons on number input */
+            .dash-table-toolbar input[type="number"]::-webkit-inner-spin-button,
+            .dash-table-toolbar input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none !important;
+                margin: 0 !important;
+            }
+            /* Hide any duplicate inputs */
+            .dash-table-toolbar input[type="number"]:not(:first-of-type) {
+                display: none !important;
+            }
+            /* Hide any pseudo-elements that might duplicate content */
+            .dash-table-toolbar > div::before,
+            .dash-table-toolbar > div::after,
+            .dash-table-toolbar input[type="number"]::before,
+            .dash-table-toolbar input[type="number"]::after {
+                display: none !important;
+                content: none !important;
+            }
+            /* Keep the "/ total" text visible - it's in the last div */
+            .dash-table-toolbar > div:last-child:not(:has(input)) {
+                display: inline-block !important;
                 color: rgba(255,255,255,0.7) !important;
                 font-size: 14px !important;
                 margin-left: 4px !important;
+                visibility: visible !important;
+            }
+            .dash-table-toolbar > div:last-child:not(:has(input)) > * {
+                display: inline !important;
+                visibility: visible !important;
+            }
+            /* Additional fix: Hide any elements with class names that suggest duplicate page numbers */
+            .dash-table-toolbar .page-number,
+            .dash-table-toolbar [class*="current-page"],
+            .dash-table-toolbar [class*="page-input"] > span:not(:last-child),
+            .dash-table-toolbar [class*="page-input"] > div:not(:has(input)) {
+                display: none !important;
+                visibility: hidden !important;
             }
             /* Prevent any pseudo-elements from duplicating content */
             .dash-table-toolbar input[type="number"]::before,
@@ -3467,6 +3441,77 @@ app.index_string = '''
                 content: none !important;
             }
         </style>
+        <script>
+            // Fix duplicate page number in DataTable pagination
+            function fixPaginationDuplicates() {
+                const toolbars = document.querySelectorAll('.dash-table-toolbar');
+                toolbars.forEach(toolbar => {
+                    // Find the input container
+                    const inputContainers = Array.from(toolbar.children).filter(div => {
+                        return div.querySelector('input[type="number"]');
+                    });
+                    
+                    inputContainers.forEach(container => {
+                        const input = container.querySelector('input[type="number"]');
+                        if (!input) return;
+                        
+                        // Hide all children except the input itself
+                        Array.from(container.children).forEach(child => {
+                            if (child !== input && child.tagName !== 'SCRIPT') {
+                                child.style.display = 'none';
+                                child.style.visibility = 'hidden';
+                            }
+                        });
+                        
+                        // Remove any text nodes or overlays
+                        const walker = document.createTreeWalker(
+                            container,
+                            NodeFilter.SHOW_TEXT,
+                            null,
+                            false
+                        );
+                        let node;
+                        while (node = walker.nextNode()) {
+                            if (node.parentElement !== input && node.textContent.trim() === input.value) {
+                                node.textContent = '';
+                            }
+                        }
+                    });
+                });
+            }
+            
+            // Run on page load and after any updates
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', fixPaginationDuplicates);
+            } else {
+                fixPaginationDuplicates();
+            }
+            
+            // Use MutationObserver to fix duplicates when table updates
+            const observer = new MutationObserver(function(mutations) {
+                let shouldFix = false;
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes.length > 0) {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1 && (
+                                node.classList.contains('dash-table-toolbar') ||
+                                node.querySelector('.dash-table-toolbar')
+                            )) {
+                                shouldFix = true;
+                            }
+                        });
+                    }
+                });
+                if (shouldFix) {
+                    setTimeout(fixPaginationDuplicates, 100);
+                }
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        </script>
     </head>
     <body>
         {%app_entry%}
@@ -6146,3 +6191,5 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
