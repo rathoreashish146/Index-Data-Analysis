@@ -5557,42 +5557,6 @@ app.index_string = '''
                 font-weight: 500 !important;
                 display: inline-block !important;
             }
-            /* Fix Plotly chart navigation/zoom controls styling */
-            .modebar {
-                background-color: rgba(10,10,10,0.9) !important;
-                border: 1px solid rgba(255,255,255,0.2) !important;
-                border-radius: 4px !important;
-            }
-            .modebar-btn {
-                color: rgba(255,255,255,0.9) !important;
-            }
-            .modebar-btn:hover {
-                background-color: rgba(255,255,255,0.1) !important;
-            }
-            .modebar-btn.active {
-                background-color: rgba(0,200,150,0.2) !important;
-            }
-            /* Fix Plotly slider/range selector styling */
-            .rangeslider-container {
-                background-color: rgba(26,26,26,0.8) !important;
-            }
-            .rangeslider-slidebox {
-                background-color: rgba(0,200,150,0.3) !important;
-                border: 1px solid rgba(0,200,150,0.5) !important;
-            }
-            .rangeslider-handle {
-                background-color: rgba(0,200,150,0.8) !important;
-                border: 2px solid rgba(255,255,255,0.9) !important;
-            }
-            .rangeslider-mask-min,
-            .rangeslider-mask-max {
-                background-color: rgba(0,0,0,0.5) !important;
-            }
-            /* Fix Plotly xaxis selector styling */
-            .xaxislayer-above,
-            .yaxislayer-above {
-                fill: rgba(255,255,255,0.9) !important;
-            }
         </style>
     </head>
     <body>
@@ -7688,44 +7652,42 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
                           row=cur_row, col=1, secondary_y=False)
         fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
 
-    # Calculate proper margins to accommodate legend outside plotting area
+    # Calculate proper bottom margin to accommodate legend outside plotting area
     # Legend will be positioned above the chart, so we need extra top margin
-    legend_height = 80  # Increased height for horizontal legend with many items
+    legend_height = 60  # Estimated height for horizontal legend
     bottom_margin = 80  # Base bottom margin
-    
+
     fig_ind.update_layout(
         template="plotly_dark",
         plot_bgcolor="rgba(26,26,26,0.8)",
         paper_bgcolor="rgba(10,10,10,0.8)",
         font=dict(color="rgba(255,255,255,0.9)"),
-        margin=dict(t=120 + legend_height, r=10, l=40, b=bottom_margin),  # Extra top margin for legend above
+        margin=dict(t=100 + legend_height, r=10, l=40, b=bottom_margin),  # Extra top margin for legend above
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.15,  # Position well above the chart (outside plotting area)
+            yanchor="top",
+            y=1.02,  # Position above the chart (outside plotting area)
             xanchor="center",
             x=0.5,
-            itemwidth=25,
-            font=dict(size=9),
-            bgcolor="rgba(10,10,10,0.95)",
-            bordercolor="rgba(255,255,255,0.3)",
+            itemwidth=30,
+            font=dict(size=10),
+            bgcolor="rgba(10,10,10,0.9)",
+            bordercolor="rgba(255,255,255,0.2)",
             borderwidth=1,
-            tracegroupgap=8,  # Space between legend items
+            tracegroupgap=10,  # Space between legend items
             entrywidthmode="fraction",
-            entrywidth=0.12,  # Control width of legend items
-            itemsizing="constant"  # Keep items consistent size
+            entrywidth=0.15  # Control width of legend items
         ),
         title=dict(
             text="Indicators (weekend-aware where applicable)",
             x=0.5,
             xanchor="center",
             font=dict(size=16),
-            y=0.995,
+            y=0.98,
             yanchor="top"
         ),
         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
-        height=600 + legend_height  # Increase chart height to accommodate legend
+        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
     )
     
     # Update all subplot x-axes to have consistent styling and prevent overlap
