@@ -2344,8 +2344,10 @@
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
 
 
-# ============================================================================================================================================================================================================
+# ===========================================================================================================================================================================================================
 
+
+# ================================================================================================================================================================================================================
 
 # import os
 # import base64
@@ -2593,6 +2595,61 @@
 #             /* Card hover effect */
 #             [style*="background"][style*="#121821"]:hover {
 #                 box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+#             }
+#             /* DataTable pagination styling */
+#             .dash-table-toolbar {
+#                 background-color: #1a1a1a !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 padding: 8px !important;
+#             }
+#             .dash-table-toolbar input {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 border: 1px solid rgba(255,255,255,0.2) !important;
+#                 border-radius: 4px !important;
+#                 padding: 4px 8px !important;
+#                 width: 60px !important;
+#                 text-align: center !important;
+#                 font-weight: 500 !important;
+#             }
+#             .dash-table-toolbar .previous-page, 
+#             .dash-table-toolbar .next-page,
+#             .dash-table-toolbar .first-page,
+#             .dash-table-toolbar .last-page {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 border: 1px solid rgba(255,255,255,0.2) !important;
+#                 border-radius: 4px !important;
+#                 padding: 4px 12px !important;
+#                 margin: 0 4px !important;
+#                 min-width: 36px !important;
+#                 cursor: pointer !important;
+#             }
+#             .dash-table-toolbar .previous-page:hover, 
+#             .dash-table-toolbar .next-page:hover,
+#             .dash-table-toolbar .first-page:hover,
+#             .dash-table-toolbar .last-page:hover {
+#                 background-color: rgba(0,200,150,0.2) !important;
+#                 border-color: rgba(0,200,150,0.4) !important;
+#             }
+#             .dash-table-toolbar .previous-page:disabled, 
+#             .dash-table-toolbar .next-page:disabled,
+#             .dash-table-toolbar .first-page:disabled,
+#             .dash-table-toolbar .last-page:disabled {
+#                 opacity: 0.3 !important;
+#                 cursor: not-allowed !important;
+#             }
+#             .dash-table-toolbar .page-number {
+#                 background-color: rgba(255,255,255,0.1) !important;
+#                 color: rgba(255,255,255,0.9) !important;
+#                 border: 1px solid rgba(255,255,255,0.2) !important;
+#                 border-radius: 4px !important;
+#                 padding: 4px 12px !important;
+#                 margin: 0 4px !important;
+#                 min-width: 60px !important;
+#                 text-align: center !important;
+#                 font-weight: 500 !important;
+#                 display: inline-block !important;
 #             }
 #         </style>
 #     </head>
@@ -2997,6 +3054,12 @@
 #                 "border": "1px solid rgba(0,200,150,0.5)"
 #             }
 #         ],
+#         style_cell_conditional=[
+#             {
+#                 "if": {"column_id": "Start (first day of trade)"},
+#                 "minWidth": "180px"
+#             }
+#         ]
 #     )
 #     return table
 
@@ -3783,44 +3846,60 @@
 #                 html.Button(
 #                     "Select All", id="indicators-select-all", n_clicks=0,
 #                     style={
-#                         "padding": "4px 12px",
+#                         "padding": "6px 16px",
 #                         "marginRight": "8px",
-#                         "borderRadius": "4px",
-#                         "border": "1px solid rgba(255,255,255,0.2)",
-#                         "background": "rgba(255,255,255,0.1)",
+#                         "borderRadius": "6px",
+#                         "border": "1px solid rgba(0,200,150,0.3)",
+#                         "background": "rgba(0,200,150,0.1)",
 #                         "color": "rgba(255,255,255,0.9)",
 #                         "cursor": "pointer",
-#                         "fontSize": "12px"
+#                         "fontSize": "13px",
+#                         "fontWeight": "500",
+#                         "transition": "all 0.2s"
 #                     }
 #                 ),
 #                 html.Button(
 #                     "Clear All", id="indicators-clear-all", n_clicks=0,
 #                     style={
-#                         "padding": "4px 12px",
-#                         "borderRadius": "4px",
+#                         "padding": "6px 16px",
+#                         "borderRadius": "6px",
 #                         "border": "1px solid rgba(255,255,255,0.2)",
 #                         "background": "rgba(255,255,255,0.1)",
 #                         "color": "rgba(255,255,255,0.9)",
 #                         "cursor": "pointer",
-#                         "fontSize": "12px"
+#                         "fontSize": "13px",
+#                         "fontWeight": "500",
+#                         "transition": "all 0.2s"
 #                     }
 #                 )
-#             ], style={"marginBottom": "16px"}),
-#             CheckboxGroup(
-#                 id="indicators-select",
-#                 label="",
-#                 options=[
-#                     {"label":" SMA (5 & 20)", "value":"sma"},
-#                     {"label":" EMA (12 & 26)", "value":"ema"},
-#                     {"label":" Bollinger Bands (20,2)", "value":"bb"},
-#                     {"label":" RSI (14)", "value":"rsi"},
-#                     {"label":" MACD (12,26,9)", "value":"macd"},
-#                     {"label":" Volatility (20/60)", "value":"vol"},
-#                     {"label":" Drawdown", "value":"dd"},
-#                 ],
-#                 value=["sma","ema","bb","rsi","macd","vol","dd"],
-#                 inline=True
-#             )
+#             ], style={
+#                 "marginBottom": "16px",
+#                 "display": "flex",
+#                 "alignItems": "center",
+#                 "flexWrap": "wrap",
+#                 "gap": "8px"
+#             }),
+#             html.Div([
+#                 CheckboxGroup(
+#                     id="indicators-select",
+#                     label="",
+#                     options=[
+#                         {"label":" SMA (5 & 20)", "value":"sma"},
+#                         {"label":" EMA (12 & 26)", "value":"ema"},
+#                         {"label":" Bollinger Bands (20,2)", "value":"bb"},
+#                         {"label":" RSI (14)", "value":"rsi"},
+#                         {"label":" MACD (12,26,9)", "value":"macd"},
+#                         {"label":" Volatility (20/60)", "value":"vol"},
+#                         {"label":" Drawdown", "value":"dd"},
+#                     ],
+#                     value=["sma","ema","bb","rsi","macd","vol","dd"],
+#                     inline=True
+#                 )
+#             ], style={
+#                 "display": "flex",
+#                 "flexWrap": "wrap",
+#                 "gap": "8px"
+#             })
 #         ], style={"marginBottom": "24px"}),
 
 #         # Analyze Button - Sticky footer area
@@ -4067,6 +4146,32 @@
 #         return cross_layout()
 #     else:
 #         return home_layout()
+
+# # -----------------------------
+# # Indicators Select All / Clear All callback
+# # -----------------------------
+# @app.callback(
+#     Output("indicators-select", "value"),
+#     Input("indicators-select-all", "n_clicks"),
+#     Input("indicators-clear-all", "n_clicks"),
+#     State("indicators-select", "options"),
+#     prevent_initial_call=True,
+# )
+# def update_indicators_select_all(select_all_clicks, clear_all_clicks, options):
+#     ctx = dash.callback_context
+#     if not ctx.triggered:
+#         return no_update
+    
+#     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    
+#     if trigger_id == "indicators-select-all":
+#         # Select all indicator values
+#         return [opt["value"] for opt in options]
+#     elif trigger_id == "indicators-clear-all":
+#         # Clear all (return empty list)
+#         return []
+    
+#     return no_update
 
 # # -----------------------------
 # # Upload callback (Single page)
@@ -4576,20 +4681,28 @@
 #                           row=cur_row, col=1, secondary_y=False)
 #         fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
 
+#     # Calculate bottom margin based on number of rows and legend
+#     # More rows = more space needed for legend
+#     bottom_margin = 100 + (cur_row * 20)  # Base 100px + 20px per row
+    
 #     fig_ind.update_layout(
 #         template="plotly_dark",
 #         plot_bgcolor="rgba(26,26,26,0.8)",
 #         paper_bgcolor="rgba(10,10,10,0.8)",
 #         font=dict(color="rgba(255,255,255,0.9)"),
-#         margin=dict(t=80, r=10, l=40, b=40),
+#         margin=dict(t=80, r=10, l=40, b=bottom_margin),  # Dynamic bottom margin
 #         legend=dict(
 #             orientation="h",
-#             yanchor="bottom",
-#             y=-0.15,
+#             yanchor="top",
+#             y=-0.02,  # Position just below the last subplot
 #             xanchor="center",
 #             x=0.5,
 #             itemwidth=30,
-#             font=dict(size=10)
+#             font=dict(size=10),
+#             bgcolor="rgba(10,10,10,0.9)",
+#             bordercolor="rgba(255,255,255,0.2)",
+#             borderwidth=1,
+#             tracegroupgap=10  # Space between legend items
 #         ),
 #         title=dict(
 #             text="Indicators (weekend-aware where applicable)",
@@ -4600,6 +4713,14 @@
 #         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
 #         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
 #     )
+    
+#     # Update all subplot x-axes to have consistent styling and prevent overlap
+#     for i in range(1, cur_row + 1):
+#         fig_ind.update_xaxes(
+#             showgrid=True,
+#             gridcolor="rgba(255,255,255,0.1)",
+#             row=i, col=1
+#         )
 
 #     # Unpack results for return
 #     drop_card, drop_line, drop_bar, drop_stats, drop_table, _dff_drop = drop_out
@@ -5089,7 +5210,10 @@
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
 
 
-# ================================================================================================================================================================================================================
+
+# =============================================================================================================================================================================================================
+
+
 
 import os
 import base64
@@ -5253,6 +5377,36 @@ app.index_string = '''
             .DateRangePickerInput_arrow_svg {
                 fill: rgba(255,255,255,0.7) !important;
             }
+            /* Fix DatePickerRange clear button overlap */
+            .DateInput__close {
+                position: absolute !important;
+                right: 8px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                z-index: 10 !important;
+                background: rgba(255,255,255,0.1) !important;
+                border-radius: 50% !important;
+                width: 20px !important;
+                height: 20px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                cursor: pointer !important;
+            }
+            .DateInput__close:hover {
+                background: rgba(255,255,255,0.2) !important;
+            }
+            .DateInput__close svg {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            .DateInput {
+                position: relative !important;
+                padding-right: 32px !important;
+            }
+            .DateRangePickerInput__withBorder {
+                position: relative !important;
+            }
             .DayPicker {
                 background-color: #1a1a1a !important;
                 color: rgba(255,255,255,0.9) !important;
@@ -5337,6 +5491,16 @@ app.index_string = '''
             /* Card hover effect */
             [style*="background"][style*="#121821"]:hover {
                 box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+            }
+            /* Responsive button styling */
+            @media (max-width: 768px) {
+                #analyze, #x-analyze {
+                    width: 100% !important;
+                    float: none !important;
+                }
+                .card-footer {
+                    text-align: center !important;
+                }
             }
             /* DataTable pagination styling */
             .dash-table-toolbar {
@@ -5842,20 +6006,29 @@ def Card(children, header=None, footer=None, **kwargs):
             style={
                 "padding": "16px 0 0 0",
                 "borderTop": "1px solid rgba(255,255,255,0.1)",
-                "marginTop": "16px"
+                "marginTop": "16px",
+                "position": "sticky",
+                "bottom": 0,
+                "background": "#121821",
+                "zIndex": 5
             }
         ))
     
+    card_style = {
+        "padding": "24px",
+        "background": "#121821",
+        "borderRadius": "12px",
+        "boxShadow": "0 4px 12px rgba(0,0,0,0.3)",
+        "border": "1px solid rgba(255,255,255,0.1)",
+        "display": "flex",
+        "flexDirection": "column",
+        "position": "relative"
+    }
+    card_style.update(kwargs.get("style", {}))
+    
     return html.Div(
         card_children,
-        style={
-            "padding": "24px",
-            "background": "#121821",
-            "borderRadius": "12px",
-            "boxShadow": "0 4px 12px rgba(0,0,0,0.3)",
-            "border": "1px solid rgba(255,255,255,0.1)",
-            **kwargs.get("style", {})
-        },
+        style=card_style,
         **{k: v for k, v in kwargs.items() if k != "style"}
     )
 
@@ -6372,13 +6545,19 @@ def single_layout():
             }),
         ], style={"marginBottom": "32px"}),
 
-        # File Upload
-        FileDropzone(
-            id="uploader",
-            label="Upload CSV File"
+        # File Upload with Loading
+        dcc.Loading(
+            id="upload-loading",
+            type="circle",
+            children=html.Div([
+                FileDropzone(
+                    id="uploader",
+                    label="Upload CSV File"
+                ),
+                html.Div(id="file-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="warn-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
+            ])
         ),
-        html.Div(id="file-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
-        html.Div(id="warn-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
 
         # Analysis Types
         Card([
@@ -6401,7 +6580,7 @@ def single_layout():
                     "fontWeight":600, "color":"#ef4444"
                 }),
                 DateRangePicker(
-                    id="date-range-drop",
+                        id="date-range-drop",
                     label="Date Range",
                     preset_id="preset-drop",
                     preset_value="all",
@@ -6417,14 +6596,14 @@ def single_layout():
                         "marginBottom": "8px"
                     }),
                     html.Div([
-                        dcc.Dropdown(id="jump-year-drop", options=[], placeholder="Year",
+                    dcc.Dropdown(id="jump-year-drop", options=[], placeholder="Year",
                                      style={"width":"100px","display":"inline-block","marginRight":"8px"}),
-                        dcc.Dropdown(id="jump-month-drop", options=MONTH_OPTIONS, placeholder="Month",
-                                     style={"width":"120px","display":"inline-block"}),
+                    dcc.Dropdown(id="jump-month-drop", options=MONTH_OPTIONS, placeholder="Month",
+                                 style={"width":"120px","display":"inline-block"}),
                     ], style={"display": "flex", "alignItems": "center"})
                 ], style={"marginBottom": "20px"}),
                 RadioGroup(
-                    id="window-size-drop",
+                            id="window-size-drop",
                     label="Analysis Period (days)",
                     options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
                              {"label": "7", "value": 7}, {"label": "10", "value": 10}],
@@ -6435,7 +6614,7 @@ def single_layout():
                 Field(
                     label="Custom Period (days)",
                     input_component=dcc.Input(
-                        id="window-size-input-drop", type="number", min=1, step=1,
+                            id="window-size-input-drop", type="number", min=1, step=1,
                         placeholder="Enter custom days",
                         style={
                             "width": "100%",
@@ -6451,7 +6630,7 @@ def single_layout():
                     helper_text="Optional: Enter a custom analysis period in days"
                 ),
                 RadioGroup(
-                    id="min-threshold-drop",
+                            id="min-threshold-drop",
                     label="Minimum Change Threshold (%)",
                     options=[{"label":"1%","value":1},{"label":"3%","value":3},
                              {"label":"5%","value":5},{"label":"10%","value":10}],
@@ -6462,8 +6641,8 @@ def single_layout():
                 Field(
                     label="Custom Threshold (%)",
                     input_component=dcc.Input(
-                        id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
-                        placeholder="e.g. 2.7",
+                            id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
+                            placeholder="e.g. 2.7", 
                         style={
                             "width": "100%",
                             "height": "40px",
@@ -6489,7 +6668,7 @@ def single_layout():
                     "fontWeight":600, "color":"#22c55e"
                 }),
                 DateRangePicker(
-                    id="date-range-gain",
+                        id="date-range-gain",
                     label="Date Range",
                     preset_id="preset-gain",
                     preset_value="all",
@@ -6505,14 +6684,14 @@ def single_layout():
                         "marginBottom": "8px"
                     }),
                     html.Div([
-                        dcc.Dropdown(id="jump-year-gain", options=[], placeholder="Year",
+                    dcc.Dropdown(id="jump-year-gain", options=[], placeholder="Year",
                                      style={"width":"100px","display":"inline-block","marginRight":"8px"}),
-                        dcc.Dropdown(id="jump-month-gain", options=MONTH_OPTIONS, placeholder="Month",
-                                     style={"width":"120px","display":"inline-block"}),
+                    dcc.Dropdown(id="jump-month-gain", options=MONTH_OPTIONS, placeholder="Month",
+                                 style={"width":"120px","display":"inline-block"}),
                     ], style={"display": "flex", "alignItems": "center"})
                 ], style={"marginBottom": "20px"}),
                 RadioGroup(
-                    id="window-size-gain",
+                            id="window-size-gain",
                     label="Analysis Period (days)",
                     options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
                              {"label": "7", "value": 7}, {"label": "10", "value": 10}],
@@ -6523,7 +6702,7 @@ def single_layout():
                 Field(
                     label="Custom Period (days)",
                     input_component=dcc.Input(
-                        id="window-size-input-gain", type="number", min=1, step=1,
+                            id="window-size-input-gain", type="number", min=1, step=1,
                         placeholder="Enter custom days",
                         style={
                             "width": "100%",
@@ -6539,7 +6718,7 @@ def single_layout():
                     helper_text="Optional: Enter a custom analysis period in days"
                 ),
                 RadioGroup(
-                    id="min-threshold-gain",
+                            id="min-threshold-gain",
                     label="Minimum Change Threshold (%)",
                     options=[{"label":"1%","value":1},{"label":"3%","value":3},
                              {"label":"5%","value":5},{"label":"10%","value":10}],
@@ -6550,8 +6729,8 @@ def single_layout():
                 Field(
                     label="Custom Threshold (%)",
                     input_component=dcc.Input(
-                        id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
-                        placeholder="e.g. 2.7",
+                            id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
+                            placeholder="e.g. 2.7", 
                         style={
                             "width": "100%",
                             "height": "40px",
@@ -6578,9 +6757,9 @@ def single_layout():
 
         # INDICATORS - Collapsible card with multi-column layout
         Card([
-            html.Div([
-                html.H3("Indicators", style={
-                    "marginBottom":"16px", "fontSize":"22px",
+        html.Div([
+            html.H3("Indicators", style={
+                "marginBottom":"16px", "fontSize":"22px",
                     "fontWeight":600, "color":"rgba(255,255,255,0.95)",
                     "display": "inline-block",
                     "marginRight": "16px"
@@ -6623,55 +6802,58 @@ def single_layout():
             }),
             html.Div([
                 CheckboxGroup(
-                    id="indicators-select",
+                id="indicators-select",
                     label="",
-                    options=[
-                        {"label":" SMA (5 & 20)", "value":"sma"},
-                        {"label":" EMA (12 & 26)", "value":"ema"},
-                        {"label":" Bollinger Bands (20,2)", "value":"bb"},
-                        {"label":" RSI (14)", "value":"rsi"},
-                        {"label":" MACD (12,26,9)", "value":"macd"},
-                        {"label":" Volatility (20/60)", "value":"vol"},
-                        {"label":" Drawdown", "value":"dd"},
-                    ],
-                    value=["sma","ema","bb","rsi","macd","vol","dd"],
+                options=[
+                    {"label":" SMA (5 & 20)", "value":"sma"},
+                    {"label":" EMA (12 & 26)", "value":"ema"},
+                    {"label":" Bollinger Bands (20,2)", "value":"bb"},
+                    {"label":" RSI (14)", "value":"rsi"},
+                    {"label":" MACD (12,26,9)", "value":"macd"},
+                    {"label":" Volatility (20/60)", "value":"vol"},
+                    {"label":" Drawdown", "value":"dd"},
+                ],
+                value=["sma","ema","bb","rsi","macd","vol","dd"],
                     inline=True
                 )
-            ], style={
+        ], style={
                 "display": "flex",
                 "flexWrap": "wrap",
                 "gap": "8px"
             })
-        ], style={"marginBottom": "24px"}),
-
-        # Analyze Button - Sticky footer area
-        html.Div([
-            html.Div([
-                Button(
-                    id="analyze",
-                    label="Analyze",
-                    variant="primary",
-                    full_width=False,
-                    style={"float": "right"}
-                )
-            ], style={
-                "textAlign": "right",
-                "padding": "16px 0",
-                "borderTop": "1px solid rgba(255,255,255,0.1)",
-                "marginTop": "24px"
-            })
+        ], footer=html.Div([
+            dcc.Loading(
+                id="analyze-loading",
+                type="circle",
+                children=html.Div([
+                    Button(
+                        id="analyze",
+                        label="Analyze",
+                        variant="primary",
+                        full_width=False,
+                        style={"float": "right"}
+                    )
+                ], style={
+                    "textAlign": "right",
+                    "width": "100%"
+                }, className="card-footer")
+            )
         ], style={
-            "position": "sticky",
-            "bottom": 0,
-            "background": "#0b0f14",
-            "padding": "0",
-            "zIndex": 10,
-            "marginBottom": "32px"
+            "textAlign": "right",
+            "width": "100%"
+        }, className="card-footer"), style={
+            "marginBottom": "24px",
+            "position": "relative",
+            "display": "flex",
+            "flexDirection": "column"
         }),
 
         # ---------- Results (Drop / Gain) ----------
-        html.Div(id="results-container", style={"display": "none"}, children=[
-            html.Div([
+        dcc.Loading(
+            id="results-loading",
+            type="circle",
+            children=html.Div(id="results-container", style={"display": "none"}, children=[
+                html.Div([
                 html.H2("Drop Analysis", style={
                     "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
                     "marginBottom":"20px"
@@ -6704,7 +6886,8 @@ def single_layout():
                 html.Div(id="stats-gain", style={"margin": "24px 0"}),
                 html.Div(id="trade-windows-gain-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
-        ]),
+            ])
+        ),
 
         # ---------- Indicators figure ----------
         html.Div(id="indicators-container"),
@@ -6725,38 +6908,50 @@ def single_layout():
 def cross_layout():
     return PageContainer([
         # Header
-        html.Div([
-            html.H1("Cross Index Analysis", style={
-                "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
+            html.Div([
+                html.H1("Cross Index Analysis", style={
+                    "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
                 "color":"rgba(255,255,255,0.95)"
-            }),
-            html.P("Compare two indexes side by side with correlation analysis", style={
+                }),
+                html.P("Compare two indexes side by side with correlation analysis", style={
                 "fontSize":"16px", "color":"rgba(255,255,255,0.7)", "marginBottom":"32px"
-            }),
+                }),
         ], style={"marginBottom": "32px"}),
 
         # Upload Index A/B - 2 column grid
-        html.Div([
+            html.Div([
             Card([
-                FileDropzone(
-                    id="uploader-a",
-                    label="Upload Index A (CSV)"
-                ),
-                html.Div(id="file-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
-                html.Div(id="warn-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
-                html.Div(id="preview-a")
+                dcc.Loading(
+                    id="upload-loading-a",
+                    type="circle",
+                        children=html.Div([
+                        FileDropzone(
+                            id="uploader-a",
+                            label="Upload Index A (CSV)"
+                        ),
+                        html.Div(id="file-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
+                        html.Div(id="warn-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
+                        html.Div(id="preview-a")
+                    ])
+                )
             ], style={"minHeight": "200px"}),
 
             Card([
-                FileDropzone(
-                    id="uploader-b",
-                    label="Upload Index B (CSV)"
-                ),
-                html.Div(id="file-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
-                html.Div(id="warn-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
-                html.Div(id="preview-b")
+                dcc.Loading(
+                    id="upload-loading-b",
+                    type="circle",
+                        children=html.Div([
+                        FileDropzone(
+                            id="uploader-b",
+                            label="Upload Index B (CSV)"
+                        ),
+                        html.Div(id="file-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
+                        html.Div(id="warn-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
+                        html.Div(id="preview-b")
+                    ])
+                )
             ], style={"minHeight": "200px"}),
-        ], style={
+                ], style={
             "display": "grid",
             "gridTemplateColumns": "repeat(auto-fit, minmax(400px, 1fr))",
             "gap": "24px",
@@ -6765,12 +6960,12 @@ def cross_layout():
 
         # Analysis Settings Card
         Card([
-            html.H3("Analysis Settings", style={
+                html.H3("Analysis Settings", style={
                 "fontSize":"24px", "fontWeight":600, "color":"rgba(255,255,255,0.95)",
-                "marginBottom":"20px"
-            }),
+                    "marginBottom":"20px"
+                }),
             # Row 1: Date Range + Snap to month
-            html.Div([
+                html.Div([
                 html.Div([
                     DateRangePicker(
                         id="date-range-cross",
@@ -6788,7 +6983,7 @@ def cross_layout():
                 "marginBottom": "20px"
             }),
             # Row 2: Navigate to Date
-            html.Div([
+                html.Div([
                 html.Label("Navigate to Date", style={
                     "display": "block",
                     "fontSize": "14px",
@@ -6812,7 +7007,7 @@ def cross_layout():
                     min=1,
                     step=1,
                     value=5,
-                    style={
+                        style={
                         "width": "100%",
                         "height": "40px",
                         "padding": "8px 12px",
@@ -6826,26 +7021,42 @@ def cross_layout():
                 helper_text="Number of days for return calculation period"
             ),
         ], footer=html.Div([
-            Button(
-                id="x-analyze",
-                label="Analyze",
-                variant="primary",
-                full_width=False,
-                style={"float": "right"}
+            dcc.Loading(
+                id="x-analyze-loading",
+                type="circle",
+                children=html.Div([
+                    Button(
+                        id="x-analyze",
+                        label="Analyze",
+                        variant="primary",
+                        full_width=False,
+                        style={"float": "right"}
+                    )
+                ], style={
+                    "textAlign": "right",
+                    "width": "100%"
+                }, className="card-footer")
             )
-        ], style={"textAlign": "right"}), style={"marginBottom": "32px"}),
+        ], style={
+            "textAlign": "right",
+            "width": "100%"
+        }, className="card-footer"), style={"marginBottom": "32px"}),
 
         # Results
-        html.Div(id="x-results-container", children=[
-            html.Div(id="x-line-levels-container"),
-            html.Div(id="x-scatter-returns-container"),
-            html.Div(id="x-line-returns-container"),
-            html.Div(id="x-stats", style={"margin":"24px 0"}),
-            html.Div(id="x-trade-windows-container"),
-        ], style={"marginTop":"32px"}),
+        dcc.Loading(
+            id="x-results-loading",
+            type="circle",
+            children=html.Div(id="x-results-container", children=[
+                html.Div(id="x-line-levels-container"),
+                html.Div(id="x-scatter-returns-container"),
+                html.Div(id="x-line-returns-container"),
+                html.Div(id="x-stats", style={"margin":"24px 0"}),
+                html.Div(id="x-trade-windows-container"),
+            ], style={"marginTop":"32px"})
+        ),
 
-        dcc.Store(id=STORE_A),
-        dcc.Store(id=STORE_B),
+            dcc.Store(id=STORE_A),
+            dcc.Store(id=STORE_B),
     ])
 
 # -----------------------------
@@ -7212,7 +7423,16 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             margin=dict(t=30, r=10, l=40, b=40),
             xaxis_title="Time", 
             yaxis_title="% change",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=1.02,
+                xanchor="center",
+                x=0.5,
+                bgcolor="rgba(10,10,10,0.9)",
+                bordercolor="rgba(255,255,255,0.2)",
+                borderwidth=1
+            ),
             xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
             yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
         )
@@ -7251,7 +7471,16 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             font=dict(color="rgba(255,255,255,0.9)"),
             title=bar_title + (f"  · N={N}" if N else ""),
             margin=dict(t=50, r=10, l=40, b=40),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=1.02,
+                xanchor="center",
+                x=0.5,
+                bgcolor="rgba(10,10,10,0.9)",
+                bordercolor="rgba(255,255,255,0.2)",
+                borderwidth=1
+            ),
             xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
             yaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
             bargap=0.2
@@ -7423,20 +7652,21 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
                           row=cur_row, col=1, secondary_y=False)
         fig_ind.update_yaxes(title_text="MACD", row=cur_row, col=1)
 
-    # Calculate bottom margin based on number of rows and legend
-    # More rows = more space needed for legend
-    bottom_margin = 100 + (cur_row * 20)  # Base 100px + 20px per row
-    
+    # Calculate proper bottom margin to accommodate legend outside plotting area
+    # Legend will be positioned above the chart, so we need extra top margin
+    legend_height = 60  # Estimated height for horizontal legend
+    bottom_margin = 80  # Base bottom margin
+
     fig_ind.update_layout(
         template="plotly_dark",
         plot_bgcolor="rgba(26,26,26,0.8)",
         paper_bgcolor="rgba(10,10,10,0.8)",
         font=dict(color="rgba(255,255,255,0.9)"),
-        margin=dict(t=80, r=10, l=40, b=bottom_margin),  # Dynamic bottom margin
+        margin=dict(t=100 + legend_height, r=10, l=40, b=bottom_margin),  # Extra top margin for legend above
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.02,  # Position just below the last subplot
+            y=1.02,  # Position above the chart (outside plotting area)
             xanchor="center",
             x=0.5,
             itemwidth=30,
@@ -7444,13 +7674,17 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             bgcolor="rgba(10,10,10,0.9)",
             bordercolor="rgba(255,255,255,0.2)",
             borderwidth=1,
-            tracegroupgap=10  # Space between legend items
+            tracegroupgap=10,  # Space between legend items
+            entrywidthmode="fraction",
+            entrywidth=0.15  # Control width of legend items
         ),
         title=dict(
             text="Indicators (weekend-aware where applicable)",
             x=0.5,
             xanchor="center",
-            font=dict(size=16)
+            font=dict(size=16),
+            y=0.98,
+            yanchor="top"
         ),
         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
         yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
@@ -7462,7 +7696,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             showgrid=True,
             gridcolor="rgba(255,255,255,0.1)",
             row=i, col=1
-        )
+    )
 
     # Unpack results for return
     drop_card, drop_line, drop_bar, drop_stats, drop_table, _dff_drop = drop_out
@@ -7950,5 +8184,3 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
