@@ -2561,6 +2561,39 @@ app.index_string = '''
             input[type="number"] {
                 margin-top: 4px !important;
             }
+            /* Responsive grid support */
+            @media (max-width: 768px) {
+                [style*="gridTemplateColumns"] {
+                    grid-template-columns: 1fr !important;
+                }
+            }
+            /* Focus states for accessibility */
+            button:focus-visible, input:focus-visible, select:focus-visible {
+                outline: 2px solid rgba(0,200,150,0.6) !important;
+                outline-offset: 2px !important;
+            }
+            /* Hover states for buttons */
+            button:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.2) !important;
+            }
+            button:active:not(:disabled) {
+                transform: translateY(0);
+            }
+            /* Disabled state styling */
+            button:disabled, input:disabled, select:disabled {
+                opacity: 0.5 !important;
+                cursor: not-allowed !important;
+            }
+            /* Improved input heights for consistency */
+            input[type="text"], input[type="number"] {
+                height: 40px !important;
+                min-height: 40px !important;
+            }
+            /* Card hover effect */
+            [style*="background"][style*="#121821"]:hover {
+                box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+            }
         </style>
     </head>
     <body>
@@ -2968,6 +3001,418 @@ def build_trade_window_table(df: pd.DataFrame, window_size_days: int, limit: int
     return table
 
 # -----------------------------
+# Reusable UI Components
+# -----------------------------
+
+def PageContainer(children, **kwargs):
+    """Consistent page container with max-width and responsive padding"""
+    return html.Div(
+        children,
+        style={
+            "maxWidth": "1152px",  # max-w-6xl equivalent
+            "width": "100%",
+            "margin": "0 auto",
+            "padding": "16px 16px",
+            **kwargs.get("style", {})
+        },
+        **{k: v for k, v in kwargs.items() if k != "style"}
+    )
+
+def Card(children, header=None, footer=None, **kwargs):
+    """Reusable card component with header, content, and footer slots"""
+    card_children = []
+    if header:
+        card_children.append(html.Div(
+            header,
+            style={
+                "padding": "0 0 16px 0",
+                "borderBottom": "1px solid rgba(255,255,255,0.1)",
+                "marginBottom": "16px"
+            }
+        ))
+    card_children.append(html.Div(children, style={"flex": 1}))
+    if footer:
+        card_children.append(html.Div(
+            footer,
+            style={
+                "padding": "16px 0 0 0",
+                "borderTop": "1px solid rgba(255,255,255,0.1)",
+                "marginTop": "16px"
+            }
+        ))
+    
+    return html.Div(
+        card_children,
+        style={
+            "padding": "24px",
+            "background": "#121821",
+            "borderRadius": "12px",
+            "boxShadow": "0 4px 12px rgba(0,0,0,0.3)",
+            "border": "1px solid rgba(255,255,255,0.1)",
+            **kwargs.get("style", {})
+        },
+        **{k: v for k, v in kwargs.items() if k != "style"}
+    )
+
+def Field(label, input_component, helper_text=None, error_text=None, required=False, **kwargs):
+    """Reusable field component with label, input, helper text, and error message"""
+    label_style = {
+        "display": "block",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "rgba(255,255,255,0.9)",
+        "marginBottom": "8px",
+        "lineHeight": "1.4"
+    }
+    if required:
+        label_style["color"] = "rgba(255,255,255,0.95)"
+    
+    field_children = [
+        html.Label(label, style=label_style),
+        input_component
+    ]
+    
+    if helper_text:
+        field_children.append(html.Div(
+            helper_text,
+            style={
+                "fontSize": "12px",
+                "color": "rgba(255,255,255,0.6)",
+                "marginTop": "4px"
+            }
+        ))
+    
+    if error_text:
+        field_children.append(html.Div(
+            error_text,
+            style={
+                "fontSize": "12px",
+                "color": "#ef4444",
+                "marginTop": "4px"
+            }
+        ))
+    
+    return html.Div(
+        field_children,
+        style={
+            "marginBottom": "20px",
+            **kwargs.get("style", {})
+        },
+        **{k: v for k, v in kwargs.items() if k != "style"}
+    )
+
+def RadioGroup(id, label, options, value=None, inline=True, accent_color=None, **kwargs):
+    """Reusable radio group component"""
+    input_style = {
+        "marginRight": "4px",
+        "cursor": "pointer",
+        "accentColor": accent_color or "rgba(0,200,150,0.8)"
+    }
+    label_style = {
+        "marginRight": "16px",
+        "cursor": "pointer",
+        "fontSize": "14px",
+        "color": "rgba(255,255,255,0.9)",
+        "display": "inline-block" if inline else "block"
+    }
+    
+    return html.Div([
+        html.Label(label, style={
+            "display": "block",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "rgba(255,255,255,0.9)",
+            "marginBottom": "8px"
+        }),
+        dcc.RadioItems(
+            id=id,
+            options=options,
+            value=value,
+            inline=inline,
+            inputStyle=input_style,
+            labelStyle=label_style,
+            **kwargs
+        )
+    ], style={"marginBottom": "20px"})
+
+def CheckboxGroup(id, label, options, value=None, inline=True, **kwargs):
+    """Reusable checkbox group component"""
+    input_style = {
+        "marginRight": "8px",
+        "cursor": "pointer"
+    }
+    label_style = {
+        "marginRight": "16px",
+        "cursor": "pointer",
+        "fontSize": "14px",
+        "color": "rgba(255,255,255,0.9)",
+        "display": "inline-block" if inline else "block"
+    }
+    
+    return html.Div([
+        html.Label(label, style={
+            "display": "block",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "rgba(255,255,255,0.9)",
+            "marginBottom": "8px"
+        }),
+        dcc.Checklist(
+            id=id,
+            options=options,
+            value=value or [],
+            inline=inline,
+            inputStyle=input_style,
+            labelStyle=label_style,
+            **kwargs
+        )
+    ], style={"marginBottom": "20px"})
+
+def DateRangePicker(id, label, preset_id=None, preset_options=None, preset_value="all",
+                    snap_id=None, snap_value=None, min_date=None, max_date=None,
+                    start_date=None, end_date=None, helper_text=None, **kwargs):
+    """Reusable date range picker with preset dropdown and snap to month"""
+    return html.Div([
+        html.Label(label, style={
+            "display": "block",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "rgba(255,255,255,0.9)",
+            "marginBottom": "8px"
+        }),
+        html.Div([
+            html.Div([
+                dcc.Dropdown(
+                    id=preset_id,
+                    options=preset_options or [
+                        {"label":"All","value":"all"},
+                        {"label":"YTD","value":"ytd"},
+                        {"label":"Last 1Y","value":"1y"},
+                        {"label":"Last 3Y","value":"3y"},
+                        {"label":"Last 6M","value":"6m"},
+                        {"label":"Custom","value":"custom"},
+                    ],
+                    value=preset_value,
+                    clearable=False,
+                    style={
+                        "width": "100%"
+                    }
+                )
+            ], style={
+                "flex": "0 0 160px",
+                "marginRight": "12px"
+            }),
+            html.Div([
+                dcc.DatePickerRange(
+                    id=id,
+                    display_format="YYYY-MM-DD",
+                    minimum_nights=0,
+                    clearable=True,
+                    persistence=True,
+                    min_date_allowed=min_date,
+                    max_date_allowed=max_date,
+                    start_date=start_date,
+                    end_date=end_date,
+                    style={
+                        "width": "100%"
+                    },
+                    **kwargs
+                )
+            ], style={
+                "flex": "1 1 auto",
+                "minWidth": "300px",
+                "marginRight": "12px"
+            }),
+            html.Div([
+                dcc.Checklist(
+                    id=snap_id,
+                    options=[{"label": " Snap to month", "value": "snap"}],
+                    value=snap_value or ["snap"],
+                    inline=True,
+                    style={"display": "inline-block"}
+                )
+            ], style={
+                "flex": "0 0 auto",
+                "display": "flex",
+                "alignItems": "center"
+            })
+        ], style={
+            "display": "flex",
+            "alignItems": "center",
+            "flexWrap": "wrap",
+            "gap": "0"
+        }),
+        helper_text and html.Div(
+            helper_text,
+            style={
+                "fontSize": "12px",
+                "color": "rgba(255,255,255,0.6)",
+                "marginTop": "4px"
+            }
+        )
+    ], style={"marginBottom": "20px"})
+
+def FileDropzone(id, label, accept=".csv", filename=None, on_replace_id=None, on_remove_id=None, **kwargs):
+    """Reusable file dropzone component with drag/drop and click support"""
+    if filename:
+        # Show file info with replace/remove actions
+        return html.Div([
+            html.Label(label, style={
+                "display": "block",
+                "fontSize": "14px",
+                "fontWeight": "600",
+                "color": "rgba(255,255,255,0.9)",
+                "marginBottom": "8px"
+            }),
+            html.Div([
+                html.Div([
+                    html.Span("📄", style={"fontSize": "20px", "marginRight": "8px"}),
+                    html.Span(filename, style={
+                        "fontSize": "14px",
+                        "color": "rgba(255,255,255,0.9)",
+                        "flex": 1
+                    }),
+                    html.Button(
+                        "Replace",
+                        id=on_replace_id,
+                        n_clicks=0,
+                        style={
+                            "padding": "6px 12px",
+                            "marginRight": "8px",
+                            "borderRadius": "6px",
+                            "border": "1px solid rgba(255,255,255,0.2)",
+                            "background": "rgba(255,255,255,0.1)",
+                            "color": "rgba(255,255,255,0.9)",
+                            "cursor": "pointer",
+                            "fontSize": "12px"
+                        }
+                    ) if on_replace_id else None,
+                    html.Button(
+                        "Remove",
+                        id=on_remove_id,
+                        n_clicks=0,
+                        style={
+                            "padding": "6px 12px",
+                            "borderRadius": "6px",
+                            "border": "1px solid rgba(239,68,68,0.3)",
+                            "background": "rgba(239,68,68,0.1)",
+                            "color": "#ef4444",
+                            "cursor": "pointer",
+                            "fontSize": "12px"
+                        }
+                    ) if on_remove_id else None
+                ], style={
+                    "display": "flex",
+                    "alignItems": "center",
+                    "padding": "12px 16px",
+                    "background": "rgba(0,200,150,0.1)",
+                    "borderRadius": "8px",
+                    "border": "1px solid rgba(0,200,150,0.3)"
+                })
+            ])
+        ], style={"marginBottom": "20px"})
+    
+    # Show upload zone
+    return html.Div([
+        html.Label(label, style={
+            "display": "block",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "rgba(255,255,255,0.9)",
+            "marginBottom": "8px"
+        }),
+        dcc.Upload(
+            id=id,
+            children=html.Div([
+                html.Div([
+                    html.Span("Drag and drop or ", style={
+                        "fontSize": "15px",
+                        "color": "rgba(255,255,255,0.7)"
+                    }),
+                    html.A("Select CSV File", style={
+                        "fontSize": "15px",
+                        "color": "#00c896",
+                        "fontWeight": "600",
+                        "textDecoration": "underline"
+                    })
+                ], style={
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "8px"
+                }),
+                html.Span("📁", style={
+                    "fontSize": "24px",
+                    "marginLeft": "12px",
+                    "opacity": 0.8,
+                    "transition": "all 0.3s"
+                })
+            ], style={
+                "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "center"
+            }),
+            style={
+                "width": "100%",
+                "height": "100px",
+                "borderWidth": "2px",
+                "borderStyle": "dashed",
+                "borderColor": "rgba(0,200,150,0.3)",
+                "borderRadius": "12px",
+                "textAlign": "center",
+                "background": "rgba(0,200,150,0.05)",
+                "transition": "all 0.3s",
+                "cursor": "pointer",
+                "display": "flex",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "alignItems": "center"
+            },
+            multiple=False,
+            accept=accept,
+            **kwargs
+        )
+    ], style={"marginBottom": "20px"})
+
+def Button(id, label, variant="primary", disabled=False, loading=False, full_width=False, **kwargs):
+    """Reusable button component with variants and states"""
+    base_style = {
+        "padding": "12px 24px",
+        "borderRadius": "8px",
+        "border": "none",
+        "fontWeight": "600",
+        "fontSize": "15px",
+        "cursor": "pointer" if not disabled and not loading else "not-allowed",
+        "transition": "all 0.3s",
+        "opacity": "0.6" if disabled or loading else "1"
+    }
+    
+    if variant == "primary":
+        base_style.update({
+            "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            "color": "white",
+            "boxShadow": "0 4px 12px rgba(102, 126, 234, 0.4)"
+        })
+    elif variant == "secondary":
+        base_style.update({
+            "background": "rgba(255,255,255,0.1)",
+            "color": "rgba(255,255,255,0.9)",
+            "border": "1px solid rgba(255,255,255,0.2)"
+        })
+    
+    if full_width:
+        base_style["width"] = "100%"
+    
+    button_label = f"{'⏳ ' if loading else ''}{label}"
+    
+    return html.Button(
+        button_label,
+        id=id,
+        disabled=disabled or loading,
+        style={**base_style, **kwargs.get("style", {})},
+        **{k: v for k, v in kwargs.items() if k != "style"}
+    )
+
+# -----------------------------
 # Layouts: Home / Single / Cross
 # -----------------------------
 
@@ -3110,265 +3555,260 @@ def home_layout():
 
 # ---------- Single Index (FULL) ----------
 def single_layout():
-    return html.Div([
+    return PageContainer([
+        # Header
         html.Div([
             html.H1("Single Index Analysis", style={
                 "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
-                "color":"inherit"
+                "color":"rgba(255,255,255,0.95)"
             }),
             html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
-                "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"32px"
+                "fontSize":"16px", "color":"rgba(255,255,255,0.7)", "marginBottom":"32px"
             }),
-        ]),
+        ], style={"marginBottom": "32px"}),
 
-        dcc.Upload(
+        # File Upload
+        FileDropzone(
             id="uploader",
-            children=html.Div([
-                html.Div([
-                    html.Span("Drag and Drop or ", style={"fontSize":"16px", "color":"rgba(255,255,255,0.7)"}),
-                    html.A("Select CSV File", style={"fontSize":"16px", "color":"#00c896", "fontWeight":600, "textDecoration":"underline"})
-                ], style={"display":"flex", "alignItems":"center", "gap":"8px"}),
-                html.Span("📁", style={"fontSize":"24px", "marginLeft":"12px", "opacity":0.8, "transition":"all 0.3s"}),
-            ], style={"display":"flex", "alignItems":"center", "justifyContent":"center"}),
-            style={
-                "width":"100%","height":"100px",
-                "borderWidth":"2px","borderStyle":"dashed","borderColor":"rgba(0,200,150,0.3)",
-                "borderRadius":"16px","textAlign":"center","margin":"10px 0",
-                "background":"rgba(0,200,150,0.05)",
-                "transition":"all 0.3s", "cursor":"pointer",
-                "display":"flex", "flexDirection":"row", "justifyContent":"center", "alignItems":"center"
-            },
-            multiple=False, accept=".csv",
+            label="Upload CSV File"
         ),
+        html.Div(id="file-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
+        html.Div(id="warn-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
 
-        html.Div(id="file-msg", style={"marginBottom": "8px"}),
-        html.Div(id="warn-msg", style={"marginBottom": "8px"}),
-
-        html.Div([
-            html.Label("Analysis Type(s)", style={
-                "fontWeight": "600", "fontSize":"16px", "color":"inherit",
-                "marginBottom":"12px", "display":"block"
-            }),
-            dcc.Checklist(
+        # Analysis Types
+        Card([
+            CheckboxGroup(
                 id="analysis-types",
+                label="Analysis Type(s)",
                 options=[{"label": " Drop", "value": "drop"},
                          {"label": " Gain", "value": "gain"}],
-                value=["drop", "gain"], inline=True,
-                inputStyle={"marginRight": "8px", "cursor":"pointer"},
-                labelStyle={
-                    "display": "inline-block", "marginRight": "24px",
-                    "fontSize":"15px", "color":"#475569", "cursor":"pointer"
-                },
-            ),
-        ], style={
-            "marginBottom": "24px", "padding":"20px",
-            "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-            "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-            "border":"1px solid rgba(255,255,255,0.1)"
-        }),
+                value=["drop", "gain"],
+                inline=True
+            )
+        ], style={"marginBottom": "24px"}),
 
-        # Controls row: Drop (left) & Gain (right)
+        # Controls row: Drop (left) & Gain (right) - 2 column grid
         html.Div([
-
-            # -------------------- DROP CONTROLS --------------------
-            html.Div([
+            # DROP CONTROLS
+            Card([
                 html.H3("Drop Options", style={
-                    "marginBottom": "16px", "fontSize":"22px",
+                    "marginBottom": "20px", "fontSize":"22px",
                     "fontWeight":600, "color":"#ef4444"
                 }),
-
-                # Date range + Jump to
+                DateRangePicker(
+                    id="date-range-drop",
+                    label="Date Range",
+                    preset_id="preset-drop",
+                    preset_value="all",
+                    snap_id="snap-month-drop",
+                    snap_value=["snap"]
+                ),
                 html.Div([
-                    html.Label("Date Range", style={"fontWeight": "600"}),
-                    dcc.Dropdown(
-                        id="preset-drop",
-                        options=[
-                            {"label":"All","value":"all"},
-                            {"label":"YTD","value":"ytd"},
-                            {"label":"Last 1Y","value":"1y"},
-                            {"label":"Last 3Y","value":"3y"},
-                            {"label":"Last 6M","value":"6m"},
-                            {"label":"Custom","value":"custom"},
-                        ],
-                        value="all", clearable=False,
-                        style={"width":"180px","marginRight":"8px","display":"inline-block"}
+                    html.Label("Navigate to Date", style={
+                        "display": "block",
+                        "fontSize": "14px",
+                        "fontWeight": "600",
+                        "color": "rgba(255,255,255,0.9)",
+                        "marginBottom": "8px"
+                    }),
+                    html.Div([
+                        dcc.Dropdown(id="jump-year-drop", options=[], placeholder="Year",
+                                     style={"width":"100px","display":"inline-block","marginRight":"8px"}),
+                        dcc.Dropdown(id="jump-month-drop", options=MONTH_OPTIONS, placeholder="Month",
+                                     style={"width":"120px","display":"inline-block"}),
+                    ], style={"display": "flex", "alignItems": "center"})
+                ], style={"marginBottom": "20px"}),
+                RadioGroup(
+                    id="window-size-drop",
+                    label="Analysis Period (days)",
+                    options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
+                             {"label": "7", "value": 7}, {"label": "10", "value": 10}],
+                    value=5,
+                    inline=True,
+                    accent_color="rgba(239,68,68,0.8)"
+                ),
+                Field(
+                    label="Custom Period (days)",
+                    input_component=dcc.Input(
+                        id="window-size-input-drop", type="number", min=1, step=1,
+                        placeholder="Enter custom days",
+                        style={
+                            "width": "100%",
+                            "height": "40px",
+                            "padding": "8px 12px",
+                            "fontSize": "14px",
+                            "background": "rgba(255,255,255,0.1)",
+                            "border": "1px solid rgba(255,255,255,0.2)",
+                            "borderRadius": "6px",
+                            "color": "rgba(255,255,255,0.9)"
+                        }
                     ),
-                    dcc.DatePickerRange(
-                        id="date-range-drop",
-                        display_format="YYYY-MM-DD",
-                        minimum_nights=0, clearable=True, persistence=True,
-                        style={"display":"inline-block"}
+                    helper_text="Optional: Enter a custom analysis period in days"
+                ),
+                RadioGroup(
+                    id="min-threshold-drop",
+                    label="Minimum Change Threshold (%)",
+                    options=[{"label":"1%","value":1},{"label":"3%","value":3},
+                             {"label":"5%","value":5},{"label":"10%","value":10}],
+                    value=3,
+                    inline=True,
+                    accent_color="rgba(239,68,68,0.8)"
+                ),
+                Field(
+                    label="Custom Threshold (%)",
+                    input_component=dcc.Input(
+                        id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
+                        placeholder="e.g. 2.7",
+                        style={
+                            "width": "100%",
+                            "height": "40px",
+                            "padding": "8px 12px",
+                            "fontSize": "14px",
+                            "background": "rgba(255,255,255,0.1)",
+                            "border": "1px solid rgba(255,255,255,0.2)",
+                            "borderRadius": "6px",
+                            "color": "rgba(255,255,255,0.9)"
+                        }
                     ),
-                    dcc.Checklist(
-                        id="snap-month-drop",
-                        options=[{"label":" Snap to month", "value":"snap"}],
-                        value=["snap"], inline=True,
-                        style={"marginLeft":"10px", "display":"inline-block"}
-                    ),
-                ], style={"margin":"12px 0"}),
-
-                html.Div([
-                    html.Label("Navigate to Date:", style={"fontWeight": "600", "marginRight":"8px", "display":"inline-block"}),
-                    dcc.Dropdown(id="jump-year-drop", options=[], placeholder="Year",
-                                 style={"width":"100px","display":"inline-block","marginRight":"6px"}),
-                    dcc.Dropdown(id="jump-month-drop", options=MONTH_OPTIONS, placeholder="Month",
-                                 style={"width":"120px","display":"inline-block"}),
-                ], style={"margin":"12px 0"}),
-
-                html.Div([
-                    html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
-                    html.Div([
-                        dcc.RadioItems(
-                            id="window-size-drop",
-                            options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
-                                     {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
-                            value=5, inline=True,
-                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
-                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
-                        ),
-                    ], style={"marginBottom": "8px"}),
-                    html.Div([
-                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="window-size-input-drop", type="number", min=1, step=1,
-                            placeholder="custom", 
-                            style={"width":"100px", "display": "inline-block"}
-                        )
-                    ], style={"marginTop": "4px"})
-                ], style={"margin":"12px 0"}),
-
-                html.Div([
-                    html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
-                    html.Div([
-                        dcc.RadioItems(
-                            id="min-threshold-drop",
-                            options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
-                                     {"label":" 5%","value":5},{"label":" 10%","value":10}],
-                            value=3, inline=True,
-                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
-                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
-                        ),
-                    ], style={"marginBottom": "8px"}),
-                    html.Div([
-                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="min-threshold-input-drop", type="number", min=0, max=100, step=0.01,
-                            placeholder="e.g. 2.7", 
-                            style={"width":"120px", "display": "inline-block"}
-                        )
-                    ], style={"marginTop": "4px"})
-                ], style={"margin":"12px 0"}),
+                    helper_text="Optional: Enter a custom threshold (0-100%)"
+                ),
             ], style={
-                "flex":1, "minWidth":"420px", "padding":"24px",
-                "background":"rgba(239,68,68,0.08)", "borderRadius":"16px",
-                "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-                "border":"1px solid rgba(239,68,68,0.3)"
+                "background": "rgba(239,68,68,0.08)",
+                "border": "1px solid rgba(239,68,68,0.3)"
             }),
 
-            # -------------------- GAIN CONTROLS --------------------
-            html.Div([
+            # GAIN CONTROLS
+            Card([
                 html.H3("Gain Options", style={
-                    "marginBottom": "16px", "fontSize":"22px",
+                    "marginBottom": "20px", "fontSize":"22px",
                     "fontWeight":600, "color":"#22c55e"
                 }),
-
+                DateRangePicker(
+                    id="date-range-gain",
+                    label="Date Range",
+                    preset_id="preset-gain",
+                    preset_value="all",
+                    snap_id="snap-month-gain",
+                    snap_value=["snap"]
+                ),
                 html.Div([
-                    html.Label("Date Range", style={"fontWeight": "600"}),
-                    dcc.Dropdown(
-                        id="preset-gain",
-                        options=[
-                            {"label":"All","value":"all"},
-                            {"label":"YTD","value":"ytd"},
-                            {"label":"Last 1Y","value":"1y"},
-                            {"label":"Last 3Y","value":"3y"},
-                            {"label":"Last 6M","value":"6m"},
-                            {"label":"Custom","value":"custom"},
-                        ],
-                        value="all", clearable=False,
-                        style={"width":"180px","marginRight":"8px","display":"inline-block"}
+                    html.Label("Navigate to Date", style={
+                        "display": "block",
+                        "fontSize": "14px",
+                        "fontWeight": "600",
+                        "color": "rgba(255,255,255,0.9)",
+                        "marginBottom": "8px"
+                    }),
+                    html.Div([
+                        dcc.Dropdown(id="jump-year-gain", options=[], placeholder="Year",
+                                     style={"width":"100px","display":"inline-block","marginRight":"8px"}),
+                        dcc.Dropdown(id="jump-month-gain", options=MONTH_OPTIONS, placeholder="Month",
+                                     style={"width":"120px","display":"inline-block"}),
+                    ], style={"display": "flex", "alignItems": "center"})
+                ], style={"marginBottom": "20px"}),
+                RadioGroup(
+                    id="window-size-gain",
+                    label="Analysis Period (days)",
+                    options=[{"label": "3", "value": 3}, {"label": "5", "value": 5},
+                             {"label": "7", "value": 7}, {"label": "10", "value": 10}],
+                    value=5,
+                    inline=True,
+                    accent_color="rgba(34,197,94,0.8)"
+                ),
+                Field(
+                    label="Custom Period (days)",
+                    input_component=dcc.Input(
+                        id="window-size-input-gain", type="number", min=1, step=1,
+                        placeholder="Enter custom days",
+                        style={
+                            "width": "100%",
+                            "height": "40px",
+                            "padding": "8px 12px",
+                            "fontSize": "14px",
+                            "background": "rgba(255,255,255,0.1)",
+                            "border": "1px solid rgba(255,255,255,0.2)",
+                            "borderRadius": "6px",
+                            "color": "rgba(255,255,255,0.9)"
+                        }
                     ),
-                    dcc.DatePickerRange(
-                        id="date-range-gain",
-                        display_format="YYYY-MM-DD",
-                        minimum_nights=0, clearable=True, persistence=True,
-                        style={"display":"inline-block"}
+                    helper_text="Optional: Enter a custom analysis period in days"
+                ),
+                RadioGroup(
+                    id="min-threshold-gain",
+                    label="Minimum Change Threshold (%)",
+                    options=[{"label":"1%","value":1},{"label":"3%","value":3},
+                             {"label":"5%","value":5},{"label":"10%","value":10}],
+                    value=3,
+                    inline=True,
+                    accent_color="rgba(34,197,94,0.8)"
+                ),
+                Field(
+                    label="Custom Threshold (%)",
+                    input_component=dcc.Input(
+                        id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
+                        placeholder="e.g. 2.7",
+                        style={
+                            "width": "100%",
+                            "height": "40px",
+                            "padding": "8px 12px",
+                            "fontSize": "14px",
+                            "background": "rgba(255,255,255,0.1)",
+                            "border": "1px solid rgba(255,255,255,0.2)",
+                            "borderRadius": "6px",
+                            "color": "rgba(255,255,255,0.9)"
+                        }
                     ),
-                    dcc.Checklist(
-                        id="snap-month-gain",
-                        options=[{"label":" Snap to month", "value":"snap"}],
-                        value=["snap"], inline=True,
-                        style={"marginLeft":"10px", "display":"inline-block"}
-                    )
-                ], style={"margin":"12px 0"}),
-
-                html.Div([
-                    html.Label("Navigate to Date:", style={"fontWeight": "600", "marginRight":"8px", "display":"inline-block"}),
-                    dcc.Dropdown(id="jump-year-gain", options=[], placeholder="Year",
-                                 style={"width":"100px","display":"inline-block","marginRight":"6px"}),
-                    dcc.Dropdown(id="jump-month-gain", options=MONTH_OPTIONS, placeholder="Month",
-                                 style={"width":"120px","display":"inline-block"}),
-                ], style={"margin":"12px 0"}),
-
-                html.Div([
-                    html.Label("Analysis Period (days)", style={"fontWeight": "600"}),
-                    html.Div([
-                        dcc.RadioItems(
-                            id="window-size-gain",
-                            options=[{"label": " 3", "value": 3}, {"label": " 5", "value": 5},
-                                     {"label": " 7", "value": 7}, {"label": " 10", "value": 10}],
-                            value=5, inline=True,
-                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
-                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
-                        ),
-                    ], style={"marginBottom": "8px"}),
-                    html.Div([
-                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="window-size-input-gain", type="number", min=1, step=1,
-                            placeholder="custom", 
-                            style={"width":"100px", "display": "inline-block"}
-                        )
-                    ], style={"marginTop": "4px"})
-                ], style={"margin":"12px 0"}),
-
-                html.Div([
-                    html.Label("Minimum Change Threshold (%)", style={"fontWeight": "600"}),
-                    html.Div([
-                        dcc.RadioItems(
-                            id="min-threshold-gain",
-                            options=[{"label":" 1%","value":1},{"label":" 3%","value":3},
-                                     {"label":" 5%","value":5},{"label":" 10%","value":10}],
-                            value=3, inline=True,
-                            inputStyle={"marginRight": "4px", "cursor": "pointer"},
-                            labelStyle={"marginRight": "12px", "cursor": "pointer"}
-                        ),
-                    ], style={"marginBottom": "8px"}),
-                    html.Div([
-                        html.Span("Custom: ", style={"marginRight": "6px", "fontSize": "13px", "opacity": 0.8}),
-                        dcc.Input(
-                            id="min-threshold-input-gain", type="number", min=0, max=100, step=0.01,
-                            placeholder="e.g. 2.7", 
-                            style={"width":"120px", "display": "inline-block"}
-                        )
-                    ], style={"marginTop": "4px"})
-                ], style={"margin":"12px 0"}),
+                    helper_text="Optional: Enter a custom threshold (0-100%)"
+                ),
             ], style={
-                "flex":1, "minWidth":"420px", "padding":"24px",
-                "background":"rgba(34,197,94,0.08)", "borderRadius":"16px",
-                "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-                "border":"1px solid rgba(34,197,94,0.3)"
+                "background": "rgba(34,197,94,0.08)",
+                "border": "1px solid rgba(34,197,94,0.3)"
             }),
+        ], style={
+            "display": "grid",
+            "gridTemplateColumns": "repeat(auto-fit, minmax(400px, 1fr))",
+            "gap": "24px",
+            "marginBottom": "24px"
+        }),
 
-        ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"8px"}),
-
-        # -------------------- INDICATORS TOGGLES --------------------
-        html.Div([
-            html.H3("Indicators", style={
-                "marginBottom":"16px", "fontSize":"22px",
-                "fontWeight":600, "color":"#1e293b"
-            }),
-            dcc.Checklist(
+        # INDICATORS - Collapsible card with multi-column layout
+        Card([
+            html.Div([
+                html.H3("Indicators", style={
+                    "marginBottom":"16px", "fontSize":"22px",
+                    "fontWeight":600, "color":"rgba(255,255,255,0.95)",
+                    "display": "inline-block",
+                    "marginRight": "16px"
+                }),
+                html.Button(
+                    "Select All", id="indicators-select-all", n_clicks=0,
+                    style={
+                        "padding": "4px 12px",
+                        "marginRight": "8px",
+                        "borderRadius": "4px",
+                        "border": "1px solid rgba(255,255,255,0.2)",
+                        "background": "rgba(255,255,255,0.1)",
+                        "color": "rgba(255,255,255,0.9)",
+                        "cursor": "pointer",
+                        "fontSize": "12px"
+                    }
+                ),
+                html.Button(
+                    "Clear All", id="indicators-clear-all", n_clicks=0,
+                    style={
+                        "padding": "4px 12px",
+                        "borderRadius": "4px",
+                        "border": "1px solid rgba(255,255,255,0.2)",
+                        "background": "rgba(255,255,255,0.1)",
+                        "color": "rgba(255,255,255,0.9)",
+                        "cursor": "pointer",
+                        "fontSize": "12px"
+                    }
+                )
+            ], style={"marginBottom": "16px"}),
+            CheckboxGroup(
                 id="indicators-select",
+                label="",
                 options=[
                     {"label":" SMA (5 & 20)", "value":"sma"},
                     {"label":" EMA (12 & 26)", "value":"ema"},
@@ -3379,31 +3819,33 @@ def single_layout():
                     {"label":" Drawdown", "value":"dd"},
                 ],
                 value=["sma","ema","bb","rsi","macd","vol","dd"],
-                inline=True,
-                inputStyle={"marginRight":"8px", "cursor":"pointer"},
-                labelStyle={
-                    "display":"inline-block","marginRight":"16px",
-                    "fontSize":"14px", "color":"#475569", "cursor":"pointer"
-                }
-            ),
+                inline=True
+            )
+        ], style={"marginBottom": "24px"}),
+
+        # Analyze Button - Sticky footer area
+        html.Div([
             html.Div([
-                html.Button(
-                    "Analyze", id="analyze", n_clicks=0,
-                    style={
-                        "padding":"14px 32px","borderRadius":"12px","border":"none",
-                        "fontWeight":600,"cursor":"pointer",
-                        "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                        "color":"white", "fontSize":"16px",
-                        "boxShadow":"0 4px 12px rgba(102, 126, 234, 0.4)",
-                        "transition":"all 0.3s"
-                    }
+                Button(
+                    id="analyze",
+                    label="Analyze",
+                    variant="primary",
+                    full_width=False,
+                    style={"float": "right"}
                 )
-            ], style={"textAlign":"right","marginTop":"20px"}),
+            ], style={
+                "textAlign": "right",
+                "padding": "16px 0",
+                "borderTop": "1px solid rgba(255,255,255,0.1)",
+                "marginTop": "24px"
+            })
         ], style={
-            "margin":"24px 0", "padding":"24px",
-            "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-            "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-            "border":"1px solid rgba(255,255,255,0.1)"
+            "position": "sticky",
+            "bottom": 0,
+            "background": "#0b0f14",
+            "padding": "0",
+            "zIndex": 10,
+            "marginBottom": "32px"
         }),
 
         # ---------- Results (Drop / Gain) ----------
@@ -3456,179 +3898,134 @@ def single_layout():
 
         dcc.Store(id=STORE_RAW),
         dcc.Store(id=STORE_META),
-    ],
-    style={"maxWidth":"1400px","margin":"0 auto","padding":"32px 24px", "marginTop":"0"})
+    ])
 
 # ---------- Cross Index ----------
 def cross_layout():
-    return html.Div(
-        [
-            html.Div([
-                html.H1("Cross Index Analysis", style={
-                    "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
-                    "color":"inherit"
-                }),
-                html.P("Compare two indexes side by side with correlation analysis", style={
-                    "fontSize":"16px", "color":"inherit", "opacity":0.8, "marginBottom":"32px"
-                }),
-            ]),
+    return PageContainer([
+        # Header
+        html.Div([
+            html.H1("Cross Index Analysis", style={
+                "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
+                "color":"rgba(255,255,255,0.95)"
+            }),
+            html.P("Compare two indexes side by side with correlation analysis", style={
+                "fontSize":"16px", "color":"rgba(255,255,255,0.7)", "marginBottom":"32px"
+            }),
+        ], style={"marginBottom": "32px"}),
 
+        # Upload Index A/B - 2 column grid
+        html.Div([
+            Card([
+                FileDropzone(
+                    id="uploader-a",
+                    label="Upload Index A (CSV)"
+                ),
+                html.Div(id="file-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="warn-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="preview-a")
+            ], style={"minHeight": "200px"}),
+
+            Card([
+                FileDropzone(
+                    id="uploader-b",
+                    label="Upload Index B (CSV)"
+                ),
+                html.Div(id="file-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="warn-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="preview-b")
+            ], style={"minHeight": "200px"}),
+        ], style={
+            "display": "grid",
+            "gridTemplateColumns": "repeat(auto-fit, minmax(400px, 1fr))",
+            "gap": "24px",
+            "marginBottom": "32px"
+        }),
+
+        # Analysis Settings Card
+        Card([
+            html.H3("Analysis Settings", style={
+                "fontSize":"24px", "fontWeight":600, "color":"rgba(255,255,255,0.95)",
+                "marginBottom":"20px"
+            }),
+            # Row 1: Date Range + Snap to month
             html.Div([
                 html.Div([
-                html.H3("Upload Index A (CSV)", style={
-                    "fontSize":"20px", "fontWeight":600, "color":"inherit",
-                    "marginBottom":"16px"
-                }),
-                    dcc.Upload(
-                        id="uploader-a",
-                        children=html.Div([
-                            html.Div([
-                                html.Span("Drag & drop or ", style={"fontSize":"15px", "color":"rgba(255,255,255,0.7)"}),
-                                html.A("Select CSV", style={"fontSize":"15px", "color":"#00c896", "fontWeight":600, "textDecoration":"underline"})
-                            ], style={"display":"flex", "alignItems":"center", "gap":"8px"}),
-                            html.Span("📁", style={"fontSize":"24px", "marginLeft":"12px", "opacity":0.8, "transition":"all 0.3s"}),
-                        ], style={"display":"flex", "alignItems":"center", "justifyContent":"center"}),
-                        style={
-                            "width":"100%","height":"100px",
-                            "borderWidth":"2px","borderStyle":"dashed","borderColor":"rgba(0,200,150,0.3)",
-                            "borderRadius":"16px","textAlign":"center",
-                            "margin":"10px 0",
-                            "background":"rgba(0,200,150,0.05)",
-                            "display":"flex", "flexDirection":"row", "justifyContent":"center", "alignItems":"center",
-                            "cursor":"pointer", "transition":"all 0.3s"
-                        },
-                        multiple=False, accept=".csv",
-                    ),
-                    html.Div(id="file-msg-a", style={"marginBottom": "6px"}),
-                    html.Div(id="warn-msg-a", style={"marginBottom": "6px"}),
-                    html.Div(id="preview-a"),
-                ], style={
-                    "flex":1, "minWidth":"420px", "padding":"24px",
-                    "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-                    "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-                    "border":"1px solid rgba(255,255,255,0.1)"
-                }),
-
-                html.Div([
-                html.H3("Upload Index B (CSV)", style={
-                    "fontSize":"20px", "fontWeight":600, "color":"inherit",
-                    "marginBottom":"16px"
-                }),
-                    dcc.Upload(
-                        id="uploader-b",
-                        children=html.Div([
-                            html.Div([
-                                html.Span("Drag & drop or ", style={"fontSize":"15px", "color":"rgba(255,255,255,0.7)"}),
-                                html.A("Select CSV", style={"fontSize":"15px", "color":"#00c896", "fontWeight":600, "textDecoration":"underline"})
-                            ], style={"display":"flex", "alignItems":"center", "gap":"8px"}),
-                            html.Span("📁", style={"fontSize":"24px", "marginLeft":"12px", "opacity":0.8, "transition":"all 0.3s"}),
-                        ], style={"display":"flex", "alignItems":"center", "justifyContent":"center"}),
-                        style={
-                            "width":"100%","height":"100px",
-                            "borderWidth":"2px","borderStyle":"dashed","borderColor":"rgba(0,200,150,0.3)",
-                            "borderRadius":"16px","textAlign":"center",
-                            "margin":"10px 0",
-                            "background":"rgba(0,200,150,0.05)",
-                            "display":"flex", "flexDirection":"row", "justifyContent":"center", "alignItems":"center",
-                            "cursor":"pointer", "transition":"all 0.3s"
-                        },
-                        multiple=False, accept=".csv",
-                    ),
-                    html.Div(id="file-msg-b", style={"marginBottom": "6px"}),
-                    html.Div(id="warn-msg-b", style={"marginBottom": "6px"}),
-                    html.Div(id="preview-b"),
-                ], style={
-                    "flex":1, "minWidth":"420px", "padding":"24px",
-                    "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-                    "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-                    "border":"1px solid rgba(255,255,255,0.1)"
-                }),
-            ], style={"display":"flex","gap":"24px","flexWrap":"wrap","marginBottom":"32px"}),
-
-            html.Hr(),
-
-            html.Div([
-                html.H3("Analysis Settings", style={
-                    "fontSize":"24px", "fontWeight":600, "color":"inherit",
-                    "marginBottom":"20px"
-                }),
-                html.Div([
-                    html.Label("Date Range", style={"fontWeight":"600","marginRight":"8px", "display":"inline-block"}),
-                    dcc.Dropdown(
-                        id="preset-cross",
-                        options=[
-                            {"label":"All","value":"all"},
-                            {"label":"YTD","value":"ytd"},
-                            {"label":"Last 1Y","value":"1y"},
-                            {"label":"Last 3Y","value":"3y"},
-                            {"label":"Last 6M","value":"6m"},
-                            {"label":"Custom","value":"custom"},
-                        ],
-                        value="all", clearable=False,
-                        style={"width":"160px","display":"inline-block","marginRight":"8px"}
-                    ),
-                    dcc.DatePickerRange(
+                    DateRangePicker(
                         id="date-range-cross",
-                        display_format="YYYY-MM-DD",
-                        minimum_nights=0, clearable=True, persistence=True,
-                        style={"display":"inline-block","marginRight":"8px"}
-                    ),
-                    dcc.Checklist(
-                        id="snap-month-cross",
-                        options=[{"label":" Snap to month", "value":"snap"}],
-                        value=["snap"], inline=True,
-                        style={"display":"inline-block"}
-                    ),
-                ], style={"marginBottom":"12px"}),
-
+                        label="Date Range",
+                        preset_id="preset-cross",
+                        preset_value="all",
+                        snap_id="snap-month-cross",
+                        snap_value=["snap"]
+                    )
+                ], style={"flex": 1, "minWidth": "300px"})
+            ], style={
+                "display": "flex",
+                "alignItems": "flex-end",
+                "gap": "16px",
+                "marginBottom": "20px"
+            }),
+            # Row 2: Navigate to Date
+            html.Div([
+                html.Label("Navigate to Date", style={
+                    "display": "block",
+                    "fontSize": "14px",
+                    "fontWeight": "600",
+                    "color": "rgba(255,255,255,0.9)",
+                    "marginBottom": "8px"
+                }),
                 html.Div([
-                    html.Label("Navigate to Date:", style={"fontWeight":"600","marginRight":"8px", "display":"inline-block"}),
                     dcc.Dropdown(id="jump-year-cross", options=[], placeholder="Year",
-                                 style={"width":"100px","display":"inline-block","marginRight":"6px"}),
+                                 style={"width":"100px","display":"inline-block","marginRight":"8px"}),
                     dcc.Dropdown(id="jump-month-cross", options=MONTH_OPTIONS, placeholder="Month",
                                  style={"width":"120px","display":"inline-block"}),
-                ], style={"marginBottom":"12px"}),
+                ], style={"display": "flex", "alignItems": "center"})
+            ], style={"marginBottom": "20px"}),
+            # Row 3: Return Calculation Period
+            Field(
+                label="Return Calculation Period (days)",
+                input_component=dcc.Input(
+                    id="x-window",
+                    type="number",
+                    min=1,
+                    step=1,
+                    value=5,
+                    style={
+                        "width": "100%",
+                        "height": "40px",
+                        "padding": "8px 12px",
+                        "fontSize": "14px",
+                        "background": "rgba(255,255,255,0.1)",
+                        "border": "1px solid rgba(255,255,255,0.2)",
+                        "borderRadius": "6px",
+                        "color": "rgba(255,255,255,0.9)"
+                    }
+                ),
+                helper_text="Number of days for return calculation period"
+            ),
+        ], footer=html.Div([
+            Button(
+                id="x-analyze",
+                label="Analyze",
+                variant="primary",
+                full_width=False,
+                style={"float": "right"}
+            )
+        ], style={"textAlign": "right"}), style={"marginBottom": "32px"}),
 
-                html.Div([
-                    html.Label("Return Calculation Period (days)", style={"fontWeight":"600","marginRight":"8px", "display":"inline-block"}),
-                    dcc.Input(id="x-window", type="number", min=1, step=1, value=5,
-                              style={"width":"140px", "display":"inline-block"}),
-                ], style={"marginBottom":"20px"}),
+        # Results
+        html.Div(id="x-results-container", children=[
+            html.Div(id="x-line-levels-container"),
+            html.Div(id="x-scatter-returns-container"),
+            html.Div(id="x-line-returns-container"),
+            html.Div(id="x-stats", style={"margin":"24px 0"}),
+            html.Div(id="x-trade-windows-container"),
+        ], style={"marginTop":"32px"}),
 
-                html.Div([
-                    html.Button(
-                        "Analyze", id="x-analyze", n_clicks=0,
-                        style={
-                            "padding":"14px 32px","borderRadius":"12px","border":"none",
-                            "fontWeight":600,"cursor":"pointer",
-                            "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                            "color":"white", "fontSize":"16px",
-                            "boxShadow":"0 4px 12px rgba(102, 126, 234, 0.4)",
-                            "transition":"all 0.3s"
-                        }
-                    )
-                ], style={"textAlign":"right","marginTop":"8px"}),
-            ], style={
-                "background":"rgba(255,255,255,0.05)","border":"1px solid rgba(255,255,255,0.1)",
-                "borderRadius":"16px","padding":"24px",
-                "boxShadow":"0 4px 12px rgba(0,0,0,0.3)"
-            }),
-
-            # ---- Results ----
-            html.Div(id="x-results-container", children=[
-                html.Div(id="x-line-levels-container"),
-                html.Div(id="x-scatter-returns-container"),
-                html.Div(id="x-line-returns-container"),
-                html.Div(id="x-stats", style={"margin":"24px 0"}),
-                html.Div(id="x-trade-windows-container"),
-            ], style={"marginTop":"32px"}),
-
-            dcc.Store(id=STORE_A),
-            dcc.Store(id=STORE_B),
-
-        ],
-        style={"maxWidth":"1400px","margin":"0 auto","padding":"32px 24px"}
-    )
+        dcc.Store(id=STORE_A),
+        dcc.Store(id=STORE_B),
+    ])
 
 # -----------------------------
 # Top-level app layout with router
@@ -4690,6 +5087,4 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
 
