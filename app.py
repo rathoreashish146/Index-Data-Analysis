@@ -5625,7 +5625,7 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
                   "borderRadius": "16px", "padding": "24px", "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"})
 
         # Trade windows list
-        trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
+        # trade_table = build_trade_window_table(dff[["datetime","index"]], ws, limit=200)
         
         # Wrap graphs and tables in containers with proper styling
         return_chart_container = html.Div([
@@ -5646,17 +5646,19 @@ def run_analysis_single(n_clicks, raw_payload, analysis_types,
             "border":"1px solid rgba(255,255,255,0.1)"
         })
         
-        trade_windows_container = html.Div([
-            html.H4("Trade windows (first and last day)", style={
-                "fontSize":"20px", "fontWeight":600, "color":"inherit",
-                "marginTop":"32px", "marginBottom":"16px"
-            }),
-            trade_table
-        ], style={
-            "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
-            "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
-            "border":"1px solid rgba(255,255,255,0.1)"
-        })
+        # COMMENTED OUT FOR DEBUGGING - Trade windows data hidden
+        # trade_windows_container = html.Div([
+        #     html.H4("Trade windows (first and last day)", style={
+        #         "fontSize":"20px", "fontWeight":600, "color":"inherit",
+        #         "marginTop":"32px", "marginBottom":"16px"
+        #     }),
+        #     trade_table
+        # ], style={
+        #     "background":"rgba(255,255,255,0.05)", "borderRadius":"12px",
+        #     "padding":"20px", "boxShadow":"0 2px 8px rgba(0,0,0,0.3)",
+        #     "border":"1px solid rgba(255,255,255,0.1)"
+        # })
+        trade_windows_container = html.Div()  # Empty placeholder
 
         return card, return_chart_container, bar_chart_container, stats_view, trade_windows_container, dff
 
@@ -6283,28 +6285,24 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     ])
 
     # -------- Trade windows tables --------
-    tableA = build_trade_window_table(tmpA[["datetime","index"]], win, limit=200)
-    tableB = build_trade_window_table(tmpB[["datetime","index"]], win, limit=200)
-    twin = html.Div([
-        html.H4("Trade windows (first and last day)", style={
-            "fontSize":"22px", "fontWeight":600, "color":"inherit",
-            "marginBottom":"20px"
-        }),
-        html.Div([
-            html.Div([
-                html.H5("Index A", style={"marginBottom":"12px", "fontSize":"16px", "fontWeight":500}), 
-                tableA
-            ], style={"flex":1,"minWidth":"380px"}),
-            html.Div([
-                html.H5("Index B", style={"marginBottom":"12px", "fontSize":"16px", "fontWeight":500}), 
-                tableB
-            ], style={"flex":1,"minWidth":"380px"}),
-        ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
-    ], style={
-        "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
-        "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
-        "border":"1px solid rgba(255,255,255,0.1)"
-    })
+    # COMMENTED OUT FOR DEBUGGING - Trade windows data hidden
+    # tableA = build_trade_window_table(tmpA[["datetime","index"]], win, limit=200)
+    # tableB = build_trade_window_table(tmpB[["datetime","index"]], win, limit=200)
+    # twin = html.Div([
+    #     html.H4("Trade windows (first and last day)", style={
+    #         "fontSize":"22px", "fontWeight":600, "color":"inherit",
+    #         "marginTop":"32px", "marginBottom":"16px"
+    #     }),
+    #     html.Div([
+    #         html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
+    #         html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
+    #     ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
+    # ], style={
+    #     "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
+    #     "padding":"24px", "boxShadow":"0 4px 12px rgba(0,0,0,0.3)",
+    #     "border":"1px solid rgba(255,255,255,0.1)"
+    # })
+    twin = html.Div()  # Empty placeholder
     
     # Wrap graphs in containers
     levels_container = html.Div([
