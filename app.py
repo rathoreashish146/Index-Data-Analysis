@@ -3459,48 +3459,71 @@ app.index_string = '''
             }
             .circular-progress {
                 position: relative;
-                width: 140px;
-                height: 140px;
-                border-radius: 50%;
-                background: conic-gradient(
-                    #00d9ff var(--progress, 0%),
-                    rgba(255, 255, 255, 0.1) var(--progress, 0%)
-                );
+                width: 160px;
+                height: 160px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: --progress 0.3s ease;
-                box-shadow: 0 0 20px rgba(0, 217, 255, 0.4),
-                            inset 0 0 20px rgba(0, 217, 255, 0.2);
+                background: radial-gradient(circle, #0a0a0a 60%, transparent 60%),
+                            conic-gradient(from 0deg, #00d9ff 0%, #00d9ff var(--progress, 0%), rgba(255,255,255,0.1) var(--progress, 0%), rgba(255,255,255,0.1) 100%);
+                border-radius: 50%;
+                box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+                animation: progressGlow 2s ease-in-out infinite;
             }
             .circular-progress::before {
                 content: '';
                 position: absolute;
-                width: 110px;
-                height: 110px;
+                width: 100%;
+                height: 100%;
                 border-radius: 50%;
-                background: #0a0a0a;
+                background: conic-gradient(from 0deg, transparent 80%, rgba(0, 217, 255, 0.4) 100%);
+                animation: rotate 1.5s linear infinite;
+            }
+            @keyframes rotate {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            @keyframes progressGlow {
+                0%, 100% { 
+                    box-shadow: 0 0 30px rgba(0, 217, 255, 0.5),
+                                0 0 60px rgba(0, 217, 255, 0.2);
+                }
+                50% { 
+                    box-shadow: 0 0 40px rgba(0, 217, 255, 0.8),
+                                0 0 80px rgba(0, 217, 255, 0.4);
+                }
             }
             .circular-progress-text {
                 position: relative;
-                z-index: 1;
-                font-size: 32px;
-                font-weight: 700;
+                z-index: 2;
+                font-size: 40px;
+                font-weight: 800;
                 color: #00d9ff;
-                text-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
+                text-shadow: 0 0 20px rgba(0, 217, 255, 1),
+                             0 0 30px rgba(0, 217, 255, 0.6);
+                animation: textPulse 1.5s ease-in-out infinite;
+            }
+            @keyframes textPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
             }
             .loading-message {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: 600;
-                color: rgba(255, 255, 255, 0.9);
+                color: rgba(255, 255, 255, 0.95);
                 text-align: center;
+                letter-spacing: 2px;
+                animation: messageFloat 2s ease-in-out infinite;
             }
-            @keyframes pulse {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.6; }
-            }
-            .loading-message {
-                animation: pulse 1.5s ease-in-out infinite;
+            @keyframes messageFloat {
+                0%, 100% { 
+                    opacity: 0.8;
+                    transform: translateY(0px);
+                }
+                50% { 
+                    opacity: 1;
+                    transform: translateY(-5px);
+                }
             }
             /* Disabled state styling */
             button:disabled, input:disabled, select:disabled {
