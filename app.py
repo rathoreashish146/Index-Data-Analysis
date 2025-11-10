@@ -4736,19 +4736,13 @@ def single_layout():
             }),
         ], style={"marginBottom": "32px"}),
 
-        # File Upload with Loading
-        dcc.Loading(
-            id="upload-loading",
-            type="circle",
-            children=html.Div([
-                FileDropzone(
-                    id="uploader",
-                    label="Upload CSV File"
-                ),
-                html.Div(id="file-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
-                html.Div(id="warn-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
-            ])
+        # File Upload
+        FileDropzone(
+            id="uploader",
+            label="Upload CSV File"
         ),
+        html.Div(id="file-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
+        html.Div(id="warn-msg", style={"marginBottom": "8px", "fontSize": "14px"}),
 
         # Analysis Types
         Card([
@@ -5013,21 +5007,12 @@ def single_layout():
                 "gap": "8px"
             })
         ], footer=html.Div([
-            dcc.Loading(
-                id="analyze-loading",
-                type="circle",
-                children=html.Div([
-                    Button(
-                        id="analyze",
-                        label="Analyze",
-                        variant="primary",
-                        full_width=False,
-                        style={"float": "right"}
-                    )
-                ], style={
-                    "textAlign": "right",
-                    "width": "100%"
-                }, className="card-footer")
+            Button(
+                id="analyze",
+                label="Analyze",
+                variant="primary",
+                full_width=False,
+                style={"float": "right"}
             )
         ], style={
             "textAlign": "right",
@@ -5040,24 +5025,21 @@ def single_layout():
         }),
 
         # ---------- Results (Drop / Gain) ----------
-        dcc.Loading(
-            id="results-loading",
-            type="circle",
-            children=html.Div(id="results-container", style={"display": "none"}, children=[
-                html.Div([
-                html.H2("Drop Analysis", style={
-                    "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
-                    "marginBottom":"20px"
-                }),
-                html.Div(id="analysis-output-drop", style={
-                    "border": "1px solid rgba(239,68,68,0.3)", "borderRadius": "16px",
-                    "padding": "20px", "margin": "10px 0",
-                    "background": "rgba(239,68,68,0.08)",
-                    "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
-                }),
-                html.Div(id="return-chart-drop-container"),
-                html.Div(id="bar-chart-drop-container"),
-                html.Div(id="stats-drop", style={"margin": "24px 0"}),
+        html.Div(id="results-container", style={"display": "none"}, children=[
+            html.Div([
+            html.H2("Drop Analysis", style={
+                "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
+                "marginBottom":"20px"
+            }),
+            html.Div(id="analysis-output-drop", style={
+                "border": "1px solid rgba(239,68,68,0.3)", "borderRadius": "16px",
+                "padding": "20px", "margin": "10px 0",
+                "background": "rgba(239,68,68,0.08)",
+                "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
+            }),
+            html.Div(id="return-chart-drop-container"),
+            html.Div(id="bar-chart-drop-container"),
+            html.Div(id="stats-drop", style={"margin": "24px 0"}),
                 html.Div(id="trade-windows-drop-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
 
@@ -5112,35 +5094,23 @@ def cross_layout():
         # Upload Index A/B - 2 column grid
             html.Div([
             Card([
-                dcc.Loading(
-                    id="upload-loading-a",
-                    type="circle",
-                        children=html.Div([
-                        FileDropzone(
-                            id="uploader-a",
-                            label="Upload Index A (CSV)"
-                        ),
-                        html.Div(id="file-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
-                        html.Div(id="warn-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
-                        html.Div(id="preview-a")
-                    ])
-                )
+                FileDropzone(
+                    id="uploader-a",
+                    label="Upload Index A (CSV)"
+                ),
+                html.Div(id="file-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="warn-msg-a", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="preview-a")
             ], style={"minHeight": "200px"}),
 
             Card([
-                dcc.Loading(
-                    id="upload-loading-b",
-                    type="circle",
-                        children=html.Div([
-                        FileDropzone(
-                            id="uploader-b",
-                            label="Upload Index B (CSV)"
-                        ),
-                        html.Div(id="file-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
-                        html.Div(id="warn-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
-                        html.Div(id="preview-b")
-                    ])
-                )
+                FileDropzone(
+                    id="uploader-b",
+                    label="Upload Index B (CSV)"
+                ),
+                html.Div(id="file-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="warn-msg-b", style={"marginBottom": "8px", "fontSize": "14px"}),
+                html.Div(id="preview-b")
             ], style={"minHeight": "200px"}),
                 ], style={
             "display": "grid",
@@ -5212,21 +5182,12 @@ def cross_layout():
                 helper_text="Number of days for return calculation period"
             ),
         ], footer=html.Div([
-            dcc.Loading(
-                id="x-analyze-loading",
-                type="circle",
-                children=html.Div([
-                    Button(
-                        id="x-analyze",
-                        label="Analyze",
-                        variant="primary",
-                        full_width=False,
-                        style={"float": "right"}
-                    )
-                ], style={
-                    "textAlign": "right",
-                    "width": "100%"
-                }, className="card-footer")
+            Button(
+                id="x-analyze",
+                label="Analyze",
+                variant="primary",
+                full_width=False,
+                style={"float": "right"}
             )
         ], style={
             "textAlign": "right",
@@ -5234,17 +5195,13 @@ def cross_layout():
         }, className="card-footer"), style={"marginBottom": "32px"}),
 
         # Results
-        dcc.Loading(
-            id="x-results-loading",
-            type="circle",
-            children=html.Div(id="x-results-container", children=[
-                html.Div(id="x-line-levels-container"),
-                html.Div(id="x-scatter-returns-container"),
-                html.Div(id="x-line-returns-container"),
-                html.Div(id="x-stats", style={"margin":"24px 0"}),
-                html.Div(id="x-trade-windows-container"),
-            ], style={"marginTop":"32px"})
-        ),
+        html.Div(id="x-results-container", children=[
+            html.Div(id="x-line-levels-container"),
+            html.Div(id="x-scatter-returns-container"),
+            html.Div(id="x-line-returns-container"),
+            html.Div(id="x-stats", style={"margin":"24px 0"}),
+            html.Div(id="x-trade-windows-container"),
+        ], style={"marginTop":"32px"}),
 
             dcc.Store(id=STORE_A),
             dcc.Store(id=STORE_B),
@@ -6543,3 +6500,11 @@ app.clientside_callback(
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
+
+# Local run (useful for dev & Render health checks)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8050))
+    app.run_server(host="0.0.0.0", port=port, debug=False)
+
