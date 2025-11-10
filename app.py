@@ -3170,7 +3170,6 @@
 
 # # # ============================================================================================================================================================================================================
 
-
 import os
 import base64
 import io
@@ -4942,9 +4941,9 @@ def single_layout():
 
         # INDICATORS - Collapsible card with multi-column layout
         Card([
-        html.Div([
-            html.H3("Indicators", style={
-                "marginBottom":"16px", "fontSize":"22px",
+            html.Div([
+                html.H3("Indicators", style={
+                    "marginBottom":"16px", "fontSize":"22px",
                     "fontWeight":600, "color":"rgba(255,255,255,0.95)",
                     "display": "inline-block",
                     "marginRight": "16px"
@@ -4987,21 +4986,21 @@ def single_layout():
             }),
             html.Div([
                 CheckboxGroup(
-                id="indicators-select",
+                    id="indicators-select",
                     label="",
-                options=[
-                    {"label":" SMA (5 & 20)", "value":"sma"},
-                    {"label":" EMA (12 & 26)", "value":"ema"},
-                    {"label":" Bollinger Bands (20,2)", "value":"bb"},
-                    {"label":" RSI (14)", "value":"rsi"},
-                    {"label":" MACD (12,26,9)", "value":"macd"},
-                    {"label":" Volatility (20/60)", "value":"vol"},
-                    {"label":" Drawdown", "value":"dd"},
-                ],
-                value=["sma","ema","bb","rsi","macd","vol","dd"],
+                    options=[
+                        {"label":" SMA (5 & 20)", "value":"sma"},
+                        {"label":" EMA (12 & 26)", "value":"ema"},
+                        {"label":" Bollinger Bands (20,2)", "value":"bb"},
+                        {"label":" RSI (14)", "value":"rsi"},
+                        {"label":" MACD (12,26,9)", "value":"macd"},
+                        {"label":" Volatility (20/60)", "value":"vol"},
+                        {"label":" Drawdown", "value":"dd"},
+                    ],
+                    value=["sma","ema","bb","rsi","macd","vol","dd"],
                     inline=True
                 )
-        ], style={
+            ], style={
                 "display": "flex",
                 "flexWrap": "wrap",
                 "gap": "8px"
@@ -5027,19 +5026,19 @@ def single_layout():
         # ---------- Results (Drop / Gain) ----------
         html.Div(id="results-container", style={"display": "none"}, children=[
             html.Div([
-            html.H2("Drop Analysis", style={
-                "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
-                "marginBottom":"20px"
-            }),
-            html.Div(id="analysis-output-drop", style={
-                "border": "1px solid rgba(239,68,68,0.3)", "borderRadius": "16px",
-                "padding": "20px", "margin": "10px 0",
-                "background": "rgba(239,68,68,0.08)",
-                "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
-            }),
-            html.Div(id="return-chart-drop-container"),
-            html.Div(id="bar-chart-drop-container"),
-            html.Div(id="stats-drop", style={"margin": "24px 0"}),
+                html.H2("Drop Analysis", style={
+                    "fontSize":"28px", "fontWeight":700, "color":"#ef4444",
+                    "marginBottom":"20px"
+                }),
+                html.Div(id="analysis-output-drop", style={
+                    "border": "1px solid rgba(239,68,68,0.3)", "borderRadius": "16px",
+                    "padding": "20px", "margin": "10px 0",
+                    "background": "rgba(239,68,68,0.08)",
+                    "boxShadow": "0 4px 12px rgba(0,0,0,0.3)"
+                }),
+                html.Div(id="return-chart-drop-container"),
+                html.Div(id="bar-chart-drop-container"),
+                html.Div(id="stats-drop", style={"margin": "24px 0"}),
                 html.Div(id="trade-windows-drop-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
 
@@ -5059,8 +5058,7 @@ def single_layout():
                 html.Div(id="stats-gain", style={"margin": "24px 0"}),
                 html.Div(id="trade-windows-gain-container"),
             ], style={"flex": 1, "minWidth": "420px"}),
-            ])
-        ),
+        ]),
 
         # ---------- Indicators figure ----------
         html.Div(id="indicators-container"),
@@ -6501,10 +6499,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
 
-
-
-# Local run (useful for dev & Render health checks)
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8050))
-    app.run_server(host="0.0.0.0", port=port, debug=False)
 
