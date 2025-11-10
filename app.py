@@ -290,17 +290,13 @@
 #                 background-color: #1a1a1a !important;
 #                 color: rgba(255,255,255,0.9) !important;
 #                 padding: 8px !important;
+#                 display: flex !important;
+#                 align-items: center !important;
+#                 justify-content: center !important;
+#                 gap: 8px !important;
+#                 flex-wrap: wrap !important;
 #             }
-#             .dash-table-toolbar input {
-#                 background-color: rgba(255,255,255,0.1) !important;
-#                 color: rgba(255,255,255,0.9) !important;
-#                 border: 1px solid rgba(255,255,255,0.2) !important;
-#                 border-radius: 4px !important;
-#                 padding: 4px 8px !important;
-#                 width: 60px !important;
-#                 text-align: center !important;
-#                 font-weight: 500 !important;
-#             }
+#             /* Style navigation buttons */
 #             .dash-table-toolbar .previous-page, 
 #             .dash-table-toolbar .next-page,
 #             .dash-table-toolbar .first-page,
@@ -309,10 +305,17 @@
 #                 color: rgba(255,255,255,0.9) !important;
 #                 border: 1px solid rgba(255,255,255,0.2) !important;
 #                 border-radius: 4px !important;
-#                 padding: 4px 12px !important;
-#                 margin: 0 4px !important;
+#                 padding: 6px 12px !important;
+#                 margin: 0 !important;
 #                 min-width: 36px !important;
+#                 height: 32px !important;
 #                 cursor: pointer !important;
+#                 display: inline-flex !important;
+#                 align-items: center !important;
+#                 justify-content: center !important;
+#                 font-size: 14px !important;
+#                 line-height: 1 !important;
+#                 box-sizing: border-box !important;
 #             }
 #             .dash-table-toolbar .previous-page:hover, 
 #             .dash-table-toolbar .next-page:hover,
@@ -328,19 +331,160 @@
 #                 opacity: 0.3 !important;
 #                 cursor: not-allowed !important;
 #             }
-#             .dash-table-toolbar .page-number {
+#             /* Fix duplicate page number - hide all spans/divs that might show duplicate page number */
+#             /* Target the container that holds the page input */
+#             .dash-table-toolbar > div {
+#                 display: inline-flex !important;
+#                 align-items: center !important;
+#                 position: relative !important;
+#                 height: 32px !important;
+#             }
+#             /* Hide ALL child elements in the input container EXCEPT the input itself */
+#             .dash-table-toolbar > div:has(input[type="number"]) > span,
+#             .dash-table-toolbar > div:has(input[type="number"]) > div:not(:has(input)),
+#             .dash-table-toolbar > div:has(input[type="number"]) > label,
+#             .dash-table-toolbar > div:has(input[type="number"]) > *:not(input[type="number"]) {
+#                 display: none !important;
+#                 visibility: hidden !important;
+#             }
+#             /* Style the page number input */
+#             .dash-table-toolbar input[type="number"] {
 #                 background-color: rgba(255,255,255,0.1) !important;
 #                 color: rgba(255,255,255,0.9) !important;
 #                 border: 1px solid rgba(255,255,255,0.2) !important;
 #                 border-radius: 4px !important;
-#                 padding: 4px 12px !important;
-#                 margin: 0 4px !important;
+#                 padding: 6px 10px !important;
+#                 width: 60px !important;
 #                 min-width: 60px !important;
+#                 max-width: 60px !important;
 #                 text-align: center !important;
 #                 font-weight: 500 !important;
+#                 font-size: 14px !important;
+#                 line-height: 1.2 !important;
+#                 height: 32px !important;
+#                 -moz-appearance: textfield !important;
+#                 box-sizing: border-box !important;
 #                 display: inline-block !important;
+#                 visibility: visible !important;
+#                 position: relative !important;
+#                 z-index: 1 !important;
+#             }
+#             /* Hide spinner buttons on number input */
+#             .dash-table-toolbar input[type="number"]::-webkit-inner-spin-button,
+#             .dash-table-toolbar input[type="number"]::-webkit-outer-spin-button {
+#                 -webkit-appearance: none !important;
+#                 margin: 0 !important;
+#             }
+#             /* Hide any duplicate inputs */
+#             .dash-table-toolbar input[type="number"]:not(:first-of-type) {
+#                 display: none !important;
+#             }
+#             /* Hide any pseudo-elements that might duplicate content */
+#             .dash-table-toolbar > div::before,
+#             .dash-table-toolbar > div::after,
+#             .dash-table-toolbar input[type="number"]::before,
+#             .dash-table-toolbar input[type="number"]::after {
+#                 display: none !important;
+#                 content: none !important;
+#             }
+#             /* Keep the "/ total" text visible - it's in the last div */
+#             .dash-table-toolbar > div:last-child:not(:has(input)) {
+#                 display: inline-block !important;
+#                 color: rgba(255,255,255,0.7) !important;
+#                 font-size: 14px !important;
+#                 margin-left: 4px !important;
+#                 visibility: visible !important;
+#             }
+#             .dash-table-toolbar > div:last-child:not(:has(input)) > * {
+#                 display: inline !important;
+#                 visibility: visible !important;
+#             }
+#             /* Additional fix: Hide any elements with class names that suggest duplicate page numbers */
+#             .dash-table-toolbar .page-number,
+#             .dash-table-toolbar [class*="current-page"],
+#             .dash-table-toolbar [class*="page-input"] > span:not(:last-child),
+#             .dash-table-toolbar [class*="page-input"] > div:not(:has(input)) {
+#                 display: none !important;
+#                 visibility: hidden !important;
+#             }
+#             /* Prevent any pseudo-elements from duplicating content */
+#             .dash-table-toolbar input[type="number"]::before,
+#             .dash-table-toolbar input[type="number"]::after {
+#                 display: none !important;
+#                 content: none !important;
 #             }
 #         </style>
+#         <script>
+#             // Fix duplicate page number in DataTable pagination
+#             function fixPaginationDuplicates() {
+#                 const toolbars = document.querySelectorAll('.dash-table-toolbar');
+#                 toolbars.forEach(toolbar => {
+#                     // Find the input container
+#                     const inputContainers = Array.from(toolbar.children).filter(div => {
+#                         return div.querySelector('input[type="number"]');
+#                     });
+                    
+#                     inputContainers.forEach(container => {
+#                         const input = container.querySelector('input[type="number"]');
+#                         if (!input) return;
+                        
+#                         // Hide all children except the input itself
+#                         Array.from(container.children).forEach(child => {
+#                             if (child !== input && child.tagName !== 'SCRIPT') {
+#                                 child.style.display = 'none';
+#                                 child.style.visibility = 'hidden';
+#                             }
+#                         });
+                        
+#                         // Remove any text nodes or overlays
+#                         const walker = document.createTreeWalker(
+#                             container,
+#                             NodeFilter.SHOW_TEXT,
+#                             null,
+#                             false
+#                         );
+#                         let node;
+#                         while (node = walker.nextNode()) {
+#                             if (node.parentElement !== input && node.textContent.trim() === input.value) {
+#                                 node.textContent = '';
+#                             }
+#                         }
+#                     });
+#                 });
+#             }
+            
+#             // Run on page load and after any updates
+#             if (document.readyState === 'loading') {
+#                 document.addEventListener('DOMContentLoaded', fixPaginationDuplicates);
+#             } else {
+#                 fixPaginationDuplicates();
+#             }
+            
+#             // Use MutationObserver to fix duplicates when table updates
+#             const observer = new MutationObserver(function(mutations) {
+#                 let shouldFix = false;
+#                 mutations.forEach(function(mutation) {
+#                     if (mutation.addedNodes.length > 0) {
+#                         mutation.addedNodes.forEach(function(node) {
+#                             if (node.nodeType === 1 && (
+#                                 node.classList.contains('dash-table-toolbar') ||
+#                                 node.querySelector('.dash-table-toolbar')
+#                             )) {
+#                                 shouldFix = true;
+#                             }
+#                         });
+#                     }
+#                 });
+#                 if (shouldFix) {
+#                     setTimeout(fixPaginationDuplicates, 100);
+#                 }
+#             });
+            
+#             observer.observe(document.body, {
+#                 childList: true,
+#                 subtree: true
+#             });
+#         </script>
 #     </head>
 #     <body>
 #         {%app_entry%}
@@ -711,6 +855,8 @@
 #         data=df_out.to_dict("records"),
 #         columns=[{"name": c, "id": c} for c in df_out.columns],
 #         page_size=min(20, len(df_out)) or 5,
+#         page_action="native",
+#         page_current=0,
 #         style_table={"overflowX": "auto", "backgroundColor": "#1a1a1a"},
 #         style_cell={
 #             "textAlign": "left", 
@@ -3022,6 +3168,7 @@
 
 
 # =============================================================================================================================================================================================================
+
 
 
 
@@ -6141,11 +6288,17 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
     twin = html.Div([
         html.H4("Trade windows (first and last day)", style={
             "fontSize":"22px", "fontWeight":600, "color":"inherit",
-            "marginTop":"32px", "marginBottom":"16px"
+            "marginBottom":"20px"
         }),
         html.Div([
-            html.Div([html.H5("Index A trade windows"), tableA], style={"flex":1,"minWidth":"380px"}),
-            html.Div([html.H5("Index B trade windows"), tableB], style={"flex":1,"minWidth":"380px"}),
+            html.Div([
+                html.H5("Index A", style={"marginBottom":"12px", "fontSize":"16px", "fontWeight":500}), 
+                tableA
+            ], style={"flex":1,"minWidth":"380px"}),
+            html.Div([
+                html.H5("Index B", style={"marginBottom":"12px", "fontSize":"16px", "fontWeight":500}), 
+                tableB
+            ], style={"flex":1,"minWidth":"380px"}),
         ], style={"display":"flex","gap":"16px","flexWrap":"wrap"})
     ], style={
         "background":"rgba(255,255,255,0.05)", "borderRadius":"16px",
@@ -6191,5 +6344,3 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
