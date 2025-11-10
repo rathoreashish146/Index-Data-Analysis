@@ -3459,34 +3459,35 @@ app.index_string = '''
             }
             .circular-progress {
                 position: relative;
-                width: 120px;
-                height: 120px;
+                width: 140px;
+                height: 140px;
+                border-radius: 50%;
+                background: conic-gradient(
+                    #00d9ff var(--progress, 0%),
+                    rgba(255, 255, 255, 0.1) var(--progress, 0%)
+                );
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: --progress 0.3s ease;
+                box-shadow: 0 0 20px rgba(0, 217, 255, 0.4),
+                            inset 0 0 20px rgba(0, 217, 255, 0.2);
             }
-            .circular-progress svg {
-                transform: rotate(-90deg);
-            }
-            .circular-progress-bg {
-                fill: none;
-                stroke: rgba(255, 255, 255, 0.1);
-                stroke-width: 8;
-            }
-            .circular-progress-bar {
-                fill: none;
-                stroke: #00d9ff;
-                stroke-width: 8;
-                stroke-linecap: round;
-                transition: stroke-dashoffset 0.3s ease;
-                filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.6));
+            .circular-progress::before {
+                content: '';
+                position: absolute;
+                width: 110px;
+                height: 110px;
+                border-radius: 50%;
+                background: #0a0a0a;
             }
             .circular-progress-text {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 28px;
+                position: relative;
+                z-index: 1;
+                font-size: 32px;
                 font-weight: 700;
                 color: #00d9ff;
-                text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+                text-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
             }
             .loading-message {
                 font-size: 18px;
@@ -5234,25 +5235,7 @@ app.layout = html.Div(
         # Loading Overlay
         html.Div(id="loading-overlay", className="loading-overlay hidden", children=[
             html.Div(className="loading-spinner-container", children=[
-                html.Div(className="circular-progress", children=[
-                    html.Svg(
-                        width="120", height="120",
-                        children=[
-                            html.Circle(
-                                className="circular-progress-bg",
-                                cx="60", cy="60", r="52"
-                            ),
-                            html.Circle(
-                                id="progress-circle",
-                                className="circular-progress-bar",
-                                cx="60", cy="60", r="52",
-                                style={
-                                    "strokeDasharray": "326.73",
-                                    "strokeDashoffset": "326.73"
-                                }
-                            )
-                        ]
-                    ),
+                html.Div(id="circular-progress-wrapper", className="circular-progress", children=[
                     html.Div(id="progress-text", className="circular-progress-text", children="0%")
                 ]),
                 html.Div(id="loading-message", className="loading-message", children="Analyzing...")
@@ -6491,20 +6474,27 @@ app.clientside_callback(
     """
     function(n_intervals, overlay_class) {
         if (overlay_class && overlay_class.includes('hidden')) {
-            return ['0%', {'strokeDashoffset': '326.73'}];
+            const wrapper = document.getElementById('circular-progress-wrapper');
+            if (wrapper) {
+                wrapper.style.setProperty('--progress', '0%');
+            }
+            return '0%';
         }
         
         // Simulate progress (0-90% during loading)
         const maxProgress = 90;
         const progress = Math.min(maxProgress, (n_intervals * 2) % (maxProgress + 10));
-        const circumference = 326.73;
-        const offset = circumference - (progress / 100 * circumference);
         
-        return [progress + '%', {'strokeDasharray': '326.73', 'strokeDashoffset': offset.toString()}];
+        // Update CSS variable for circular progress
+        const wrapper = document.getElementById('circular-progress-wrapper');
+        if (wrapper) {
+            wrapper.style.setProperty('--progress', progress + '%');
+        }
+        
+        return progress + '%';
     }
     """,
     Output("progress-text", "children"),
-    Output("progress-circle", "style"),
     Input("progress-interval", "n_intervals"),
     State("loading-overlay", "className"),
     prevent_initial_call=True
