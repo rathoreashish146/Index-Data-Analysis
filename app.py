@@ -1,3 +1,4 @@
+# # # ===============================================================================================================================================================================================================
 
 # import os
 # import base64
@@ -1380,10 +1381,21 @@
 #                     "transition": "all 0.2s"
 #                 }),
 #                 dcc.Link("Cross Index", href="/cross", style={
-#                     "textDecoration": "none",
+#                     "marginRight": "20px", "textDecoration": "none",
 #                     "color": text_color, "fontSize": "14px", "fontWeight": 500,
 #                     "padding": "6px 12px", "borderRadius": "4px",
 #                     "transition": "all 0.2s"
+#                 }),
+#                 dcc.Link([
+#                     html.Span("📖 ", style={"marginRight": "4px"}),
+#                     "Documentation"
+#                 ], href="/docs", style={
+#                     "textDecoration": "none",
+#                     "color": text_color, "fontSize": "14px", "fontWeight": 600,
+#                     "padding": "8px 16px", "borderRadius": "6px",
+#                     "transition": "all 0.2s",
+#                     "background": "linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%)",
+#                     "border": "1px solid rgba(102,126,234,0.4)"
 #                 }),
 #             ], style={"display": "flex", "alignItems": "center"})
 #         ],
@@ -1410,20 +1422,31 @@
 #                     "WebkitBackgroundClip":"text", "WebkitTextFillColor":"transparent",
 #                     "backgroundClip":"text"
 #                 }),
-#                 html.P("Choose a workflow to begin your analysis:", style={
-#                     "fontSize":"18px", "color":"#64748b", "marginBottom":"40px"
+#                 html.P("Powerful financial data analysis made simple - no expertise required!", style={
+#                     "fontSize":"20px", "color":"rgba(255,255,255,0.7)", "marginBottom":"12px"
+#                 }),
+#                 html.P([
+#                     "📊 Upload your CSV data • 🔍 Get instant insights • 📈 Visualize trends"
+#                 ], style={
+#                     "fontSize":"16px", "color":"rgba(255,255,255,0.6)", "marginBottom":"40px"
 #                 }),
 #             ], style={"textAlign":"center", "marginBottom":"48px"}),
+            
 #             html.Div(
 #                 [
 #                     dcc.Link(
 #                         html.Div(
 #                             [
 #                                 html.Div("📊", style={"fontSize":"48px", "marginBottom":"16px"}),
-#                                 html.H3("Single Index", style={"margin":"0 0 8px 0", "fontSize":"24px", "fontWeight":600}),
-#                                 html.P("Analyze one index with comprehensive indicators", style={
-#                                     "margin":0, "fontSize":"14px", "opacity":0.9
-#                                 })
+#                                 html.H3("Single Index Analysis", style={"margin":"0 0 12px 0", "fontSize":"24px", "fontWeight":600}),
+#                                 html.P("Perfect for analyzing one market index in depth", style={
+#                                     "margin":"0 0 12px 0", "fontSize":"15px", "opacity":0.95, "lineHeight":"1.5"
+#                                 }),
+#                                 html.Div([
+#                                     html.Div("✓ Find drop & gain events", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
+#                                     html.Div("✓ Technical indicators", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
+#                                     html.Div("✓ Statistical analysis", style={"fontSize":"13px", "opacity":0.85}),
+#                                 ], style={"textAlign":"left", "paddingLeft":"20px"})
 #                             ],
 #                             style={**card_style, "textAlign":"center"}
 #                         ),
@@ -1434,10 +1457,15 @@
 #                         html.Div(
 #                             [
 #                                 html.Div("🔀", style={"fontSize":"48px", "marginBottom":"16px"}),
-#                                 html.H3("Cross Index", style={"margin":"0 0 8px 0", "fontSize":"24px", "fontWeight":600}),
-#                                 html.P("Compare two indexes side by side", style={
-#                                     "margin":0, "fontSize":"14px", "opacity":0.9
-#                                 })
+#                                 html.H3("Cross Index Comparison", style={"margin":"0 0 12px 0", "fontSize":"24px", "fontWeight":600}),
+#                                 html.P("Compare two indexes to understand their relationship", style={
+#                                     "margin":"0 0 12px 0", "fontSize":"15px", "opacity":0.95, "lineHeight":"1.5"
+#                                 }),
+#                                 html.Div([
+#                                     html.Div("✓ Correlation analysis", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
+#                                     html.Div("✓ Relative performance", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
+#                                     html.Div("✓ Side-by-side visualization", style={"fontSize":"13px", "opacity":0.85}),
+#                                 ], style={"textAlign":"left", "paddingLeft":"20px"})
 #                             ],
 #                             style={**card_style, "background":"linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", "textAlign":"center"}
 #                         ),
@@ -1449,11 +1477,58 @@
 #                     "marginTop": "12px", 
 #                     "display":"flex", 
 #                     "justifyContent":"center", 
-#                     "alignItems":"center",
+#                     "alignItems":"stretch",
 #                     "flexWrap":"wrap",
 #                     "gap":"24px"
 #                 }
 #             ),
+            
+#             # Quick start guide
+#             html.Div([
+#                 Card([
+#                     html.H3("🚀 Quick Start Guide", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"16px"}),
+#                     html.Div([
+#                         html.Div([
+#                             html.Strong("1. ", style={"color":"#667eea", "fontSize":"18px"}),
+#                             html.Strong("Prepare Your Data", style={"color":"rgba(255,255,255,0.95)"}),
+#                             html.P("CSV file with 2 columns: Date and Index Value", style={"fontSize":"14px", "color":"rgba(255,255,255,0.7)", "marginTop":"4px", "marginLeft":"24px"})
+#                         ], style={"marginBottom":"16px"}),
+#                         html.Div([
+#                             html.Strong("2. ", style={"color":"#667eea", "fontSize":"18px"}),
+#                             html.Strong("Choose Analysis Type", style={"color":"rgba(255,255,255,0.95)"}),
+#                             html.P("Single index for detailed analysis or Cross index for comparison", style={"fontSize":"14px", "color":"rgba(255,255,255,0.7)", "marginTop":"4px", "marginLeft":"24px"})
+#                         ], style={"marginBottom":"16px"}),
+#                         html.Div([
+#                             html.Strong("3. ", style={"color":"#667eea", "fontSize":"18px"}),
+#                             html.Strong("Upload & Analyze", style={"color":"rgba(255,255,255,0.95)"}),
+#                             html.P("Upload your file, configure settings, and click Analyze", style={"fontSize":"14px", "color":"rgba(255,255,255,0.7)", "marginTop":"4px", "marginLeft":"24px"})
+#                         ], style={"marginBottom":"16px"}),
+#                         html.Div([
+#                             html.Strong("4. ", style={"color":"#667eea", "fontSize":"18px"}),
+#                             html.Strong("Explore Results", style={"color":"rgba(255,255,255,0.95)"}),
+#                             html.P("View charts, statistics, and insights", style={"fontSize":"14px", "color":"rgba(255,255,255,0.7)", "marginTop":"4px", "marginLeft":"24px"})
+#                         ]),
+#                     ]),
+#                     html.Div([
+#                         html.A([
+#                             html.Span("📖 ", style={"marginRight":"6px"}),
+#                             "View Full Documentation"
+#                         ], href="/docs", style={
+#                             "display":"inline-block",
+#                             "marginTop":"24px",
+#                             "padding":"12px 24px",
+#                             "background":"linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%)",
+#                             "border":"1px solid rgba(102,126,234,0.4)",
+#                             "color":"#667eea",
+#                             "textDecoration":"none",
+#                             "borderRadius":"8px",
+#                             "fontWeight":"600",
+#                             "fontSize":"14px",
+#                             "transition":"all 0.3s"
+#                         })
+#                     ], style={"textAlign":"center"})
+#                 ], style={"maxWidth":"600px", "margin":"48px auto 0"})
+#             ])
 #         ],
 #         style={"maxWidth":"1200px","margin":"0 auto","padding":"48px 24px", "marginTop":"0"}
 #     )
@@ -1463,12 +1538,23 @@
 #     return PageContainer([
 #         # Header
 #         html.Div([
-#             html.H1("Single Index Analysis", style={
+#             html.H1("📊 Single Index Analysis", style={
 #                 "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
 #                 "color":"rgba(255,255,255,0.95)"
 #             }),
-#             html.P("Upload a CSV with two columns: a date column and a numeric index column (headers can be anything).", style={
-#                 "fontSize":"16px", "color":"rgba(255,255,255,0.7)", "marginBottom":"32px"
+#             html.P([
+#                 "Analyze market movements, find significant drops and gains, and understand trends with technical indicators."
+#             ], style={
+#                 "fontSize":"17px", "color":"rgba(255,255,255,0.8)", "marginBottom":"8px"
+#             }),
+#             html.P([
+#                 "💡 ", html.Strong("Required Data Format:", style={"color":"#00c896"}), 
+#                 " CSV file with 2 columns - a date column and a numeric index value column (column names can be anything). ",
+#                 html.A("See examples in docs →", href="/docs#data-format", style={"color":"#667eea", "textDecoration":"underline"})
+#             ], style={
+#                 "fontSize":"14px", "color":"rgba(255,255,255,0.6)", "marginBottom":"32px",
+#                 "padding":"12px 16px", "background":"rgba(0,200,150,0.08)", 
+#                 "borderRadius":"8px", "border":"1px solid rgba(0,200,150,0.2)"
 #             }),
 #         ], style={"marginBottom": "32px"}),
 
@@ -1488,23 +1574,44 @@
 
 #         # Analysis Types
 #         Card([
+#             html.Div([
+#                 html.H3("🎯 What do you want to analyze?", style={
+#                     "fontSize":"20px", "fontWeight":600, "color":"rgba(255,255,255,0.95)", "marginBottom":"12px"
+#                 }),
+#                 html.P("Select one or both types of analysis to run on your data:", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.7)", "marginBottom":"16px"
+#                 }),
+#             ]),
 #             CheckboxGroup(
 #                 id="analysis-types",
 #                 label="Analysis Type(s)",
-#                 options=[{"label": " Drop", "value": "drop"},
-#                          {"label": " Gain", "value": "gain"}],
+#                 options=[
+#                     {"label": " 📉 Drop Analysis - Find periods where the index decreased", "value": "drop"},
+#                     {"label": " 📈 Gain Analysis - Find periods where the index increased", "value": "gain"}
+#                 ],
 #                 value=["drop", "gain"],
-#                 inline=True
-#             )
+#                 inline=False
+#             ),
+#             html.P([
+#                 "💡 ", html.Strong("Tip:", style={"color":"#00c896"}),
+#                 " Analyzing both helps you understand the full picture of market volatility and opportunities."
+#             ], style={
+#                 "fontSize":"13px", "color":"rgba(255,255,255,0.6)", "marginTop":"12px",
+#                 "padding":"8px 12px", "background":"rgba(255,255,255,0.03)",
+#                 "borderRadius":"6px"
+#             })
 #         ], style={"marginBottom": "24px"}),
 
 #         # Controls row: Drop (left) & Gain (right) - 2 column grid
 #         html.Div([
 #             # DROP CONTROLS
 #             Card([
-#                 html.H3("Drop Options", style={
-#                     "marginBottom": "20px", "fontSize":"22px",
+#                 html.H3("📉 Drop Analysis Options", style={
+#                     "marginBottom": "8px", "fontSize":"22px",
 #                     "fontWeight":600, "color":"#ef4444"
+#                 }),
+#                 html.P("Configure settings to identify when the index decreased significantly", style={
+#                     "fontSize":"13px", "color":"rgba(255,255,255,0.6)", "marginBottom":"20px"
 #                 }),
 #                 DateRangePicker(
 #                         id="date-range-drop",
@@ -1590,9 +1697,12 @@
 
 #             # GAIN CONTROLS
 #             Card([
-#                 html.H3("Gain Options", style={
-#                     "marginBottom": "20px", "fontSize":"22px",
+#                 html.H3("📈 Gain Analysis Options", style={
+#                     "marginBottom": "8px", "fontSize":"22px",
 #                     "fontWeight":600, "color":"#22c55e"
+#                 }),
+#                 html.P("Configure settings to identify when the index increased significantly", style={
+#                     "fontSize":"13px", "color":"rgba(255,255,255,0.6)", "marginBottom":"20px"
 #                 }),
 #                 DateRangePicker(
 #                         id="date-range-gain",
@@ -1836,12 +1946,23 @@
 #     return PageContainer([
 #         # Header
 #             html.Div([
-#                 html.H1("Cross Index Analysis", style={
+#                 html.H1("🔀 Cross Index Analysis", style={
 #                     "fontSize":"36px", "fontWeight":700, "marginBottom":"12px",
 #                 "color":"rgba(255,255,255,0.95)"
 #                 }),
-#                 html.P("Compare two indexes side by side with correlation analysis", style={
-#                 "fontSize":"16px", "color":"rgba(255,255,255,0.7)", "marginBottom":"32px"
+#                 html.P([
+#                     "Compare two different indexes to understand their relationship, correlation, and relative performance over time."
+#                 ], style={
+#                     "fontSize":"17px", "color":"rgba(255,255,255,0.8)", "marginBottom":"8px"
+#                 }),
+#                 html.P([
+#                     "💡 ", html.Strong("How it works:", style={"color":"#00c896"}), 
+#                     " Upload two CSV files (same format as Single Index), set a date range, and see how they move together. ",
+#                     html.A("Learn more in docs →", href="/docs#cross-index", style={"color":"#f5576c", "textDecoration":"underline"})
+#                 ], style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.6)", "marginBottom":"32px",
+#                     "padding":"12px 16px", "background":"rgba(245,87,108,0.08)", 
+#                     "borderRadius":"8px", "border":"1px solid rgba(245,87,108,0.2)"
 #                 }),
 #         ], style={"marginBottom": "32px"}),
 
@@ -1887,9 +2008,12 @@
 
 #         # Analysis Settings Card
 #         Card([
-#                 html.H3("Analysis Settings", style={
-#                 "fontSize":"24px", "fontWeight":600, "color":"rgba(255,255,255,0.95)",
-#                     "marginBottom":"20px"
+#                 html.H3("⚙️ Analysis Settings", style={
+#                     "fontSize":"24px", "fontWeight":600, "color":"rgba(255,255,255,0.95)",
+#                     "marginBottom":"8px"
+#                 }),
+#                 html.P("Configure the time range and calculation period for comparing both indexes", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.7)", "marginBottom":"20px"
 #                 }),
 #             # Row 1: Date Range + Snap to month
 #                 html.Div([
@@ -1934,6 +2058,7 @@
 #                     min=1,
 #                     step=1,
 #                     value=5,
+#                     placeholder="e.g., 5",
 #                         style={
 #                         "width": "100%",
 #                         "height": "40px",
@@ -1945,7 +2070,7 @@
 #                         "color": "rgba(255,255,255,0.9)"
 #                     }
 #                 ),
-#                 helper_text="Number of days for return calculation period"
+#                 helper_text="How many days to use when calculating returns (e.g., 5 days = weekly returns). This measures price change over X-day periods for both indexes."
 #             ),
 #         ], footer=html.Div([
 #             dcc.Loading(
@@ -1986,6 +2111,410 @@
 #             dcc.Store(id=STORE_B),
 #     ])
 
+# # ---------- Documentation Page ----------
+# def docs_layout():
+#     return PageContainer([
+#         # Header
+#         html.Div([
+#             html.H1("📖 Documentation", style={
+#                 "fontSize":"42px", "fontWeight":700, "marginBottom":"16px",
+#                 "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+#                 "WebkitBackgroundClip":"text", "WebkitTextFillColor":"transparent",
+#                 "backgroundClip":"text"
+#             }),
+#             html.P("Complete guide to using the Index Data Analysis application", style={
+#                 "fontSize":"18px", "color":"rgba(255,255,255,0.7)", "marginBottom":"48px"
+#             }),
+#         ], style={"textAlign":"center"}),
+
+#         # Table of Contents
+#         Card([
+#             html.H2("📑 Table of Contents", style={"marginBottom":"20px", "fontSize":"26px", "fontWeight":600, "color":"rgba(255,255,255,0.95)"}),
+#             html.Ul([
+#                 html.Li(html.A("1. What is this app?", href="#what-is", style={"color":"#667eea", "textDecoration":"none"})),
+#                 html.Li(html.A("2. Data Format Requirements", href="#data-format", style={"color":"#667eea", "textDecoration":"none"})),
+#                 html.Li(html.A("3. Single Index Analysis", href="#single-index", style={"color":"#667eea", "textDecoration":"none"})),
+#                 html.Li(html.A("4. Cross Index Analysis", href="#cross-index", style={"color":"#667eea", "textDecoration":"none"})),
+#                 html.Li(html.A("5. Understanding Key Concepts", href="#concepts", style={"color":"#667eea", "textDecoration":"none"})),
+#                 html.Li(html.A("6. Technical Indicators Explained", href="#indicators", style={"color":"#667eea", "textDecoration":"none"})),
+#                 html.Li(html.A("7. Examples & Use Cases", href="#examples", style={"color":"#667eea", "textDecoration":"none"})),
+#             ], style={"fontSize":"16px", "lineHeight":"2", "color":"rgba(255,255,255,0.9)"})
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 1: What is this app?
+#         html.Div(id="what-is"),
+#         Card([
+#             html.H2("1️⃣ What is this app?", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#667eea"}),
+#             html.P([
+#                 "The Index Data Analysis app is a powerful tool designed to analyze financial index data. ",
+#                 "It helps you understand market movements by analyzing price changes over time and identifying ",
+#                 "significant events like drops and gains."
+#             ], style={"fontSize":"16px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"16px"}),
+#             html.P([
+#                 html.Strong("Two Main Features:", style={"color":"#667eea"}),
+#             ], style={"fontSize":"16px", "marginBottom":"12px"}),
+#             html.Ul([
+#                 html.Li([html.Strong("Single Index Analysis:"), " Analyze one market index in depth, finding drop and gain events with detailed statistics and visualizations."]),
+#                 html.Li([html.Strong("Cross Index Analysis:"), " Compare two different indexes to see how they move together, their correlation, and relative performance."]),
+#             ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginLeft":"20px"})
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 2: Data Format
+#         html.Div(id="data-format"),
+#         Card([
+#             html.H2("2️⃣ Data Format Requirements", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#667eea"}),
+#             html.P([
+#                 "Your CSV file must contain ", html.Strong("exactly two columns", style={"color":"#00c896"}), ":"
+#             ], style={"fontSize":"16px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"16px"}),
+#             html.Ul([
+#                 html.Li([html.Strong("Column 1:"), " A date or datetime column (any reasonable date format works)"]),
+#                 html.Li([html.Strong("Column 2:"), " A numeric column representing the index value (price, level, etc.)"]),
+#             ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginLeft":"20px", "marginBottom":"20px"}),
+            
+#             html.H3("✅ Example of Valid Data:", style={"fontSize":"20px", "fontWeight":600, "color":"#22c55e", "marginBottom":"12px"}),
+#             html.Pre([
+#                 "Date,Index\n",
+#                 "2024-01-01,1000.5\n",
+#                 "2024-01-02,1005.2\n",
+#                 "2024-01-03,998.7\n",
+#                 "2024-01-04,1012.3"
+#             ], style={
+#                 "background":"rgba(34,197,94,0.1)", "padding":"16px", "borderRadius":"8px",
+#                 "border":"1px solid rgba(34,197,94,0.3)", "fontSize":"14px",
+#                 "color":"rgba(255,255,255,0.95)", "overflowX":"auto"
+#             }),
+            
+#             html.Div([
+#                 html.Strong("💡 Important Notes:", style={"color":"#00c896", "display":"block", "marginBottom":"8px"}),
+#                 html.Ul([
+#                     html.Li("Column headers can have any name - the app automatically detects which is the date and which is numeric"),
+#                     html.Li("The app handles common date formats automatically (YYYY-MM-DD, MM/DD/YYYY, etc.)"),
+#                     html.Li("Rows with missing or invalid data will be automatically removed"),
+#                     html.Li("Data will be automatically sorted by date"),
+#                 ], style={"fontSize":"14px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.8)", "marginLeft":"20px"})
+#             ], style={"marginTop":"20px", "padding":"16px", "background":"rgba(0,200,150,0.08)", "borderRadius":"8px", "border":"1px solid rgba(0,200,150,0.3)"})
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 3: Single Index Analysis
+#         html.Div(id="single-index"),
+#         Card([
+#             html.H2("3️⃣ Single Index Analysis", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#667eea"}),
+#             html.P("This mode analyzes a single market index to identify significant price movements.", style={
+#                 "fontSize":"16px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"24px"
+#             }),
+            
+#             html.H3("📤 Step 1: Upload Your Data", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.P("Click or drag & drop your CSV file into the upload area. You'll see a preview of your data once it's loaded.", style={
+#                 "fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"20px"
+#             }),
+            
+#             html.H3("🎯 Step 2: Choose Analysis Type", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.Ul([
+#                 html.Li([html.Strong("Drop Analysis (Red):", style={"color":"#ef4444"}), " Identifies periods where the index fell by a specified percentage"]),
+#                 html.Li([html.Strong("Gain Analysis (Green):", style={"color":"#22c55e"}), " Identifies periods where the index rose by a specified percentage"]),
+#                 html.Li("You can analyze both simultaneously!")
+#             ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginLeft":"20px", "marginBottom":"20px"}),
+            
+#             html.H3("⚙️ Step 3: Configure Parameters", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.Div([
+#                 html.Strong("📅 Date Range:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P("Select the time period to analyze. Options include All time, Year-to-Date (YTD), Last 1 Year, Last 3 Years, Last 6 Months, or Custom range.", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"
+#                 }),
+                
+#                 html.Strong("📍 Navigate to Date:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P("Jump directly to a specific year/month in your data for quick analysis of a particular time period.", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"
+#                 }),
+                
+#                 html.Strong("📊 Analysis Period (days):", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P([
+#                     "The time window to measure price changes. For example, a 5-day period means 'from day X to day X+5'. ",
+#                     "Common choices: 3 days (short-term), 5 days (weekly), 7 days (weekly), 10 days (two weeks). ",
+#                     "You can also enter a custom period."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"}),
+                
+#                 html.Strong("📉 Minimum Change Threshold:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P([
+#                     "The minimum percentage change to count as a significant event. ",
+#                     "For example, 3% means only drops/gains of 3% or more are counted. ",
+#                     "Lower thresholds = more events found, Higher thresholds = only major events."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"}),
+                
+#                 html.Strong("📅 Snap to Month:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P("When enabled, the analysis period starts at the beginning of the month and ends at month-end. Useful for clean monthly reporting.", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"
+#                 }),
+#             ], style={"marginLeft":"20px", "marginBottom":"20px"}),
+            
+#             html.H3("📊 Step 4: View Results", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.P("After clicking 'Analyze', you'll see:", style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"12px"}),
+#             html.Ul([
+#                 html.Li([html.Strong("Event Statistics:"), " Total number of drop/gain events found and their probability"]),
+#                 html.Li([html.Strong("Return Distribution Chart:"), " Visual distribution of all returns during the analysis period"]),
+#                 html.Li([html.Strong("Bar Chart:"), " Count of events that crossed your threshold"]),
+#                 html.Li([html.Strong("Statistical Summary:"), " Mean, median, standard deviation, and other key metrics"]),
+#                 html.Li([html.Strong("Trade Windows Table:"), " Detailed table showing start/end dates for each analysis window"]),
+#                 html.Li([html.Strong("Technical Indicators:"), " RSI, MACD, Bollinger Bands, and more (see section 6)"]),
+#             ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginLeft":"20px"}),
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 4: Cross Index Analysis
+#         html.Div(id="cross-index"),
+#         Card([
+#             html.H2("4️⃣ Cross Index Analysis", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#f5576c"}),
+#             html.P("This mode compares two different indexes to understand their relationship and relative performance.", style={
+#                 "fontSize":"16px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"24px"
+#             }),
+            
+#             html.H3("📤 Step 1: Upload Both Indexes", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.P("Upload two separate CSV files - one for Index A and one for Index B. Both must follow the same data format (see Section 2).", style={
+#                 "fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"20px"
+#             }),
+            
+#             html.H3("⚙️ Step 2: Configure Analysis Settings", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.Ul([
+#                 html.Li([html.Strong("Date Range:"), " The time period to compare. The app will only analyze dates where both indexes have data."]),
+#                 html.Li([html.Strong("Return Calculation Period:"), " Number of days to use when calculating returns for both indexes (typically 5 days)."]),
+#             ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginLeft":"20px", "marginBottom":"20px"}),
+            
+#             html.H3("📊 Step 3: Understanding the Results", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#             html.Div([
+#                 html.Strong("📈 Price Levels Over Time:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P("Shows both indexes plotted together so you can see their overall trends and movements.", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"
+#                 }),
+                
+#                 html.Strong("🎯 Scatter Plot:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P("Each point represents the returns of both indexes on the same day. If points cluster along a line, the indexes move together (correlated). Scattered points mean independent movement.", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"
+#                 }),
+                
+#                 html.Strong("📊 Returns Over Time:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.P("Compares the percentage returns of both indexes over time, making it easy to see which performed better during specific periods.", style={
+#                     "fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"16px"
+#                 }),
+                
+#                 html.Strong("📐 Correlation Coefficient:", style={"display":"block", "marginBottom":"8px", "color":"#667eea"}),
+#                 html.Ul([
+#                     html.Li([html.Strong("+1.0:"), " Perfect positive correlation (always move together)"]),
+#                     html.Li([html.Strong("0.0:"), " No correlation (independent movement)"]),
+#                     html.Li([html.Strong("-1.0:"), " Perfect negative correlation (always move opposite)"]),
+#                     html.Li([html.Strong("0.7 to 1.0:"), " Strong positive correlation"]),
+#                     html.Li([html.Strong("0.3 to 0.7:"), " Moderate positive correlation"]),
+#                 ], style={"fontSize":"14px", "lineHeight":"1.6", "color":"rgba(255,255,255,0.85)", "marginLeft":"20px"}),
+#             ], style={"marginLeft":"20px"}),
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 5: Key Concepts
+#         html.Div(id="concepts"),
+#         Card([
+#             html.H2("5️⃣ Understanding Key Concepts", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#667eea"}),
+            
+#             html.Div([
+#                 html.H3("📊 Returns", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     "A return is the percentage change in index value over a period. ",
+#                     html.Strong("Formula:"), " ((End Value - Start Value) / Start Value) × 100"
+#                 ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"16px"}),
+#                 html.P([
+#                     html.Strong("Example:"), " If an index goes from 1000 to 1050 over 5 days, the 5-day return is ((1050-1000)/1000) × 100 = 5%"
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.8)", "marginBottom":"24px", "fontStyle":"italic"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📅 Weekend-Aware Calculations", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     "Financial markets are closed on weekends. This app intelligently handles weekends by: ",
+#                     html.Ul([
+#                         html.Li("If an analysis period ends on Saturday, it uses Friday's data"),
+#                         html.Li("If it ends on Sunday, it uses Monday's data"),
+#                         html.Li("This ensures accurate calendar-based analysis without gaps")
+#                     ], style={"marginTop":"8px", "lineHeight":"1.6"})
+#                 ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"24px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📈 Probability", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     "The probability shown is: (Number of Events / Total Analysis Windows) × 100"
+#                 ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"12px"}),
+#                 html.P([
+#                     html.Strong("Example:"), " If you find 45 drop events out of 500 analysis windows, the probability is 45/500 = 9%"
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.8)", "fontStyle":"italic"}),
+#             ]),
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 6: Technical Indicators
+#         html.Div(id="indicators"),
+#         Card([
+#             html.H2("6️⃣ Technical Indicators Explained", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#667eea"}),
+#             html.P("When you analyze a single index, the app calculates various technical indicators used by traders and analysts:", style={
+#                 "fontSize":"16px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginBottom":"24px"
+#             }),
+            
+#             html.Div([
+#                 html.H3("📊 Moving Averages (SMA, EMA)", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("What it is:"), " Average of prices over a period. SMA = simple average, EMA = gives more weight to recent prices."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("How to use it:"), " When price crosses above MA = potential uptrend. When price crosses below MA = potential downtrend."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"20px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📉 MACD (Moving Average Convergence Divergence)", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("What it is:"), " Shows the relationship between two moving averages (12-day EMA - 26-day EMA)."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("How to use it:"), " When MACD crosses above signal line = bullish signal. When MACD crosses below signal line = bearish signal."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"20px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("💪 RSI (Relative Strength Index)", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("What it is:"), " Measures momentum on a scale of 0-100."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("How to use it:"),
+#                     html.Ul([
+#                         html.Li("RSI > 70: Potentially overbought (may drop soon)"),
+#                         html.Li("RSI < 30: Potentially oversold (may rise soon)"),
+#                         html.Li("RSI around 50: Neutral momentum")
+#                     ], style={"marginTop":"8px", "lineHeight":"1.6"})
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"20px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📊 Bollinger Bands", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("What it is:"), " Shows a middle line (20-day average) with upper and lower bands (±2 standard deviations)."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("How to use it:"), " Price near upper band = potentially overbought. Price near lower band = potentially oversold. Narrowing bands = low volatility (potential breakout coming)."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"20px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📉 Volatility", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("What it is:"), " Measures how much prices fluctuate (standard deviation of returns)."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("How to use it:"), " High volatility = larger price swings (higher risk/opportunity). Low volatility = stable prices (lower risk/opportunity)."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginBottom":"20px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📉 Drawdown", style={"fontSize":"20px", "fontWeight":600, "color":"#00c896", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("What it is:"), " How far the price has fallen from its recent peak."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"8px"}),
+#                 html.P([
+#                     html.Strong("How to use it:"), " Large drawdowns indicate significant losses from recent highs. Recovery from drawdown shows resilience."
+#                 ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)"}),
+#             ]),
+#         ], style={"marginBottom":"32px"}),
+
+#         # Section 7: Examples
+#         html.Div(id="examples"),
+#         Card([
+#             html.H2("7️⃣ Examples & Use Cases", style={"marginBottom":"20px", "fontSize":"28px", "fontWeight":600, "color":"#667eea"}),
+            
+#             html.Div([
+#                 html.H3("💼 Use Case 1: Risk Assessment", style={"fontSize":"22px", "fontWeight":600, "color":"#f5576c", "marginBottom":"12px"}),
+#                 html.P([
+#                     html.Strong("Scenario:"), " You want to understand how often the S&P 500 drops by 5% or more in a week."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"12px"}),
+#                 html.Div([
+#                     html.Strong("Steps:", style={"display":"block", "marginBottom":"8px"}),
+#                     html.Ol([
+#                         html.Li("Upload your S&P 500 CSV data"),
+#                         html.Li("Select 'Drop' analysis"),
+#                         html.Li("Set Analysis Period to 7 days"),
+#                         html.Li("Set Minimum Threshold to 5%"),
+#                         html.Li("Click Analyze"),
+#                     ], style={"lineHeight":"1.8", "marginLeft":"20px"}),
+#                     html.P([
+#                         html.Strong("Result:"), " You'll see the probability (e.g., '8%') meaning that 7-day drops of 5%+ occur in 8% of all 7-day periods."
+#                     ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginTop":"12px"})
+#                 ], style={"marginLeft":"20px", "marginBottom":"24px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("📈 Use Case 2: Growth Opportunities", style={"fontSize":"22px", "fontWeight":600, "color":"#22c55e", "marginBottom":"12px"}),
+#                 html.P([
+#                     html.Strong("Scenario:"), " You want to find periods when a stock gained 10% or more in 10 days."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"12px"}),
+#                 html.Div([
+#                     html.Strong("Steps:", style={"display":"block", "marginBottom":"8px"}),
+#                     html.Ol([
+#                         html.Li("Upload your stock index data"),
+#                         html.Li("Select 'Gain' analysis"),
+#                         html.Li("Set Analysis Period to 10 days"),
+#                         html.Li("Set Minimum Threshold to 10%"),
+#                         html.Li("Check the Trade Windows table to see exact dates of these events"),
+#                     ], style={"lineHeight":"1.8", "marginLeft":"20px"}),
+#                     html.P([
+#                         html.Strong("Result:"), " You'll see all periods where this occurred, helping you understand growth patterns."
+#                     ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginTop":"12px"})
+#                 ], style={"marginLeft":"20px", "marginBottom":"24px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("🔀 Use Case 3: Comparing Indexes", style={"fontSize":"22px", "fontWeight":600, "color":"#667eea", "marginBottom":"12px"}),
+#                 html.P([
+#                     html.Strong("Scenario:"), " You want to see if technology stocks move with the overall market."
+#                 ], style={"fontSize":"15px", "color":"rgba(255,255,255,0.9)", "marginBottom":"12px"}),
+#                 html.Div([
+#                     html.Strong("Steps:", style={"display":"block", "marginBottom":"8px"}),
+#                     html.Ol([
+#                         html.Li("Go to Cross Index Analysis"),
+#                         html.Li("Upload S&P 500 data as Index A"),
+#                         html.Li("Upload NASDAQ data as Index B"),
+#                         html.Li("Set a 5-day return period"),
+#                         html.Li("Click Analyze"),
+#                     ], style={"lineHeight":"1.8", "marginLeft":"20px"}),
+#                     html.P([
+#                         html.Strong("Result:"), " A correlation of 0.85 or higher means they move together strongly. Lower correlation means more independent movement."
+#                     ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.85)", "marginTop":"12px"})
+#                 ], style={"marginLeft":"20px", "marginBottom":"24px"}),
+#             ]),
+            
+#             html.Div([
+#                 html.H3("💡 Pro Tips", style={"fontSize":"22px", "fontWeight":600, "color":"#00c896", "marginBottom":"12px"}),
+#                 html.Ul([
+#                     html.Li([html.Strong("Start with common settings:"), " 5-day period, 3% threshold"]),
+#                     html.Li([html.Strong("Use YTD:"), " To analyze current year performance"]),
+#                     html.Li([html.Strong("Compare different thresholds:"), " Run analysis with 3%, 5%, and 10% to see different risk levels"]),
+#                     html.Li([html.Strong("Check weekend behavior:"), " The app handles weekends automatically - no manual adjustments needed"]),
+#                     html.Li([html.Strong("Look at indicators together:"), " RSI + MACD + Bollinger Bands give a complete picture"]),
+#                 ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)", "marginLeft":"20px"})
+#             ], style={"padding":"20px", "background":"rgba(0,200,150,0.08)", "borderRadius":"12px", "border":"1px solid rgba(0,200,150,0.3)"}),
+#         ], style={"marginBottom":"32px"}),
+
+#         # Footer
+#         Card([
+#             html.H3("❓ Need More Help?", style={"fontSize":"22px", "fontWeight":600, "color":"#667eea", "marginBottom":"12px"}),
+#             html.P([
+#                 "This documentation covers all the main features and concepts. ",
+#                 "If you're still unsure about something, start with the examples above and experiment with your data. ",
+#                 "The app is designed to be intuitive - just upload your CSV and try the preset options first!"
+#             ], style={"fontSize":"15px", "lineHeight":"1.8", "color":"rgba(255,255,255,0.9)"}),
+#             html.Div([
+#                 html.A("← Back to Home", href="/", style={
+#                     "display":"inline-block", "marginTop":"20px", "padding":"12px 24px",
+#                     "background":"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+#                     "color":"white", "textDecoration":"none", "borderRadius":"8px",
+#                     "fontWeight":"600", "fontSize":"15px"
+#                 })
+#             ])
+#         ], style={"marginTop":"32px", "textAlign":"center"})
+#     ], style={"maxWidth":"900px", "margin":"0 auto"})
+
 # # -----------------------------
 # # Top-level app layout with router
 # # -----------------------------
@@ -2024,6 +2553,8 @@
 #         return single_layout()
 #     elif pathname == "/cross":
 #         return cross_layout()
+#     elif pathname == "/docs":
+#         return docs_layout()
 #     else:
 #         return home_layout()
 
@@ -3151,7 +3682,8 @@
 
 
 
-# # ===============================================================================================================================================================================================================
+
+# ==========================================================================================================================================================================================================
 
 
 import os
@@ -3226,6 +3758,36 @@ app.index_string = '''
             [id="uploader"]:hover span:last-child, [id="uploader-a"]:hover span:last-child, [id="uploader-b"]:hover span:last-child {
                 opacity: 1 !important;
                 transform: scale(1.1);
+            }
+            /* Feature card hover effects */
+            a[href="/single"] > div,
+            a[href="/cross"] > div {
+                position: relative;
+            }
+            a[href="/single"]:hover > div,
+            a[href="/cross"]:hover > div {
+                transform: translateY(-8px);
+                box-shadow: 0 16px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2) !important;
+            }
+            a[href="/single"]:active > div,
+            a[href="/cross"]:active > div {
+                transform: translateY(-4px);
+            }
+            /* Feature card shine effect on hover */
+            a[href="/single"] > div::before,
+            a[href="/cross"] > div::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+                transition: left 0.5s;
+            }
+            a[href="/single"]:hover > div::before,
+            a[href="/cross"]:hover > div::before {
+                left: 100%;
             }
             /* DataTable dark theme styles */
             .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
@@ -3404,9 +3966,33 @@ app.index_string = '''
                     grid-template-columns: 1fr !important;
                 }
             }
+            /* Responsive feature cards */
+            @media (max-width: 900px) {
+                a[href="/single"] > div,
+                a[href="/cross"] > div {
+                    max-width: 100% !important;
+                    min-height: 380px !important;
+                }
+            }
+            @media (max-width: 480px) {
+                a[href="/single"] > div,
+                a[href="/cross"] > div {
+                    padding: 32px 24px !important;
+                    min-height: 360px !important;
+                }
+            }
             /* Focus states for accessibility */
             button:focus-visible, input:focus-visible, select:focus-visible {
                 outline: none !important;
+            }
+            /* Feature card focus states */
+            a[href="/single"]:focus-visible > div,
+            a[href="/cross"]:focus-visible > div {
+                outline: 3px solid rgba(102,126,234,0.6) !important;
+                outline-offset: 4px;
+            }
+            a[href="/cross"]:focus-visible > div {
+                outline-color: rgba(240,147,251,0.6) !important;
             }
             /* Hover states for buttons */
             button:hover:not(:disabled) {
@@ -4476,29 +5062,83 @@ def Button(id, label, variant="primary", disabled=False, loading=False, full_wid
 # Layouts: Home / Single / Cross
 # -----------------------------
 
-card_style = {
-    "display": "flex",
-    "flexDirection": "column",
-    "padding": "32px 36px",
-    "borderRadius": "20px",
-    "border": "none",
-    "boxShadow": "0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
-    "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "textDecoration": "none",
-    "color": "white",
-    "width": "320px",
-    "minHeight": "280px",
-    "height": "280px",
-    "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    "cursor": "pointer",
-    "justifyContent": "center",
-    "alignItems": "center",
-    "boxSizing": "border-box",
-}
-card_style_hover = {
-    "transform": "translateY(-4px)",
-    "boxShadow": "0 12px 32px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.12)",
-}
+def feature_card(icon, title, description, features, gradient_bg, href):
+    """Reusable feature card component with consistent styling and layout"""
+    return dcc.Link(
+        html.Div([
+            # Icon container - fixed height for alignment
+            html.Div(
+                icon,
+                style={
+                    "fontSize": "56px",
+                    "lineHeight": "1",
+                    "marginBottom": "24px",
+                    "height": "56px",
+                    "display": "flex",
+                    "alignItems": "center",
+                    "justifyContent": "center"
+                }
+            ),
+            # Title
+            html.H3(
+                title,
+                style={
+                    "margin": "0 0 16px 0",
+                    "fontSize": "26px",
+                    "fontWeight": 700,
+                    "lineHeight": "1.2",
+                    "letterSpacing": "-0.5px"
+                }
+            ),
+            # Description
+            html.P(
+                description,
+                style={
+                    "margin": "0 0 24px 0",
+                    "fontSize": "15px",
+                    "lineHeight": "1.6",
+                    "opacity": 0.95,
+                    "minHeight": "48px"  # Ensures consistent height for 2 lines
+                }
+            ),
+            # Feature list
+            html.Div([
+                html.Div([
+                    html.Span("✓ ", style={"marginRight": "8px", "fontWeight": 600}),
+                    html.Span(feature)
+                ], style={
+                    "fontSize": "14px",
+                    "marginBottom": "10px" if i < len(features) - 1 else "0",
+                    "opacity": 0.9,
+                    "display": "flex",
+                    "alignItems": "flex-start",
+                    "lineHeight": "1.5"
+                }) for i, feature in enumerate(features)
+            ], style={
+                "textAlign": "left",
+                "width": "100%"
+            })
+        ], style={
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",
+            "padding": "40px 32px",
+            "borderRadius": "20px",
+            "background": gradient_bg,
+            "color": "white",
+            "width": "100%",
+            "maxWidth": "380px",
+            "minHeight": "420px",
+            "boxShadow": "0 8px 24px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1)",
+            "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            "cursor": "pointer",
+            "boxSizing": "border-box",
+            "position": "relative",
+            "overflow": "hidden"
+        }),
+        href=href,
+        style={"textDecoration": "none", "flex": "1 1 380px", "maxWidth": "380px"}
+    )
 
 def navbar():
     # Always dark theme
@@ -4586,54 +5226,42 @@ def home_layout():
                 }),
             ], style={"textAlign":"center", "marginBottom":"48px"}),
             
+            # Feature cards container
             html.Div(
                 [
-                    dcc.Link(
-                        html.Div(
-                            [
-                                html.Div("📊", style={"fontSize":"48px", "marginBottom":"16px"}),
-                                html.H3("Single Index Analysis", style={"margin":"0 0 12px 0", "fontSize":"24px", "fontWeight":600}),
-                                html.P("Perfect for analyzing one market index in depth", style={
-                                    "margin":"0 0 12px 0", "fontSize":"15px", "opacity":0.95, "lineHeight":"1.5"
-                                }),
-                                html.Div([
-                                    html.Div("✓ Find drop & gain events", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
-                                    html.Div("✓ Technical indicators", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
-                                    html.Div("✓ Statistical analysis", style={"fontSize":"13px", "opacity":0.85}),
-                                ], style={"textAlign":"left", "paddingLeft":"20px"})
-                            ],
-                            style={**card_style, "textAlign":"center"}
-                        ),
-                        href="/single",
-                        style={"textDecoration":"none", "display":"flex"}
+                    feature_card(
+                        icon="📊",
+                        title="Single Index Analysis",
+                        description="Perfect for analyzing one market index in depth",
+                        features=[
+                            "Find drop & gain events",
+                            "Technical indicators",
+                            "Statistical analysis"
+                        ],
+                        gradient_bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        href="/single"
                     ),
-                    dcc.Link(
-                        html.Div(
-                            [
-                                html.Div("🔀", style={"fontSize":"48px", "marginBottom":"16px"}),
-                                html.H3("Cross Index Comparison", style={"margin":"0 0 12px 0", "fontSize":"24px", "fontWeight":600}),
-                                html.P("Compare two indexes to understand their relationship", style={
-                                    "margin":"0 0 12px 0", "fontSize":"15px", "opacity":0.95, "lineHeight":"1.5"
-                                }),
-                                html.Div([
-                                    html.Div("✓ Correlation analysis", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
-                                    html.Div("✓ Relative performance", style={"fontSize":"13px", "marginBottom":"6px", "opacity":0.85}),
-                                    html.Div("✓ Side-by-side visualization", style={"fontSize":"13px", "opacity":0.85}),
-                                ], style={"textAlign":"left", "paddingLeft":"20px"})
-                            ],
-                            style={**card_style, "background":"linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", "textAlign":"center"}
-                        ),
-                        href="/cross",
-                        style={"textDecoration":"none", "display":"flex"}
+                    feature_card(
+                        icon="🔀",
+                        title="Cross Index Comparison",
+                        description="Compare two indexes to understand their relationship",
+                        features=[
+                            "Correlation analysis",
+                            "Relative performance",
+                            "Side-by-side visualization"
+                        ],
+                        gradient_bg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                        href="/cross"
                     ),
                 ],
                 style={
-                    "marginTop": "12px", 
-                    "display":"flex", 
-                    "justifyContent":"center", 
-                    "alignItems":"stretch",
-                    "flexWrap":"wrap",
-                    "gap":"24px"
+                    "display": "flex",
+                    "justifyContent": "center",
+                    "alignItems": "stretch",
+                    "flexWrap": "wrap",
+                    "gap": "32px",
+                    "marginTop": "12px",
+                    "marginBottom": "64px"
                 }
             ),
             
@@ -6833,7 +7461,5 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
-
 
 
