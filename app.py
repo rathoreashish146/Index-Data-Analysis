@@ -4527,7 +4527,6 @@
 
 
 
-
 import os
 import base64
 import io
@@ -6647,6 +6646,13 @@ def single_layout():
         dcc.Loading(
             id="results-loading",
             type="circle",
+            style={
+                "position": "fixed",
+                "top": "50%",
+                "left": "50%",
+                "transform": "translate(-50%, -50%)",
+                "zIndex": "9999"
+            },
             children=html.Div(id="results-container", style={"display": "none"}, children=[
                 html.Div([
                 html.H2("Drop Analysis", style={
@@ -6957,6 +6963,13 @@ def cross_layout():
         dcc.Loading(
             id="x-results-loading",
             type="circle",
+            style={
+                "position": "fixed",
+                "top": "50%",
+                "left": "50%",
+                "transform": "translate(-50%, -50%)",
+                "zIndex": "9999"
+            },
             children=html.Div(id="x-results-container", children=[
                 html.Div(id="x-line-levels-container"),
                 html.Div(id="x-scatter-returns-container"),
@@ -9082,5 +9095,8 @@ def download_drawdowns(n_clicks, stored_data):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
+
 
 
