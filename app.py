@@ -4995,6 +4995,30 @@ app.index_string = '''
                 display: none !important;
                 content: none !important;
             }
+            
+            /* Make drawdown loading spinner bigger and more prominent */
+            #drawdown-loading ._dash-loading-callback {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            #drawdown-loading ._dash-loading {
+                margin: 0 !important;
+            }
+            #drawdown-loading .dash-spinner {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            #drawdown-loading .dash-spinner > div {
+                width: 100px !important;
+                height: 100px !important;
+                border-width: 8px !important;
+            }
+            /* Center the spinner properly */
+            ._dash-loading-callback {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
         </style>
         <script>
             // Fix duplicate page number in DataTable pagination
@@ -6790,8 +6814,22 @@ def single_layout():
                 "flexWrap":"wrap", "gap":"20px", "marginBottom":"24px"
             }),
             
-            # Results container
-            html.Div(id="drawdown-results-container", style={"marginTop":"24px"}),
+            # Results container with loading spinner
+            dcc.Loading(
+                id="drawdown-loading",
+                type="circle",
+                color="#ef4444",
+                fullscreen=False,
+                style={
+                    "position": "fixed",
+                    "top": "50%",
+                    "left": "50%",
+                    "transform": "translate(-50%, -50%)",
+                    "zIndex": "9999"
+                },
+                children=html.Div(id="drawdown-results-container", style={"marginTop":"24px"}),
+                parent_style={"position": "relative", "minHeight": "200px"}
+            ),
         ], style={"marginBottom":"32px", "marginTop":"32px"}),
 
         html.Hr(),
@@ -8867,7 +8905,7 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct, custom_value):
             ], style={"display":"flex", "gap":"12px", "flexWrap":"wrap", "marginBottom":"32px"})
         ])
         
-        # DataTable
+        # DataTable with better column widths
         table = dash_table.DataTable(
             data=display_df.to_dict("records"),
             columns=[{"name": c, "id": c} for c in display_df.columns],
@@ -8879,7 +8917,8 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct, custom_value):
                 "overflowX": "auto",
                 "backgroundColor": "#1a1a1a",
                 "borderRadius": "12px",
-                "overflow": "hidden"
+                "overflow": "hidden",
+                "minWidth": "100%"
             },
             style_cell={
                 "textAlign": "left",
@@ -8888,8 +8927,22 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct, custom_value):
                 "color": "rgba(255,255,255,0.9)",
                 "border": "1px solid rgba(255,255,255,0.1)",
                 "fontFamily": "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-                "fontSize": "14px"
+                "fontSize": "14px",
+                "minWidth": "100px",
+                "maxWidth": "180px",
+                "whiteSpace": "normal"
             },
+            style_cell_conditional=[
+                {"if": {"column_id": "Peak Date"}, "minWidth": "120px", "maxWidth": "140px"},
+                {"if": {"column_id": "Peak Value"}, "minWidth": "110px", "maxWidth": "130px"},
+                {"if": {"column_id": "Trough Date"}, "minWidth": "120px", "maxWidth": "140px"},
+                {"if": {"column_id": "Trough Value"}, "minWidth": "110px", "maxWidth": "130px"},
+                {"if": {"column_id": "Recovery Date"}, "minWidth": "120px", "maxWidth": "140px"},
+                {"if": {"column_id": "Recovery Value"}, "minWidth": "110px", "maxWidth": "130px"},
+                {"if": {"column_id": "Drawdown %"}, "minWidth": "120px", "maxWidth": "140px"},
+                {"if": {"column_id": "Days to Trough"}, "minWidth": "130px", "maxWidth": "150px"},
+                {"if": {"column_id": "Days to Recovery"}, "minWidth": "140px", "maxWidth": "160px"},
+            ],
             style_header={
                 "backgroundColor": "#252525",
                 "color": "rgba(255,255,255,0.95)",
@@ -8929,13 +8982,14 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct, custom_value):
         # Create drawdown visualization graph with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         
-        # Add price line (primary y-axis)
+        # Add price line (primary y-axis) - no markers
         fig.add_trace(go.Scatter(
             x=annotated[date_col],
             y=annotated[numeric_col],
             mode='lines',
             name='Price',
             line=dict(color='#667eea', width=2),
+            marker=dict(size=0),  # Explicitly no markers
             hovertemplate='<b>Price:</b> %{y:.2f}<extra></extra>'
         ), secondary_y=False)
         
@@ -8946,19 +9000,26 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct, custom_value):
             mode='lines',
             name='Peak Level',
             line=dict(color='#00c896', width=1, dash='dash'),
+            marker=dict(size=0),  # Explicitly no markers
             hovertemplate='<b>Peak:</b> %{y:.2f}<extra></extra>'
         ), secondary_y=False)
         
-        # Add drawdown percentage line (secondary y-axis)
+        # Add drawdown percentage line (secondary y-axis) - ONLY for filtered episodes
+        # Create a masked version that only shows drawdowns meeting the threshold
         drawdown_pct_display = annotated['drawdown_pct'] * 100  # Convert to percentage
+        # Mask: only show drawdown when it meets or exceeds the threshold
+        drawdown_display_masked = drawdown_pct_display.copy()
+        drawdown_display_masked[drawdown_pct_display.abs() < filter_threshold] = 0  # Set small drawdowns to 0
+        
         fig.add_trace(go.Scatter(
             x=annotated[date_col],
-            y=drawdown_pct_display,
+            y=drawdown_display_masked,
             mode='lines',
             name='Drawdown %',
             line=dict(color='#ef4444', width=2, dash='dot'),
             fill='tozeroy',
             fillcolor='rgba(239,68,68,0.15)',
+            marker=dict(size=0),  # Explicitly no markers
             hovertemplate='<b>Drawdown:</b> %{y:.2f}%<extra></extra>'
         ), secondary_y=True)
         
@@ -9044,23 +9105,9 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct, custom_value):
             info_banner,
             summary,
             html.Div([
-                html.H4("📈 Drawdown Visualization", style={
-                    "fontSize":"18px", "fontWeight":600, "color":"rgba(255,255,255,0.95)",
-                    "marginBottom":"16px", "marginTop":"24px"
-                }),
-                html.P([
-                    "The graph shows the price history (blue line) and peak levels (green dashed line). ",
-                    html.Span("Red shaded areas", style={"color":"#ef4444", "fontWeight":"600"}),
-                    " indicate drawdown episodes where the price fell below the previous peak. ",
-                    "The ", html.Span("red dotted line (right axis)", style={"color":"#ef4444", "fontWeight":"600"}),
-                    " shows the drawdown percentage at each point in time - negative values indicate how far below the peak."
-                ], style={"fontSize":"14px", "color":"rgba(255,255,255,0.6)", "marginBottom":"16px"}),
-                graph_component,
-            ]),
-            html.Div([
                 html.H4("📋 Drawdown Episodes Table", style={
                     "fontSize":"18px", "fontWeight":600, "color":"rgba(255,255,255,0.95)",
-                    "marginBottom":"16px"
+                    "marginBottom":"16px", "marginTop":"24px"
                 }),
                 html.P(f"Showing {len(display_df)} episode(s) with drawdown ≥{filter_threshold}%", style={
                     "fontSize":"14px", "color":"rgba(255,255,255,0.6)", "marginBottom":"16px"
@@ -9095,6 +9142,9 @@ def download_drawdowns(n_clicks, stored_data):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
+
 
 
 
