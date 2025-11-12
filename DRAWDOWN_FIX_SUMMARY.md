@@ -1,18 +1,48 @@
 # 🔧 Drawdown Analysis - Dynamic Column Detection Fix
 
 ## Problem
-The Drawdown Recovery Analysis was failing with error:
+The Drawdown Recovery Analysis was failing with errors:
+
+**Error 1:**
 ```
 Error analyzing drawdowns: "None of [Index(['datetime', 'index'], dtype='object')] are in the [columns]"
 ```
 
-**Root Cause:** The function was hardcoded to expect columns named `'datetime'` and `'index'`, but the stored data might have different column names (e.g., original CSV column names).
+**Error 2:**
+```
+Could not automatically detect date and numeric columns in the data.
+Available columns: filename, columns, rows, csv_b64
+```
+
+**Root Causes:** 
+1. The function was hardcoded to expect columns named `'datetime'` and `'index'`, but the stored data might have different column names
+2. The stored data was in metadata format (base64-encoded CSV) rather than a parsed DataFrame
 
 ---
 
 ## ✅ Solution
 
-### 1. **Auto-Detection of Columns**
+### 1. **Decode Base64 CSV Data**
+Added logic to properly decode the stored data format:
+
+```python
+# Check if stored_data is the metadata format (with csv_b64)
+if isinstance(stored_data, dict) and "csv_b64" in stored_data:
+    # Decode base64 CSV data
+    csv_bytes = base64.b64decode(stored_data["csv_b64"])
+    df = pd.read_csv(io.BytesIO(csv_bytes))
+else:
+    # Try as direct DataFrame
+    df = pd.DataFrame(stored_data)
+```
+
+**How It Works:**
+- Checks if stored data is in metadata format (has `csv_b64` field)
+- Decodes the base64-encoded CSV string
+- Parses it back into a DataFrame
+- Falls back to direct DataFrame conversion if needed
+
+### 2. **Auto-Detection of Columns**
 Added intelligent column detection that works with **any column names**:
 
 ```python
@@ -47,7 +77,31 @@ for col in df.columns:
 
 ---
 
-### 2. **Enhanced Error Messages**
+## 📦 Understanding the Data Storage Format
+
+The app stores uploaded CSV data in a metadata wrapper:
+
+```python
+raw_payload = {
+    "filename": "your_file.csv",
+    "columns": ["datetime", "spx", "vix"],
+    "rows": 1234,
+    "csv_b64": "BASE64_ENCODED_CSV_DATA_HERE"
+}
+```
+
+**Why this format?**
+- Preserves original column names
+- Allows data to be serialized for browser storage
+- Enables file metadata tracking
+- Works with Dash's dcc.Store component
+
+**The Fix:**
+The drawdown callback now properly extracts the CSV data from this wrapper format before processing.
+
+---
+
+### 3. **Enhanced Error Messages**
 If columns can't be detected, shows helpful error:
 
 ```
