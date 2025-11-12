@@ -987,9 +987,21 @@ def compute_drawdown_recovery(
         Original series plus:
             cum_max, drawdown, drawdown_pct
     """
+    # Ensure columns exist
+    if date_col not in df.columns:
+        raise ValueError(f"Column '{date_col}' not found in dataframe. Available columns: {list(df.columns)}")
+    if price_col not in df.columns:
+        raise ValueError(f"Column '{price_col}' not found in dataframe. Available columns: {list(df.columns)}")
+    
     data = df[[date_col, price_col]].copy()
-    data[date_col] = pd.to_datetime(data[date_col])
+    data[date_col] = pd.to_datetime(data[date_col], errors='coerce')
+    data = data.dropna(subset=[date_col, price_col])
+    data[price_col] = pd.to_numeric(data[price_col], errors='coerce')
+    data = data.dropna(subset=[price_col])
     data = data.sort_values(date_col).reset_index(drop=True)
+    
+    if data.empty:
+        return pd.DataFrame(), pd.DataFrame()
     
     # Running peak & drawdown
     data["cum_max"] = data[price_col].cummax()
@@ -3989,8 +4001,42 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct):
         if df.empty:
             return html.Div("No data available", style={"color":"rgba(255,255,255,0.7)"})
         
+        # Auto-detect date and numeric columns
+        date_col = None
+        numeric_col = None
+        
+        # Find date column
+        for col in df.columns:
+            try:
+                pd.to_datetime(df[col], errors='coerce')
+                if pd.to_datetime(df[col], errors='coerce').notna().sum() > len(df) * 0.5:
+                    date_col = col
+                    break
+            except:
+                continue
+        
+        # Find numeric column (excluding the date column)
+        for col in df.columns:
+            if col != date_col:
+                try:
+                    pd.to_numeric(df[col], errors='coerce')
+                    if pd.to_numeric(df[col], errors='coerce').notna().sum() > len(df) * 0.5:
+                        numeric_col = col
+                        break
+                except:
+                    continue
+        
+        if not date_col or not numeric_col:
+            available_cols = ", ".join(df.columns.tolist())
+            return html.Div([
+                html.P("Could not automatically detect date and numeric columns in the data.", 
+                      style={"marginBottom":"8px"}),
+                html.P(f"Available columns: {available_cols}", 
+                      style={"fontSize":"13px", "opacity":"0.8"})
+            ], style={"color":"#ef4444", "padding":"20px"})
+        
         # Compute drawdown episodes
-        events_df, annotated = compute_drawdown_recovery(df, "datetime", "index")
+        events_df, annotated = compute_drawdown_recovery(df, date_col, numeric_col)
         
         if events_df.empty:
             return html.Div("No drawdown episodes found in the data", 
@@ -4031,6 +4077,18 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct):
         avg_drawdown = display_df["Drawdown %"].mean()
         max_drawdown = display_df["Drawdown %"].min()
         avg_recovery = display_df["Days to Recovery"].dropna().mean()
+        
+        # Info banner showing detected columns
+        info_banner = html.Div([
+            html.Span("✓ ", style={"marginRight":"6px", "fontSize":"16px"}),
+            html.Span(f"Analyzed using: ", style={"fontWeight":"500"}),
+            html.Span(f"Date column: '{date_col}' | Value column: '{numeric_col}'", 
+                     style={"opacity":"0.8"})
+        ], style={
+            "padding":"12px 16px", "background":"rgba(0,200,150,0.1)", 
+            "borderRadius":"8px", "border":"1px solid rgba(0,200,150,0.3)",
+            "fontSize":"14px", "color":"rgba(255,255,255,0.9)", "marginBottom":"24px"
+        })
         
         summary = html.Div([
             html.H4("📊 Summary Statistics", style={
@@ -4126,6 +4184,7 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct):
         )
         
         return html.Div([
+            info_banner,
             summary,
             html.Div([
                 html.H4("📋 Drawdown Episodes Table", style={
@@ -4165,6 +4224,9 @@ def download_drawdowns(n_clicks, stored_data):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
+
 
 
 
@@ -7950,6 +8012,7 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 8050))
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
 
