@@ -3997,7 +3997,15 @@ def analyze_drawdowns(n_clicks, stored_data, min_drawdown_pct):
         return html.Div()
     
     try:
-        df = pd.DataFrame(stored_data)
+        # Check if stored_data is the metadata format (with csv_b64)
+        if isinstance(stored_data, dict) and "csv_b64" in stored_data:
+            # Decode base64 CSV data
+            csv_bytes = base64.b64decode(stored_data["csv_b64"])
+            df = pd.read_csv(io.BytesIO(csv_bytes))
+        else:
+            # Try as direct DataFrame
+            df = pd.DataFrame(stored_data)
+        
         if df.empty:
             return html.Div("No data available", style={"color":"rgba(255,255,255,0.7)"})
         
@@ -4224,6 +4232,8 @@ def download_drawdowns(n_clicks, stored_data):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
+
+
 
 
 
@@ -8012,6 +8022,7 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 8050))
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
 
