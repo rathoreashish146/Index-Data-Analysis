@@ -1,3 +1,4 @@
+
 # # ==========================================================================================================================================================================================================
 
 
@@ -4039,15 +4040,13 @@ def run_cross(n_clicks, rawA, rawB, preset, sd, ed, snap_val, win):
         ),
         xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
         yaxis=dict(
-            title="Index A",
-            titlefont=dict(color="#00c896"),
+            title=dict(text="Index A", font=dict(color="#00c896")),
             tickfont=dict(color="#00c896"),
             gridcolor="rgba(255,255,255,0.1)",
             side="left"
         ),
         yaxis2=dict(
-            title="Index B",
-            titlefont=dict(color="#888888"),
+            title=dict(text="Index B", font=dict(color="#888888")),
             tickfont=dict(color="#888888"),
             anchor="x",
             overlaying="y",
@@ -4646,7 +4645,6 @@ def download_drawdowns(n_clicks, stored_data):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
 
 
 
@@ -9278,6 +9276,7 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 8050))
 #     app.run_server(host="0.0.0.0", port=port, debug=False)
+
 
 
 
